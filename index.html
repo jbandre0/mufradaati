@@ -203,17 +203,24 @@ const L3Q_DAYS=[2,6];
 const SESSION_QUEUE_FOR_BOX={l1:"l1q",l1q:"l1q",l2a:"l2a",l2b:"l2a",l3:"l3q",l3q:"l3q",l4:"l4q",l4q:"l4q",l5a:"l5a",l5b:"l5a",mastered:"mastered"};
 
 // ═══════════════════════════════════════════════════════════
+// PIN — namespaces all data per user
+// ═══════════════════════════════════════════════════════════
+function getPin(){return localStorage.getItem("muf-pin")||"";}
+function savePin(p){localStorage.setItem("muf-pin",p);}
+function pinKey(k){const p=getPin();return p?`${p}-${k}`:k;}
+
+// ═══════════════════════════════════════════════════════════
 // STORAGE — localStorage as cache, KV as source of truth
 // ═══════════════════════════════════════════════════════════
-function ls(k,d){try{const v=localStorage.getItem(k);return v!==null?JSON.parse(v):d;}catch{return d;}}
-function ss(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
+function ls(k,d){try{const v=localStorage.getItem(pinKey(k));return v!==null?JSON.parse(v):d;}catch{return d;}}
+function ss(k,v){try{localStorage.setItem(pinKey(k),JSON.stringify(v));}catch{}}
 function getWords(){return ls("muf-words",[]);}
 function getBoxes(){return ls("muf-boxes",{l1:[],l1q:[],l2a:[],l2b:[],l3q:[],l3:[],l4q:[],l4:[],l5a:[],l5b:[],mastered:[]});}
 function getSettings(){return ls("muf-settings",{l1Target:40});}
 function getStats(){return ls("muf-stats",{sessions:[],lifetime:{reviewed:0,correct:0,byLevel:{}}});}
 function getSession(){return ls("muf-session",null);}
 function saveSession(s){ss("muf-session",s);}
-function clearSession(){localStorage.removeItem("muf-session");}
+function clearSession(){localStorage.removeItem(pinKey("muf-session"));}
 
 // ── KV sync helpers ──
 let _syncT=null;
@@ -224,19 +231,15 @@ function setSyncStatus(msg,col){
   clearTimeout(_syncT);_syncT=setTimeout(()=>{el.style.opacity="0";},2500);
 }
 
-function kvAvailable(){
-  return!insideClaude()&&(sessionStorage.getItem("muf-proxy-ok")||sessionStorage.getItem("muf-skip-key")==null);
-}
-
 async function kvSet(key,value){
   if(insideClaude())return;
   try{
     await fetch(WORKER_URL,{
       method:"POST",
-      headers:{"Content-Type":"application/json","X-Action":"kv-set","X-Key":key},
+      headers:{"Content-Type":"application/json","X-Action":"kv-set","X-Key":pinKey(key)},
       body:JSON.stringify(value)
     });
-  }catch(e){console.warn("KV set failed",e);}
+  }catch(e){}
 }
 
 async function kvGetAll(){
@@ -244,7 +247,7 @@ async function kvGetAll(){
   try{
     const r=await fetch(WORKER_URL,{
       method:"POST",
-      headers:{"Content-Type":"application/json","X-Action":"kv-getall"},
+      headers:{"Content-Type":"application/json","X-Action":"kv-getall","X-Pin":getPin()},
       body:"{}"
     });
     return await r.json();
@@ -1098,9 +1101,12 @@ function renderStats(){
       <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)"/>
     </div>
     <div style="margin-top:20px;padding-top:18px;border-top:1px solid var(--border)">
-      <div style="font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px">AI Proxy</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.6">${insideClaude()?"Running inside Claude.ai — no proxy needed.":"AI calls route through a Cloudflare Worker. Your API key is stored securely in Cloudflare."}</div>
-      ${insideClaude()?"":`<button class="btn3" onclick="sessionStorage.removeItem('muf-proxy-ok');sessionStorage.removeItem('muf-skip-key');renderApiSetup()" style="font-size:12px;padding:7px 14px">Check Connection</button>`}
+      <div style="font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px">AI &amp; Sync</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.6">${insideClaude()?"Running inside Claude.ai — no setup needed.":getApiKey()?"✓ API key saved — AI features active.":"⚠ No API key — AI features disabled."}</div>
+      ${insideClaude()?"":`<div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn3" onclick="showApiKeyModal()" style="font-size:12px;padding:7px 14px">${getApiKey()?"Update API Key":"Add API Key"}</button>
+        <button class="btn3" onclick="sessionStorage.removeItem('muf-proxy-ok');sessionStorage.removeItem('muf-skip-key');renderApiSetup()" style="font-size:12px;padding:7px 14px">Check Connection</button>
+      </div>`}
     </div>
   </div>`;
 }
@@ -1109,8 +1115,11 @@ function showApiKeyModal(){
   document.getElementById("modal-root").innerHTML=`
     <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
       <div class="modal">
-        <div style="font-size:17px;font-weight:700;color:var(--sand);margin-bottom:6px">API Key</div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.6">Saved only in this browser's localStorage. Never shared.</div>
+        <div style="font-size:17px;font-weight:700;color:var(--sand);margin-bottom:6px">Your API Key</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.6">
+          Stored locally on this device only. Your credits pay for AI features.<br/>
+          Get your key at <span style="color:var(--gold)">console.anthropic.com</span>
+        </div>
         <div class="field">
           <label class="lbl">Anthropic API Key</label>
           <input id="modal-key" class="inp" type="password" placeholder="sk-ant-api03-…" value="${getApiKey()}" autocomplete="off" style="font-size:13px"/>
@@ -1119,7 +1128,7 @@ function showApiKeyModal(){
           <button class="btn1" onclick="
             const v=document.getElementById('modal-key').value.trim();
             if(!v.startsWith('sk-ant')){toast('Invalid key format','var(--red)');return;}
-            saveApiKey(v);closeModal();setView('stats');toast('API key updated ✓');
+            saveApiKey(v);closeModal();setView('stats');toast('API key saved ✓');
           ">Save</button>
           <button class="btn3" onclick="closeModal()">Cancel</button>
         </div>
@@ -1524,11 +1533,11 @@ For "isNew": false = in mastered list or is a basic function word. true = genuin
 // ═══════════════════════════════════════════════════════════
 // API KEY — stored in localStorage, never in the file itself
 // ═══════════════════════════════════════════════════════════
-function getApiKey(){try{return localStorage.getItem("muf-api-key")||"";}catch{return "";}}
-function saveApiKey(k){try{localStorage.setItem("muf-api-key",k);}catch{}}
-function clearApiKey(){try{localStorage.removeItem("muf-api-key");}catch{}}
+function getApiKey(){try{return localStorage.getItem(pinKey("muf-api-key"))||"";}catch{return "";}}
+function saveApiKey(k){try{localStorage.setItem(pinKey("muf-api-key"),k);}catch{}}
+function clearApiKey(){try{localStorage.removeItem(pinKey("muf-api-key"));}catch{}}
 
-// Cloudflare Worker URL — the secure proxy that holds your API key
+// Cloudflare Worker URL — proxy that forwards your own API key
 const WORKER_URL="https://mufradaati-worker.justin-andre00.workers.dev";
 
 // Returns the correct API endpoint depending on environment
@@ -1540,8 +1549,13 @@ function apiUrl(){
 // Returns headers for fetch calls
 function apiHeaders(){
   const h={"Content-Type":"application/json"};
-  // Only needed inside Claude.ai sandbox
-  if(insideClaude())h["anthropic-dangerous-direct-browser-access"]="true";
+  if(insideClaude()){
+    h["anthropic-dangerous-direct-browser-access"]="true";
+  } else {
+    // Send the user's own API key to the Worker via header
+    const key=getApiKey();
+    if(key)h["X-Api-Key"]=key;
+  }
   return h;
 }
 
@@ -1554,23 +1568,22 @@ function renderApiSetup(){
       <div class="ar" style="font-size:36px;text-align:center;color:var(--goldL);margin-bottom:8px">مفرداتي</div>
       <div style="text-align:center;font-size:12px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;margin-bottom:32px">Mufradaati</div>
       <div class="card" style="margin-bottom:14px">
-        ${sHead("AI Features")}
+        ${sHead("Welcome")}
         <div style="font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:20px">
-          Quick Add, Bulk Add, and Apply use AI via a secure Cloudflare Worker.<br/><br/>
-          Click <strong style="color:var(--sand)">Check Connection</strong> to verify the worker is reachable, then continue.
+          Mufradaati uses a Cloudflare Worker for AI features and cloud sync.<br/><br/>
+          Click <strong style="color:var(--sand)">Check Connection</strong> to verify, then continue to set up your PIN and API key.
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button class="btn1" onclick="checkProxyAndContinue()">&#10003; Check Connection</button>
-          <button class="btn3" onclick="skipApiKey()">Skip (AI features disabled)</button>
+          <button class="btn3" onclick="skipApiKey()">Skip (AI &amp; sync disabled)</button>
         </div>
         <div id="proxy-check-result" style="margin-top:12px;font-size:12px"></div>
       </div>
       <div class="card">
         ${sHead("About")}
         <div style="font-size:12px;color:var(--muted);line-height:1.8">
-          AI calls are routed through a Cloudflare Worker proxy.<br/>
-          Your API key is stored securely in Cloudflare — never exposed in this app.<br/>
-          Works on any device, including mobile.
+          Each user has their own PIN (separates your words) and their own Anthropic API key (separates billing).<br/>
+          Nothing is shared between users.
         </div>
       </div>
     </div>`;
@@ -1600,14 +1613,62 @@ function skipApiKey(){
   bootApp();
 }
 
+// ═══════════════════════════════════════════════════════════
+// PIN SCREEN
+// ═══════════════════════════════════════════════════════════
+function renderPinScreen(){
+  document.getElementById("main").innerHTML=`
+    <div style="max-width:380px;margin:0 auto;padding-top:40px;text-align:center">
+      <div class="ar" style="font-size:42px;color:var(--goldL);margin-bottom:8px">مفرداتي</div>
+      <div style="font-size:10px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase;margin-bottom:40px">Mufradaati</div>
+      <div class="card">
+        ${sHead("Create Your Profile")}
+        <div style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:22px">
+          You'll only need to do this once per device.
+        </div>
+        <div class="field">
+          <label class="lbl">Your PIN (4+ digits)</label>
+          <input id="pin-input" class="inp" type="number" placeholder="e.g. 482910"
+            style="font-size:24px;text-align:center;letter-spacing:.2em"
+            autocomplete="off"/>
+          <div style="font-size:10px;color:var(--muted2);margin-top:5px">Keeps your words separate from other users</div>
+        </div>
+        <div class="field">
+          <label class="lbl">Anthropic API Key</label>
+          <input id="apikey-input" class="inp" type="password" placeholder="sk-ant-api03-…"
+            style="font-size:13px" autocomplete="off"/>
+          <div style="font-size:10px;color:var(--muted2);margin-top:5px">Your credits pay for AI features. Get yours at <span style="color:var(--gold)">console.anthropic.com</span></div>
+        </div>
+        <div id="pin-error" style="color:var(--red);font-size:12px;margin-bottom:12px;display:none"></div>
+        <button class="btn1" style="width:100%;justify-content:center;font-size:15px;padding:14px" onclick="submitPin()">Let's go →</button>
+        <button onclick="submitPin(true)" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;margin-top:12px;font-family:inherit">Skip API key (AI features disabled)</button>
+      </div>
+    </div>`;
+  setTimeout(()=>document.getElementById("pin-input")?.focus(),100);
+}
+
+function submitPin(skipKey){
+  const pin=(document.getElementById("pin-input")?.value||"").trim();
+  const key=(document.getElementById("apikey-input")?.value||"").trim();
+  const errEl=document.getElementById("pin-error");
+  if(pin.length<4){errEl.style.display="block";errEl.textContent="PIN must be at least 4 digits";return;}
+  if(!skipKey&&key&&!key.startsWith("sk-ant")){errEl.style.display="block";errEl.textContent="Invalid API key format — should start with sk-ant";return;}
+  errEl.style.display="none";
+  savePin(pin);
+  if(!skipKey&&key)saveApiKey(key);
+  bootApp();
+}
+
 async function bootApp(){
-  // Pull latest data from KV and hydrate localStorage before rendering
   if(!insideClaude()){
     setSyncStatus("↓ loading…","var(--muted)");
     const remote=await kvGetAll();
     if(remote){
       const keys=["muf-words","muf-boxes","muf-settings","muf-stats","muf-last-clear"];
-      keys.forEach(k=>{if(remote[k]!==undefined)localStorage.setItem(k,remote[k]);});
+      keys.forEach(k=>{
+        const pk=pinKey(k);
+        if(remote[pk]!==undefined)localStorage.setItem(pk,remote[pk]);
+      });
       setSyncStatus("✓ synced","var(--green)");
     } else {
       setSyncStatus("","var(--muted)");
@@ -1623,10 +1684,16 @@ async function bootApp(){
 // BOOT
 // ═══════════════════════════════════════════════════════════
 (function init(){
-  // Show setup screen if outside Claude.ai and proxy hasn't been confirmed this session
-  if(!insideClaude()&&!sessionStorage.getItem("muf-proxy-ok")&&!sessionStorage.getItem("muf-skip-key")){
+  if(insideClaude()){bootApp();return;}
+  // First time setup — check proxy/worker
+  if(!sessionStorage.getItem("muf-proxy-ok")&&!sessionStorage.getItem("muf-skip-key")){
     runMidnightClear();
     renderApiSetup();
+    return;
+  }
+  // PIN gate — show once per device
+  if(!getPin()){
+    renderPinScreen();
     return;
   }
   bootApp();
