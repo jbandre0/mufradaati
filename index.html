@@ -893,10 +893,14 @@ Respond ONLY with valid JSON (no markdown, no explanation):
   try{
     const r=await fetch(apiUrl(),{method:"POST",headers:apiHeaders(),
       body:JSON.stringify({model:"claude-sonnet-4-5-20250929",max_tokens:800,messages:[{role:"user",content:prompt}]})});
-    const data=await r.json();const raw=data.content?.find(c=>c.type==="text")?.text||"";
+    const data=await r.json();
+    // Surface any API-level errors clearly
+    if(data.error){throw new Error(`API error ${r.status}: ${JSON.stringify(data.error)}`);}
+    const raw=data.content?.find(c=>c.type==="text")?.text||"";
+    if(!raw){throw new Error(`Empty response. Full response: ${JSON.stringify(data)}`);}
     const parsed=JSON.parse(raw.replace(/```json|```/g,"").trim());
     _qaState={..._qaState,loading:false,preview:{...parsed,wordType:wtype,dialect:dial}};
-  }catch(e){_qaState={..._qaState,loading:false,error:"Generation failed — check your connection and try again."};}
+  }catch(e){_qaState={..._qaState,loading:false,error:`${e.message||String(e)}`};}
   render();
 }
 function dialect_note(d){return({MSA:"Modern Standard Arabic",Darija:"Moroccan Darija",Shaami:"Levantine Arabic",Egyptian:"Egyptian Arabic",Iraqi:"Iraqi Arabic",Gulf:"Gulf Arabic",Universal:"MSA",Other:"Arabic"})[d]||d;}
