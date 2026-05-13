@@ -159,6 +159,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0
 <div class="atmo"></div>
 <div class="toast" id="toast"></div>
 <div id="modal-root"></div>
+<div id="sync-indicator" style="position:fixed;bottom:18px;right:18px;z-index:150;font-size:10px;color:var(--muted);letter-spacing:.06em;opacity:0;transition:opacity .4s;pointer-events:none"></div>
 <div class="shell">
   <nav>
     <div class="brand" onclick="goHome()">
@@ -202,21 +203,72 @@ const L3Q_DAYS=[2,6];
 const SESSION_QUEUE_FOR_BOX={l1:"l1q",l1q:"l1q",l2a:"l2a",l2b:"l2a",l3:"l3q",l3q:"l3q",l4:"l4q",l4q:"l4q",l5a:"l5a",l5b:"l5a",mastered:"mastered"};
 
 // ═══════════════════════════════════════════════════════════
-// STORAGE
+// STORAGE — localStorage as cache, KV as source of truth
 // ═══════════════════════════════════════════════════════════
 function ls(k,d){try{const v=localStorage.getItem(k);return v!==null?JSON.parse(v):d;}catch{return d;}}
 function ss(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
 function getWords(){return ls("muf-words",[]);}
-function saveWords(w){ss("muf-words",w);}
 function getBoxes(){return ls("muf-boxes",{l1:[],l1q:[],l2a:[],l2b:[],l3q:[],l3:[],l4q:[],l4:[],l5a:[],l5b:[],mastered:[]});}
-function saveBoxes(b){ss("muf-boxes",b);}
 function getSettings(){return ls("muf-settings",{l1Target:40});}
-function saveSettings(s){ss("muf-settings",s);}
 function getStats(){return ls("muf-stats",{sessions:[],lifetime:{reviewed:0,correct:0,byLevel:{}}});}
-function saveStats(s){ss("muf-stats",s);}
 function getSession(){return ls("muf-session",null);}
 function saveSession(s){ss("muf-session",s);}
 function clearSession(){localStorage.removeItem("muf-session");}
+
+// ── KV sync helpers ──
+let _syncT=null;
+function setSyncStatus(msg,col){
+  const el=document.getElementById("sync-indicator");
+  if(!el)return;
+  el.textContent=msg;el.style.color=col||"var(--muted)";el.style.opacity="1";
+  clearTimeout(_syncT);_syncT=setTimeout(()=>{el.style.opacity="0";},2500);
+}
+
+function kvAvailable(){
+  return!insideClaude()&&(sessionStorage.getItem("muf-proxy-ok")||sessionStorage.getItem("muf-skip-key")==null);
+}
+
+async function kvSet(key,value){
+  if(insideClaude())return;
+  try{
+    await fetch(WORKER_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json","X-Action":"kv-set","X-Key":key},
+      body:JSON.stringify(value)
+    });
+  }catch(e){console.warn("KV set failed",e);}
+}
+
+async function kvGetAll(){
+  if(insideClaude())return null;
+  try{
+    const r=await fetch(WORKER_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json","X-Action":"kv-getall"},
+      body:"{}"
+    });
+    return await r.json();
+  }catch(e){return null;}
+}
+
+// Save functions — write to localStorage immediately, sync to KV async
+function saveWords(w){
+  ss("muf-words",w);
+  setSyncStatus("↑ syncing…","var(--muted)");
+  kvSet("muf-words",w).then(()=>setSyncStatus("✓ synced","var(--green)")).catch(()=>setSyncStatus("⚠ sync failed","var(--gold)"));
+}
+function saveBoxes(b){
+  ss("muf-boxes",b);
+  kvSet("muf-boxes",b).catch(()=>{});
+}
+function saveSettings(s){
+  ss("muf-settings",s);
+  kvSet("muf-settings",s).catch(()=>{});
+}
+function saveStats(s){
+  ss("muf-stats",s);
+  kvSet("muf-stats",s).catch(()=>{});
+}
 
 // ═══════════════════════════════════════════════════════════
 // MIDNIGHT QUEUE CLEAR — runs once per calendar day on load
@@ -1548,7 +1600,19 @@ function skipApiKey(){
   bootApp();
 }
 
-function bootApp(){
+async function bootApp(){
+  // Pull latest data from KV and hydrate localStorage before rendering
+  if(!insideClaude()){
+    setSyncStatus("↓ loading…","var(--muted)");
+    const remote=await kvGetAll();
+    if(remote){
+      const keys=["muf-words","muf-boxes","muf-settings","muf-stats","muf-last-clear"];
+      keys.forEach(k=>{if(remote[k]!==undefined)localStorage.setItem(k,remote[k]);});
+      setSyncStatus("✓ synced","var(--green)");
+    } else {
+      setSyncStatus("","var(--muted)");
+    }
+  }
   runMidnightClear();
   const sess=getSession();
   if(sess&&sess.active)_view="review";
