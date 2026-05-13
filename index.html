@@ -1154,34 +1154,51 @@ function importData(input){
   reader.onload=function(e){
     try{
       const snapshot=JSON.parse(e.target.result);
-      if(!snapshot["muf-words"]&&!snapshot["muf-boxes"]){
+      // Accept both namespaced and un-namespaced backups
+      const pin=getPin();
+      const hasNamespaced=snapshot[`${pin}-muf-words`]||snapshot[`${pin}-muf-boxes`];
+      const hasPlain=snapshot["muf-words"]||snapshot["muf-boxes"];
+      if(!hasNamespaced&&!hasPlain){
         toast("Invalid backup file","var(--red)");return;
       }
+      const wordCount=(hasNamespaced?(snapshot[`${pin}-muf-words`]||[]):(snapshot["muf-words"]||[])).length;
       const dateStr=snapshot.exportedAt?new Date(snapshot.exportedAt).toLocaleDateString("en",{month:"short",day:"numeric",year:"numeric"}):"this file";
-      const snap=snapshot;
       document.getElementById("modal-root").innerHTML=`
         <div class="modal-overlay">
           <div class="modal" style="text-align:center">
             <div style="font-size:17px;font-weight:700;color:var(--sand);margin-bottom:10px">Import backup?</div>
-            <div style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6">This will replace ALL current data with the backup from <strong>${dateStr}</strong>. This cannot be undone.</div>
+            <div style="font-size:13px;color:var(--muted);margin-bottom:6px;line-height:1.6">Backup from <strong>${dateStr}</strong> — <strong>${wordCount}</strong> word${wordCount!==1?"s":""}.</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:24px;line-height:1.6">This will replace ALL current data. This cannot be undone.</div>
             <div style="display:flex;gap:10px;justify-content:center">
               <button class="btn1" onclick="closeModal();_importConfirmed()">Yes, import</button>
               <button class="btn3" onclick="closeModal()">Cancel</button>
             </div>
           </div>
         </div>`;
-      window._pendingImport=snap;
+      window._pendingImport=snapshot;
     }catch(err){toast("Could not read file","var(--red)");input.value="";}
   };
   reader.readAsText(file);
 }
+
 function _importConfirmed(){
   const snap=window._pendingImport;if(!snap)return;
-  const keys=["muf-words","muf-boxes","muf-settings","muf-stats","muf-session","muf-last-clear"];
-  keys.forEach(k=>{if(snap[k]!==undefined)ss(k,snap[k]);});
+  const pin=getPin();
+  const dataKeys=["muf-words","muf-boxes","muf-settings","muf-stats","muf-session","muf-last-clear"];
+  dataKeys.forEach(k=>{
+    // Try namespaced key first, fall back to plain key (old backups)
+    const namespacedVal=snap[`${pin}-${k}`];
+    const plainVal=snap[k];
+    const val=namespacedVal!==undefined?namespacedVal:plainVal;
+    if(val!==undefined)ss(k,val);
+  });
+  // Also sync imported data to KV
+  const words=getWords();const boxes=getBoxes();const stats=getStats();const settings=getSettings();
+  Promise.all([kvSet("muf-words",words),kvSet("muf-boxes",boxes),kvSet("muf-stats",stats),kvSet("muf-settings",settings)])
+    .then(()=>toast("Import successful — reloading…"))
+    .catch(()=>toast("Import successful — reloading…"));
   window._pendingImport=null;
-  toast("Import successful — reloading…");
-  setTimeout(()=>location.reload(),1200);
+  setTimeout(()=>location.reload(),1400);
 }
 
 // ═══════════════════════════════════════════════════════════
