@@ -1610,13 +1610,15 @@ async function checkProxyAndContinue(){
   const el=document.getElementById("proxy-check-result");
   el.style.color="var(--muted)";el.textContent="Checking…";
   try{
-    // Simple GET ping — Worker responds "Method not allowed" which means it's alive
     const r=await fetch(WORKER_URL,{method:"GET"});
-    // 405 = Method Not Allowed = Worker is running perfectly
     if(r.status===405||r.status===200){
       sessionStorage.setItem("muf-proxy-ok","1");
       el.style.color="var(--green)";el.textContent="✓ Connected!";
-      setTimeout(()=>bootApp(),800);
+      setTimeout(()=>{
+        // After connection check, go to PIN screen if no PIN yet, otherwise boot
+        if(!getPin())renderPinScreen();
+        else bootApp();
+      },800);
     }else{throw new Error(`Unexpected status ${r.status}`);}
   }catch(e){
     el.style.color="var(--red)";
