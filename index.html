@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>مفرداتي · Mufradaati</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#F7F4EF;--bg2:#F0EDE8;--bg3:#EAE6DF;
+  --card:#FFFFFF;--card2:#F5F2ED;--card3:#EDE9E2;
+  --border:rgba(0,0,0,0.09);--border-hi:rgba(160,110,20,0.55);
+  --gold:#9A7A1A;--goldL:#7A5F10;--goldD:#6A5010;
+  --sand:#2C2420;--muted:#8A8070;--muted2:#AAA090;
+  --accent:#B85C28;--green:#2A7A4A;--red:#B03030;--blue:#2A5EA8;--purple:#6B3F9A;
+  --l1:#B03030;--l2:#B85C28;--l3:#9A7A1A;--l4:#2A5EA8;--l5:#6B3F9A;--lm:#2A7A4A;
+}
+body{background:var(--bg);color:var(--sand);font-family:'Cormorant Garamond','Amiri',Georgia,serif;min-height:100vh;overflow-x:hidden;}
+input,select,textarea,button{font-family:inherit;}
+input::placeholder,textarea::placeholder{color:var(--muted2);}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:2px;}
+select option{background:var(--card);color:var(--sand);}
+.atmo{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 60% 40% at 15% 10%,rgba(154,122,26,0.07) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 60% at 85% 85%,rgba(184,92,40,0.05) 0%,transparent 70%);}
+.atmo::after{content:'';position:absolute;inset:0;
+  background-image:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(0,0,0,0.012) 40px,rgba(0,0,0,0.012) 41px),
+    repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(0,0,0,0.012) 40px,rgba(0,0,0,0.012) 41px);
+  mask-image:radial-gradient(ellipse at 50% 50%,black 30%,transparent 80%);}
+.shell{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:0 18px 90px;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0 16px;border-bottom:1px solid var(--border);margin-bottom:28px;}
+.brand{display:flex;align-items:center;gap:12px;cursor:pointer;}
+.brand-ar{font-family:'Amiri',serif;font-size:28px;color:var(--goldL);direction:rtl;}
+.brand-en{font-size:9px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase;margin-top:2px;}
+.nav-btns{display:flex;gap:2px;}
+.nav-btn{padding:6px 12px;border-radius:7px;border:none;cursor:pointer;font-size:12px;letter-spacing:.05em;background:transparent;color:var(--muted);transition:all .2s;}
+.nav-btn:hover{color:var(--sand);}
+.nav-btn.active{background:rgba(196,158,60,0.12);color:var(--goldL);border:1px solid rgba(196,158,60,0.2);}
+.inp{width:100%;background:rgba(0,0,0,0.02);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--sand);font-size:15px;outline:none;transition:border-color .2s;}
+.inp:focus{border-color:var(--border-hi);}
+.lbl{display:block;font-size:11px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:7px;}
+.field{margin-bottom:18px;}
+.btn1{background:linear-gradient(135deg,var(--goldD),var(--accent));color:#fff;border:none;border-radius:10px;padding:13px 26px;font-size:14px;cursor:pointer;font-weight:600;letter-spacing:.05em;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(196,96,42,0.2);transition:all .2s;}
+.btn1:hover{opacity:.9;transform:translateY(-1px);}
+.btn1:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none;}
+.btn2{background:transparent;color:var(--goldL);border:1px solid rgba(196,158,60,0.35);border-radius:10px;padding:11px 22px;font-size:13px;cursor:pointer;letter-spacing:.04em;transition:all .2s;}
+.btn2:hover{border-color:var(--gold);background:rgba(196,158,60,0.06);}
+.btn3{background:rgba(0,0,0,0.03);color:var(--sand);border:1px solid var(--border);border-radius:8px;padding:9px 16px;font-size:13px;cursor:pointer;transition:all .2s;}
+.btn3:hover{background:rgba(0,0,0,0.06);}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;}
+.ar{font-family:'Amiri',serif;direction:rtl;color:var(--goldL);}
+.s-head{font-size:10px;color:var(--gold);letter-spacing:.15em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+.s-head-line{flex:1;height:1px;background:linear-gradient(90deg,rgba(196,158,60,0.25),transparent);}
+.prog-bar{height:2px;background:rgba(0,0,0,0.06);border-radius:2px;}
+.prog-fill{height:100%;border-radius:2px;transition:width .4s ease;background:linear-gradient(90deg,var(--gold),var(--accent));}
+.flip-wrap{perspective:1400px;height:340px;margin-bottom:20px;cursor:pointer;}
+.flip-inner{transform-style:preserve-3d;transition:transform .6s cubic-bezier(.4,0,.2,1);height:100%;position:relative;}
+.flip-inner.flipped{transform:rotateY(180deg);cursor:default;}
+.flip-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.flip-back{transform:rotateY(180deg);background:linear-gradient(145deg,var(--card),var(--card2));border-color:rgba(154,122,26,0.25);overflow-y:auto;justify-content:flex-start;padding-top:22px;}
+.flip-face::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:60%;height:3px;border-radius:0 0 40px 40px;background:linear-gradient(90deg,transparent,rgba(196,158,60,0.4),transparent);}
+.rating-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.rate-btn{border-radius:12px;padding:14px 5px;cursor:pointer;text-align:center;border:1px solid;transition:all .15s;font-weight:700;font-family:inherit;font-size:15px;letter-spacing:.03em;}
+.rate-btn:hover{transform:translateY(-2px);}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px);}
+.modal{background:var(--card);border:1px solid rgba(154,122,26,0.2);border-radius:20px;padding:30px;max-width:460px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.15);}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:200;background:var(--card);border-radius:10px;padding:10px 20px;font-size:13px;letter-spacing:.04em;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.15);opacity:0;transition:opacity .3s;pointer-events:none;border:1px solid var(--border);}
+.toast.show{opacity:1;}
+.badge{font-size:10px;padding:3px 9px;border-radius:20px;white-space:nowrap;display:inline-block;letter-spacing:.04em;}
+.tab-strip{display:flex;gap:5px;margin-bottom:22px;overflow-x:auto;padding-bottom:4px;}
+.tab-strip::-webkit-scrollbar{height:2px;}
+.tab-btn{flex-shrink:0;border-radius:8px;border:1px solid var(--border);padding:6px 14px;cursor:pointer;font-size:12px;color:var(--muted);background:transparent;transition:all .2s;white-space:nowrap;}
+.tab-btn:hover{color:var(--sand);}
+.word-row{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:13px 15px;display:flex;align-items:center;gap:13px;margin-bottom:7px;transition:border-color .2s;}
+.word-row:hover{border-color:rgba(154,122,26,0.2);}
+.box-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:14px;}
+.box-card{border-radius:13px;padding:14px 11px;cursor:pointer;transition:all .15s;text-align:center;border:1.5px solid var(--border);background:var(--card);}
+.box-card:hover{transform:translateY(-2px);}
+.box-card.queue-box{border-style:dashed;opacity:.7;padding:10px 9px;cursor:default;}
+.box-card.queue-box:hover{transform:none;}
+.box-label{font-size:9px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px;font-weight:700;}
+.box-count{font-size:28px;font-weight:700;line-height:1;}
+.queue-label{font-size:8px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;font-weight:700;opacity:.8;}
+.queue-count{font-size:21px;font-weight:700;line-height:1;}
+.step-row{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--border);}
+.step-row:last-child{border-bottom:none;}
+.step-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.step-toggle{width:26px;height:26px;border-radius:7px;border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:all .2s;}
+.step-toggle.on{background:rgba(196,158,60,0.15);border-color:var(--gold);color:var(--goldL);}
+.step-toggle.off{color:var(--muted2);}
+.prompt-banner{background:rgba(196,158,60,0.07);border:1px solid rgba(196,158,60,0.28);border-radius:14px;padding:24px 20px;margin-bottom:18px;}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;}
+.stat-box{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:16px 6px;text-align:center;}
+.dialect-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
+.dialect-pill{border-radius:20px;border:1px solid var(--border);padding:5px 13px;font-size:11px;cursor:pointer;color:var(--muted);background:transparent;transition:all .2s;letter-spacing:.04em;}
+.dialect-pill:hover{color:var(--sand);}
+.dialect-pill.active{background:rgba(196,158,60,0.15);border-color:rgba(196,158,60,0.4);color:var(--goldL);}
+.ornament{text-align:center;color:rgba(196,158,60,0.3);font-family:'Amiri',serif;font-size:20px;margin:20px 0;letter-spacing:8px;}
+.end-btn{background:rgba(176,48,48,0.06);border:1px solid rgba(176,48,48,0.2);color:var(--red);border-radius:8px;cursor:pointer;font-size:12px;padding:5px 14px;letter-spacing:.04em;transition:all .2s;}
+.end-btn:hover{background:rgba(176,48,48,0.12);}
+.sub-tab-strip{display:flex;gap:0;margin-bottom:24px;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.sub-tab-btn{flex:1;padding:10px 6px;cursor:pointer;font-size:12px;color:var(--muted);background:transparent;border:none;border-right:1px solid var(--border);letter-spacing:.05em;transition:all .2s;text-align:center;}
+.sub-tab-btn:last-child{border-right:none;}
+.sub-tab-btn:hover{color:var(--sand);background:rgba(0,0,0,0.02);}
+.sub-tab-btn.active{background:rgba(196,158,60,0.1);color:var(--goldL);font-weight:600;}
+.preview-field{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px;}
+.preview-ar{font-family:'Amiri',serif;direction:rtl;font-size:24px;color:var(--goldL);}
+.preview-label{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(196,158,60,0.2);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.bulk-ta{width:100%;background:rgba(0,0,0,0.02);border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--sand);font-size:14px;outline:none;resize:vertical;min-height:160px;line-height:1.8;transition:border-color .2s;}
+.bulk-ta:focus{border-color:var(--border-hi);}
+.bulk-result{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;margin-bottom:5px;font-size:13px;}
+.bulk-result.ok{background:rgba(42,122,74,0.07);border:1px solid rgba(42,122,74,0.18);}
+.bulk-result.err{background:rgba(176,48,48,0.06);border:1px solid rgba(176,48,48,0.15);color:var(--muted);}
+@media(max-width:480px){.box-grid,.stat-grid{grid-template-columns:1fr 1fr;}.rating-grid{grid-template-columns:1fr 1fr;}}
+/* ── Bigger card back content ── */
+.card-back-english{font-size:26px;font-weight:600;color:var(--sand);text-align:center;margin-bottom:10px;}
+.card-back-example{font-family:'Amiri',serif;direction:rtl;font-size:22px;color:var(--goldL);text-align:center;line-height:1.6;margin-bottom:6px;}
+.card-back-example-en{font-size:14px;color:var(--muted);font-style:italic;text-align:center;line-height:1.5;margin-bottom:12px;}
+.card-back-forms{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px;}
+.card-back-form{text-align:center;background:rgba(154,122,26,0.08);border-radius:9px;padding:7px 12px;}
+.card-back-form-label{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;}
+.card-back-form-val{font-family:'Amiri',serif;direction:rtl;font-size:18px;color:var(--goldL);}
+/* ── Apply tab ── */
+.apply-mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px;}
+.apply-mode-btn{border-radius:13px;padding:18px 14px;cursor:pointer;text-align:center;border:1.5px solid var(--border);background:var(--card);transition:all .2s;}
+.apply-mode-btn:hover{border-color:rgba(154,122,26,0.3);transform:translateY(-1px);}
+.apply-mode-btn.active{background:rgba(154,122,26,0.08);border-color:rgba(154,122,26,0.45);}
+.apply-mode-icon{font-size:26px;margin-bottom:8px;}
+.apply-mode-label{font-size:13px;font-weight:600;color:var(--sand);margin-bottom:4px;}
+.apply-mode-desc{font-size:11px;color:var(--muted);line-height:1.4;}
+/* Generated text area */
+.apply-text-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px 20px;margin-bottom:16px;}
+.apply-text{font-family:'Amiri',serif;direction:rtl;font-size:26px;line-height:2.2;color:var(--sand);text-align:right;}
+.apply-text-en{font-size:14px;color:var(--muted);line-height:1.8;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
+/* Word highlights */
+.w-known{color:var(--goldL);cursor:default;}
+.w-new{color:var(--blue);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;cursor:pointer;position:relative;}
+.w-new:hover .w-tooltip{display:block;}
+.w-tooltip{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--card);border:1px solid rgba(42,94,168,0.3);border-radius:10px;padding:10px 14px;min-width:180px;max-width:240px;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.12);text-align:center;}
+.w-tooltip-meaning{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--sand);margin-bottom:8px;direction:ltr;}
+.w-tooltip-btns{display:flex;gap:6px;justify-content:center;}
+.w-tooltip-btn{font-size:10px;padding:4px 10px;border-radius:6px;border:1px solid;cursor:pointer;font-family:inherit;letter-spacing:.04em;white-space:nowrap;}
+/* Grammar focus grid */
+.grammar-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:18px;}
+.grammar-btn{border-radius:9px;padding:9px 10px;cursor:pointer;text-align:center;border:1px solid var(--border);background:transparent;font-size:12px;color:var(--muted);transition:all .2s;line-height:1.3;}
+.grammar-btn:hover{color:var(--sand);border-color:rgba(154,122,26,0.25);}
+.grammar-btn.active{background:rgba(154,122,26,0.1);border-color:rgba(154,122,26,0.4);color:var(--goldL);font-weight:600;}
+/* Sentence list for grammar mode */
+.sentence-row{background:var(--card2);border:1px solid var(--border);border-radius:11px;padding:14px 16px;margin-bottom:10px;}
+.sentence-ar{font-family:'Amiri',serif;direction:rtl;font-size:24px;color:var(--sand);line-height:1.7;text-align:right;margin-bottom:6px;}
+.sentence-en{font-size:13px;color:var(--muted);line-height:1.5;}
+</style>
+</head>
+<body>
+<div class="atmo"></div>
+<div class="toast" id="toast"></div>
+<div id="modal-root"></div>
+<div class="shell">
+  <nav>
+    <div class="brand" onclick="goHome()">
+      <div><div class="brand-ar">مفرداتي</div><div class="brand-en">Mufradaati</div></div>
+    </div>
+    <div class="nav-btns">
+      <button class="nav-btn active" id="nb-home"  onclick="setView('home')">Home</button>
+      <button class="nav-btn"        id="nb-boxes" onclick="setView('boxes')">Boxes</button>
+      <button class="nav-btn"        id="nb-add"   onclick="setView('add')">Add</button>
+      <button class="nav-btn"        id="nb-apply" onclick="setView('apply')">Apply</button>
+      <button class="nav-btn"        id="nb-stats" onclick="setView('stats')">Stats</button>
+    </div>
+  </nav>
+  <div id="main"></div>
+</div>
+<script>
+// ═══════════════════════════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════════════════════════
+const WORD_TYPES=["Noun","Verb","Adjective","Adverb","Phrase","Preposition","Conjunction","Other"];
+const DIALECTS=["Universal","MSA","Darija","Shaami","Egyptian","Iraqi","Gulf","Other"];
+const DAY_NAMES=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const BOXES=[
+  {id:"l1q",label:"L1 Queue",color:"#C04848",isQueue:true,main:1},
+  {id:"l1",label:"Level 1",color:"#C04848",isQueue:false,main:1},
+  {id:"l2a",label:"L2A",color:"#C4602A",isQueue:false,main:2},
+  {id:"l2b",label:"L2B",color:"#C4602A",isQueue:false,main:2},
+  {id:"l3q",label:"L3 Queue",color:"#C49E3C",isQueue:true,main:3},
+  {id:"l3",label:"Level 3",color:"#C49E3C",isQueue:false,main:3},
+  {id:"l4q",label:"L4 Queue",color:"#3A7BC8",isQueue:true,main:4},
+  {id:"l4",label:"Level 4",color:"#3A7BC8",isQueue:false,main:4},
+  {id:"l5a",label:"L5A",color:"#9B59B6",isQueue:false,main:5},
+  {id:"l5b",label:"L5B",color:"#9B59B6",isQueue:false,main:5},
+  {id:"mastered",label:"Mastered",color:"#3A9864",isQueue:false,main:6},
+];
+const DAY_LEVELS={
+  0:["l5b","l4","l3","l2b","l1"],1:["l2b","l1"],2:["l2b","l1"],
+  3:["l3","l2b","l1"],4:["l2b","l1"],5:["l2b","l1"],6:["l2b","l1"],
+};
+const L3Q_DAYS=[2,6];
+const SESSION_QUEUE_FOR_BOX={l1:"l1q",l1q:"l1q",l2a:"l2a",l2b:"l2a",l3:"l3q",l3q:"l3q",l4:"l4q",l4q:"l4q",l5a:"l5a",l5b:"l5a",mastered:"mastered"};
+
+// ═══════════════════════════════════════════════════════════
+// STORAGE
+// ═══════════════════════════════════════════════════════════
+function ls(k,d){try{const v=localStorage.getItem(k);return v!==null?JSON.parse(v):d;}catch{return d;}}
+function ss(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
+function getWords(){return ls("muf-words",[]);}
+function saveWords(w){ss("muf-words",w);}
+function getBoxes(){return ls("muf-boxes",{l1:[],l1q:[],l2a:[],l2b:[],l3q:[],l3:[],l4q:[],l4:[],l5a:[],l5b:[],mastered:[]});}
+function saveBoxes(b){ss("muf-boxes",b);}
+function getSettings(){return ls("muf-settings",{l1Target:40});}
+function saveSettings(s){ss("muf-settings",s);}
+function getStats(){return ls("muf-stats",{sessions:[],lifetime:{reviewed:0,correct:0,byLevel:{}}});}
+function saveStats(s){ss("muf-stats",s);}
+function getSession(){return ls("muf-session",null);}
+function saveSession(s){ss("muf-session",s);}
+function clearSession(){localStorage.removeItem("muf-session");}
+
+// ═══════════════════════════════════════════════════════════
+// MIDNIGHT QUEUE CLEAR — runs once per calendar day on load
+// Auto-clears: L1Q→L1, L3Q→L3, L4Q→L4
+// L2A→L2B and L5A→L5B are prompt-only (in-session)
+// ═══════════════════════════════════════════════════════════
+function runMidnightClear(){
+  const key="muf-last-clear";
+  const today=new Date().toDateString();
+  if(ls(key,null)===today)return;
+  const sess=getSession();
+  if(sess&&sess.active)return; // don't run during live session
+  const boxes=getBoxes();let changed=false;
+  [["l1q","l1"],["l3q","l3"],["l4q","l4"]].forEach(([from,to])=>{
+    const ids=boxes[from]||[];
+    if(ids.length){boxes[to]=[...(boxes[to]||[]),...ids];boxes[from]=[];changed=true;}
+  });
+  if(changed)saveBoxes(boxes);
+  ss(key,today);
+}
+
+// ═══════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════
+function uid(){return`w${Date.now()}${Math.random().toString(36).slice(2,5)}`;}
+function todayDow(){return new Date().getDay();}
+function hexRgb(hex){const h=hex.replace("#","");return`${parseInt(h.slice(0,2),16)},${parseInt(h.slice(2,4),16)},${parseInt(h.slice(4,6),16)}`;}
+function sHead(t){return`<div class="s-head">${t}<div class="s-head-line"></div></div>`;}
+function wordById(id){return getWords().find(w=>w.id===id);}
+function boxDef(id){return BOXES.find(b=>b.id===id)||{id,label:id,color:"#888",isQueue:false,main:1};}
+function moveWords(ids,fromBox,toBox){const b=getBoxes();const set=new Set(ids);b[fromBox]=(b[fromBox]||[]).filter(id=>!set.has(id));b[toBox]=[...(b[toBox]||[]),...ids];saveBoxes(b);}
+function addWordToBox(wordId,box){const b=getBoxes();if(!b[box])b[box]=[];if(!b[box].includes(wordId))b[box].push(wordId);saveBoxes(b);}
+function removeWordFromBox(wordId,box){const b=getBoxes();b[box]=(b[box]||[]).filter(id=>id!==wordId);saveBoxes(b);}
+let _toastT;
+function toast(msg,col){col=col||"var(--green)";clearTimeout(_toastT);const el=document.getElementById("toast");el.textContent=msg;el.style.borderColor=col;el.style.color=col;el.classList.add("show");_toastT=setTimeout(()=>el.classList.remove("show"),2800);}
+function sessionDoneToday(){const stats=getStats();const today=new Date().toDateString();return stats.sessions.some(s=>new Date(s.ts).toDateString()===today);}
+
+// ═══════════════════════════════════════════════════════════
+// ROUTING LOGIC
+// ═══════════════════════════════════════════════════════════
+function correctDest(box,dow){
+  if(box==="l5b")return"mastered";if(box==="l4")return"l5a";if(box==="l3")return"l4";
+  if(box==="l2b")return L3Q_DAYS.includes(dow)?"l3q":"l3";if(box==="l1")return"l2a";return"l1";
+}
+function incorrectDest(box){
+  if(box==="l5b")return"l4q";if(box==="l4")return"l3q";if(box==="l3")return"l2a";
+  if(box==="l2b")return"l1q";if(box==="l1")return"l1q";return"l1q";
+}
+
+// ═══════════════════════════════════════════════════════════
+// VIEW ROUTER
+// ═══════════════════════════════════════════════════════════
+let _view="home";
+function setView(v){
+  _view=v;
+  ["home","boxes","add","apply","stats"].forEach(k=>{
+    const el=document.getElementById("nb-"+k);if(!el)return;
+    el.classList.toggle("active",k===v||(k==="home"&&["home","summary","review"].includes(v)));
+  });
+  render();
+}
+function goHome(){setView("home");}
+function render(){
+  const m=document.getElementById("main");if(!m)return;
+  if(_view==="home")m.innerHTML=renderHome();
+  else if(_view==="boxes")m.innerHTML=renderBoxes();
+  else if(_view==="add")m.innerHTML=renderAdd();
+  else if(_view==="apply")m.innerHTML=renderApply();
+  else if(_view==="stats")m.innerHTML=renderStats();
+  else if(_view==="review")m.innerHTML=renderReview();
+  else if(_view==="summary")m.innerHTML=renderSummary();
+}
+
+// ═══════════════════════════════════════════════════════════
+// HOME
+// ═══════════════════════════════════════════════════════════
+let _dialectFilter="All";
+function renderHome(){
+  const boxes=getBoxes();const words=getWords();const dow=todayDow();const sess=getSession();
+  const pills=["All",...DIALECTS].map(d=>`<button class="dialect-pill${_dialectFilter===d?" active":""}" onclick="_dialectFilter='${d}';setView('home')">${d}</button>`).join("");
+  let ctaHtml="";
+  if(sess&&sess.active){
+    ctaHtml=`<div class="card" style="margin-bottom:14px;text-align:center">
+      <div style="font-size:13px;color:var(--gold);margin-bottom:10px">Session in progress — ${DAY_NAMES[sess.dow]}</div>
+      <button class="btn1" onclick="setView('review')">Resume Session →</button>
+    </div>`;
+  } else if(!words.length){
+    ctaHtml=`<div class="card" style="margin-bottom:14px;text-align:center;padding:36px 24px">
+      <div class="ar" style="font-size:42px;color:var(--goldL);margin-bottom:10px">أهلاً وسهلاً</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Add your first word to begin your journey</div>
+      <button class="btn1" onclick="setView('add')">+ Add Word</button>
+    </div>`;
+  } else {
+    const planned=DAY_LEVELS[dow]||["l2b","l1"];
+    const cnt=planned.reduce((s,b)=>s+(boxes[b]||[]).length,0);
+    const doneToday=sessionDoneToday();
+    ctaHtml=`<div class="card" style="margin-bottom:14px">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:2px">Today is <span style="color:var(--sand);font-weight:600">${DAY_NAMES[dow]}</span></div>
+      <div style="font-size:11px;color:var(--muted2);margin-bottom:16px">Planned: ${planned.map(b=>boxDef(b).label).join(" → ")}</div>
+      ${doneToday
+        ?`<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+            <span style="font-size:20px">✓</span>
+            <span style="font-size:13px;color:var(--green);font-weight:600">Session complete for today</span>
+          </div>
+          <button class="btn2" style="width:100%;justify-content:center;font-size:14px;padding:12px" onclick="openSessionModal()">Start Another Session</button>`
+        :cnt===0
+          ?`<div style="font-size:12px;color:var(--muted);margin-bottom:16px">No words in today's boxes yet.</div>
+            <button class="btn1" style="width:100%;justify-content:center;font-size:16px;padding:16px" onclick="openSessionModal()" disabled>▶ Start Session</button>`
+          :`<div style="margin-bottom:16px"><span style="font-size:32px;font-weight:700;color:var(--goldL)">${cnt}</span>
+              <span style="font-size:13px;color:var(--muted);margin-left:8px">word${cnt!==1?"s":""} to review</span></div>
+            <button class="btn1" style="width:100%;justify-content:center;font-size:16px;padding:16px" onclick="openSessionModal()">▶ Start Session</button>`
+      }
+    </div>`;
+  }
+  return`${ctaHtml}${sHead("Vocabulary Boxes")}
+    <div class="dialect-pills">${pills}</div>
+    ${renderBoxGrid()}
+    <div style="display:flex;gap:9px;margin-top:14px">
+      <button class="btn2" style="flex:1" onclick="setView('add')">+ Add Word</button>
+      <button class="btn3" style="flex:1" onclick="setView('stats')">📊 Stats</button>
+    </div><div class="ornament">❧ ✦ ❧</div>`;
+}
+
+function renderBoxGrid(){
+  const boxes=getBoxes();const words=getWords();
+  const dm={};words.forEach(w=>{dm[w.id]=w.dialect;});
+  function cnt(id){const ids=boxes[id]||[];return _dialectFilter==="All"?ids.length:ids.filter(id=>dm[id]===_dialectFilter).length;}
+  const layout=[{id:"l1q",q:true},{id:"l1",q:false},null,{id:"l2a",q:false},{id:"l2b",q:false},null,{id:"l3q",q:true},{id:"l3",q:false},null,{id:"l4q",q:true},{id:"l4",q:false},null,{id:"l5a",q:false},{id:"l5b",q:false},null,{id:"mastered",q:false},null,null];
+  let h=`<div class="box-grid">`;
+  for(const item of layout){
+    if(!item){h+=`<div></div>`;continue;}
+    const def=boxDef(item.id);const c=def.color;const rg=hexRgb(c);const n=cnt(item.id);
+    h+=item.q
+      ?`<div class="box-card queue-box" style="border-color:rgba(${rg},0.4)"><div class="queue-label" style="color:${c}">${def.label}</div><div class="queue-count" style="color:${c}">${n}</div></div>`
+      :`<div class="box-card" onclick="viewBox('${item.id}')" style="background:rgba(${rg},0.04);border-color:rgba(${rg},0.25)"><div class="box-label" style="color:${c}">${def.label}</div><div class="box-count" style="color:${c}">${n}</div></div>`;
+  }
+  return h+`</div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// SESSION MODAL
+// ═══════════════════════════════════════════════════════════
+let _sessionToggles={};
+let _sessionModalCtx={dow:0,allPoss:[],planned:[],cardDirection:"ar-en"};
+function openSessionModal(){
+  if(sessionDoneToday()){
+    document.getElementById("modal-root").innerHTML=`
+      <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal" style="text-align:center">
+          <div style="font-size:28px;margin-bottom:14px">✓</div>
+          <div style="font-size:17px;font-weight:700;color:var(--green);margin-bottom:10px">Session already complete today</div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6">You've already done a session today. Start another one?</div>
+          <div style="display:flex;gap:10px;justify-content:center">
+            <button class="btn1" onclick="closeModal();_openSessionModalInner()">Yes, start another</button>
+            <button class="btn3" onclick="closeModal()">No thanks</button>
+          </div>
+        </div>
+      </div>`;
+    return;
+  }
+  _openSessionModalInner();
+}
+function _openSessionModalInner(){
+  const dow=todayDow();const planned=DAY_LEVELS[dow]||["l2b","l1"];const allPoss=["l5b","l4","l3","l2b","l1"];
+  _sessionModalCtx={dow,allPoss,planned,cardDirection:_sessionModalCtx.cardDirection||"ar-en"};
+  _sessionToggles={};planned.forEach(b=>_sessionToggles[b]=true);
+  renderSessionModal();
+}
+function renderSessionModal(){
+  const {dow,allPoss,planned,cardDirection}=_sessionModalCtx;const boxes=getBoxes();
+  const rows=allPoss.map(b=>{
+    const def=boxDef(b);const c=def.color;const rg=hexRgb(c);
+    const cnt=(boxes[b]||[]).length;const isPlan=planned.includes(b);const isOn=!!_sessionToggles[b];
+    return`<div class="step-row">
+      <div class="step-num" style="background:rgba(${rg},0.15);color:${c}">${def.label.replace("Level ","")}</div>
+      <div style="flex:1"><div style="font-size:13px;color:var(--sand)">${def.label}</div><div style="font-size:10px;color:var(--muted)">${cnt} word${cnt!==1?"s":""}</div></div>
+      ${isPlan?`<span style="font-size:9px;color:var(--muted2)">planned</span>`:`<span style="font-size:9px;color:var(--gold);opacity:.6">extra</span>`}
+      <button class="step-toggle ${isOn?"on":"off"}" onclick="toggleSessionBox('${b}')">${isOn?"✓":"+"}</button>
+    </div>`;
+  }).join("");
+  const arEn=cardDirection==="ar-en";
+  const dirToggle=`<div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+    <div style="font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px">Card Direction</div>
+    <div style="display:flex;gap:0;border:1px solid var(--border);border-radius:9px;overflow:hidden">
+      <button onclick="_sessionModalCtx.cardDirection='ar-en';renderSessionModal()"
+        style="flex:1;padding:9px 8px;border:none;cursor:pointer;font-size:12px;letter-spacing:.04em;transition:all .2s;font-family:inherit;
+          ${arEn?"background:rgba(196,158,60,0.12);color:var(--goldL);font-weight:600":"background:transparent;color:var(--muted)"}">
+        Arabic → English
+      </button>
+      <button onclick="_sessionModalCtx.cardDirection='en-ar';renderSessionModal()"
+        style="flex:1;padding:9px 8px;border:none;border-left:1px solid var(--border);cursor:pointer;font-size:12px;letter-spacing:.04em;transition:all .2s;font-family:inherit;
+          ${!arEn?"background:rgba(196,158,60,0.12);color:var(--goldL);font-weight:600":"background:transparent;color:var(--muted)"}">
+        English → Arabic
+      </button>
+    </div>
+    <div style="font-size:10px;color:var(--muted2);margin-top:6px">${arEn?"See Arabic, recall English meaning":"See English, recall Arabic word &amp; forms"}</div>
+  </div>`;
+  document.getElementById("modal-root").innerHTML=`
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <div style="font-size:10px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;margin-bottom:5px">Today</div>
+        <div style="font-size:24px;font-weight:700;color:var(--goldL);margin-bottom:22px">${DAY_NAMES[dow]}</div>
+        ${sHead("Session Plan")}
+        <div style="font-size:11px;color:var(--muted2);margin-bottom:16px">Toggle levels on or off to customize</div>
+        ${rows}
+        ${dirToggle}
+        <div style="display:flex;gap:10px;margin-top:22px">
+          <button class="btn1" onclick="startSession()">Begin →</button>
+          <button class="btn3" onclick="closeModal()">Cancel</button>
+        </div>
+      </div>
+    </div>`;
+}
+function toggleSessionBox(box){_sessionToggles[box]=!_sessionToggles[box];renderSessionModal();}
+function closeModal(){document.getElementById("modal-root").innerHTML="";}
+function startSession(){
+  const dow=_sessionModalCtx.dow;closeModal();
+  const boxes=getBoxes();const order=["l5b","l4","l3","l2b","l1"];
+  const enabled=order.filter(b=>_sessionToggles[b]&&(boxes[b]||[]).length>0);
+  if(!enabled.length){toast("No words in selected boxes","var(--red)");return;}
+  const steps=enabled.map(b=>({box:b,done:false,correct:0,incorrect:0}));
+  saveSession({active:true,dow,steps,stepIdx:0,queue:[...(boxes[steps[0].box]||[])],queueIdx:0,flipped:false,ratings:{},pendingPrompt:null,startedAt:Date.now(),moveLog:[],sessionCorrect:0,sessionTotal:0,byLevel:{},cardDirection:_sessionModalCtx.cardDirection||"ar-en"});
+  setView("review");
+}
+
+// ═══════════════════════════════════════════════════════════
+// REVIEW
+// ═══════════════════════════════════════════════════════════
+function renderReview(){
+  const sess=getSession();
+  if(!sess||!sess.active){setView("home");return renderHome();}
+  if(sess.pendingPrompt)return renderPrompt(sess);
+  const step=sess.steps[sess.stepIdx];
+  if(!step||step.done||sess.queueIdx>=sess.queue.length){setTimeout(()=>finishStep(),0);return`<div style="text-align:center;padding:60px 0;color:var(--muted)">Loading…</div>`;}
+  const wordId=sess.queue[sess.queueIdx];const word=wordById(wordId);
+  if(!word){sess.queueIdx++;saveSession(sess);setTimeout(()=>render(),0);return`<div style="padding:60px 0"></div>`;}
+  const def=boxDef(step.box);const c=def.color;const rg=hexRgb(c);
+  const pctStep=sess.queue.length>0?(sess.queueIdx/sess.queue.length)*100:0;
+  const doneSteps=sess.steps.filter(s=>s.done).length;
+  const overallPct=((doneSteps+(pctStep/100))/sess.steps.length)*100;
+  // Extra forms for back of card
+  let formsHtml="";
+  if(word.forms&&Object.keys(word.forms).length>0){
+    formsHtml=`<div class="card-back-forms">`;
+    Object.entries(word.forms).forEach(([label,val])=>{
+      if(!val)return;
+      formsHtml+=`<div class="card-back-form">
+        <div class="card-back-form-label">${label}</div>
+        <div class="card-back-form-val">${val}</div>
+      </div>`;
+    });
+    formsHtml+=`</div>`;
+  }
+  const arEn=(sess.cardDirection||"ar-en")==="ar-en";
+
+  // Front face content
+  const frontHtml=arEn
+    ?`<div style="font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:20px">What does this mean?</div>
+      <div class="ar" style="font-size:54px;text-align:center;line-height:1.45">${word.arabic}</div>`
+    :`<div style="font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:20px">How do you say this?</div>
+      <div style="font-size:32px;font-weight:600;color:var(--sand);text-align:center;line-height:1.4">${word.english}</div>`;
+
+  // Back face content
+  const backHtml=arEn
+    ?`<div style="font-size:10px;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;opacity:.7;margin-bottom:10px;flex-shrink:0">Answer</div>
+      <div class="card-back-english">${word.english}</div>
+      ${word.example?`<div class="card-back-example">${word.example.split(" — ")[0]||""}</div>
+      <div class="card-back-example-en">${word.example.split(" — ")[1]||""}</div>`:""}
+      ${formsHtml}`
+    :`<div style="font-size:10px;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;opacity:.7;margin-bottom:10px;flex-shrink:0">Answer</div>
+      <div class="ar" style="font-size:48px;text-align:center;line-height:1.45;margin-bottom:10px">${word.arabic}</div>
+      ${word.example?`<div class="card-back-example">${word.example.split(" — ")[0]||""}</div>
+      <div class="card-back-example-en">${word.example.split(" — ")[1]||""}</div>`:""}
+      ${formsHtml}`;
+
+  return`
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+    <div class="prog-bar" style="flex:1"><div class="prog-fill" style="width:${overallPct.toFixed(1)}%"></div></div>
+    <span style="font-size:11px;color:var(--muted);flex-shrink:0">${sess.queueIdx+1}/${sess.queue.length}</span>
+  </div>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+    <button class="end-btn" onclick="confirmEndSession()">■ End Session</button>
+  </div>
+  <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">
+    <span class="badge" style="background:rgba(${rg},0.12);color:${c}">${def.label}</span>
+    <span class="badge" style="background:rgba(0,0,0,0.04);color:var(--muted)">${word.dialect||""}</span>
+    <span class="badge" style="background:rgba(0,0,0,0.04);color:var(--muted)">${word.wordType||""}</span>
+  </div>
+  <div class="flip-wrap" onclick="if(!${sess.flipped})doFlip()">
+    <div class="flip-inner${sess.flipped?" flipped":""}">
+      <div class="flip-face">
+        ${frontHtml}
+        <div style="position:absolute;bottom:16px;font-size:10px;color:var(--muted);opacity:.4">tap to reveal</div>
+      </div>
+      <div class="flip-face flip-back">
+        ${backHtml}
+      </div>
+    </div>
+  </div>
+  ${sess.flipped?`<div class="rating-grid">
+    <button class="rate-btn" style="background:rgba(42,122,74,0.1);border-color:var(--green);color:var(--green)" onclick="rateWord('correct')">✓ Got it</button>
+    <button class="rate-btn" style="background:rgba(176,48,48,0.1);border-color:var(--red);color:var(--red)" onclick="rateWord('incorrect')">✗ Missed</button>
+  </div>`:`<button class="btn1" style="width:100%;justify-content:center;font-size:15px;padding:15px" onclick="doFlip()">Reveal Answer</button>`}`;
+}
+function doFlip(){const sess=getSession();if(!sess)return;sess.flipped=true;saveSession(sess);render();}
+function rateWord(rating){
+  const sess=getSession();if(!sess||!sess.active)return;
+  const step=sess.steps[sess.stepIdx];const wordId=sess.queue[sess.queueIdx];
+  const dest=rating==="correct"?correctDest(step.box,sess.dow):incorrectDest(step.box);
+  removeWordFromBox(wordId,step.box);addWordToBox(wordId,dest);
+  sess.ratings[wordId]=rating;sess.moveLog.push({wordId,from:step.box,to:dest});
+  if(rating==="correct")step.correct++;else step.incorrect++;
+  sess.sessionTotal++;if(rating==="correct")sess.sessionCorrect++;
+  if(!sess.byLevel[step.box])sess.byLevel[step.box]={correct:0,total:0};
+  sess.byLevel[step.box].total++;if(rating==="correct")sess.byLevel[step.box].correct++;
+  sess.queueIdx++;sess.flipped=false;saveSession(sess);render();
+}
+
+// ═══════════════════════════════════════════════════════════
+// STEP FLOW
+// ═══════════════════════════════════════════════════════════
+function finishStep(){
+  const sess=getSession();if(!sess)return;
+  sess.steps[sess.stepIdx].done=true;const box=sess.steps[sess.stepIdx].box;
+
+  if(box==="l5b"){
+    const f=getBoxes();if((f.l5a||[]).length>0){
+      sess.pendingPrompt={type:"move",from:"l5a",to:"l5b",msg:"Move L5A → L5B?",sub:"Words in L5A have waited their week and are ready to become L5B candidates."};
+      saveSession(sess);render();return;
+    }
+  }
+  if(box==="l4"){
+    const f=getBoxes();if((f.l4q||[]).length>0){moveWords([...f.l4q],"l4q","l4");toast("L4 Queue → L4 ✓","var(--blue)");}
+  }
+  if(box==="l3"){
+    const f=getBoxes();if((f.l3q||[]).length>0){moveWords([...f.l3q],"l3q","l3");toast("L3 Queue → L3 ✓","var(--gold)");}
+  }
+  if(box==="l2b"){
+    const f=getBoxes();if((f.l2a||[]).length>0){
+      sess.pendingPrompt={type:"move",from:"l2a",to:"l2b",msg:"Move L2A → L2B?",sub:"These words have waited 2 days and are ready to be reviewed in tomorrow's L2B session."};
+      saveSession(sess);render();return;
+    }
+  }
+  if(box==="l1"){
+    const f=getBoxes();if((f.l1q||[]).length>0){moveWords([...f.l1q],"l1q","l1");}
+    endSession(sess);return;
+  }
+  advanceStep(sess);
+}
+function advanceStep(sess){
+  if(!sess)sess=getSession();if(!sess)return;
+  sess.stepIdx++;
+  if(sess.stepIdx>=sess.steps.length){endSession(sess);return;}
+  const nextBox=sess.steps[sess.stepIdx].box;
+  sess.queue=[...(getBoxes()[nextBox]||[])];sess.queueIdx=0;sess.flipped=false;
+  saveSession(sess);render();
+}
+function renderPrompt(sess){
+  const p=sess.pendingPrompt;const fd=boxDef(p.from);const td=boxDef(p.to);
+  const cnt=(getBoxes()[p.from]||[]).length;
+  return`<div style="min-height:320px;display:flex;flex-direction:column;justify-content:center">
+    <div class="prompt-banner" style="text-align:center">
+      <div style="font-size:32px;margin-bottom:14px">🔄</div>
+      <div style="font-size:18px;font-weight:700;color:var(--goldL);margin-bottom:10px">${p.msg}</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6">${p.sub}</div>
+      <div style="font-size:14px;color:var(--sand);margin-bottom:22px">
+        <span style="color:${fd.color}">${fd.label}</span>
+        <span style="color:var(--muted);margin:0 10px">→</span>
+        <span style="color:${td.color}">${td.label}</span>
+        <span style="color:var(--muted);margin-left:8px">(${cnt} word${cnt!==1?"s":""})</span>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center">
+        <button class="btn1" onclick="confirmPrompt(true)">Yes, move them</button>
+        <button class="btn3" onclick="confirmPrompt(false)">Skip for now</button>
+      </div>
+    </div>
+  </div>`;
+}
+function confirmPrompt(yes){
+  const sess=getSession();if(!sess)return;const p=sess.pendingPrompt;
+  if(yes){const b=getBoxes();moveWords([...(b[p.from]||[])],p.from,p.to);toast(`${boxDef(p.from).label} → ${boxDef(p.to).label} ✓`);}
+  sess.pendingPrompt=null;saveSession(sess);advanceStep(sess);
+}
+function endSession(sess){
+  const stats=getStats();const dow=sess.dow;
+  stats.lifetime.reviewed=(stats.lifetime.reviewed||0)+sess.sessionTotal;
+  stats.lifetime.correct=(stats.lifetime.correct||0)+sess.sessionCorrect;
+  Object.keys(sess.byLevel||{}).forEach(box=>{
+    if(!stats.lifetime.byLevel[box])stats.lifetime.byLevel[box]={correct:0,total:0};
+    stats.lifetime.byLevel[box].correct+=sess.byLevel[box].correct;stats.lifetime.byLevel[box].total+=sess.byLevel[box].total;
+  });
+  stats.sessions.push({ts:Date.now(),dow,correct:sess.sessionCorrect,total:sess.sessionTotal,byLevel:sess.byLevel,moveLog:sess.moveLog});
+  if(stats.sessions.length>300)stats.sessions=stats.sessions.slice(-300);
+  saveStats(stats);
+  saveSession({...sess,active:false,endedAt:Date.now()});
+  setView("summary");
+}
+function confirmEndSession(){
+  document.getElementById("modal-root").innerHTML=`
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal" style="text-align:center">
+        <div style="font-size:28px;margin-bottom:14px">■</div>
+        <div style="font-size:17px;font-weight:700;color:var(--sand);margin-bottom:10px">End session early?</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6">Progress so far will be saved.</div>
+        <div style="display:flex;gap:10px;justify-content:center">
+          <button class="btn1" onclick="closeModal();endSession(getSession())">Yes, end it</button>
+          <button class="btn3" onclick="closeModal()">Keep going</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// SUMMARY
+// ═══════════════════════════════════════════════════════════
+function renderSummary(){
+  const sess=getSession();if(!sess)return renderHome();
+  const boxes=getBoxes();const settings=getSettings();
+  const l1Count=(boxes.l1||[]).length;const l1Target=settings.l1Target||40;const l1Diff=l1Target-l1Count;
+  const pct=sess.sessionTotal>0?Math.round(sess.sessionCorrect/sess.sessionTotal*100):0;
+  const praise=pct>=90?"ممتاز":pct>=70?"أحسنت":"استمر";
+  const statCols=[{v:sess.sessionTotal,l:"Reviewed",c:"var(--goldL)"},{v:sess.sessionCorrect,l:"Correct",c:"var(--green)"},{v:sess.sessionTotal-sess.sessionCorrect,l:"Missed",c:"var(--red)"},{v:`${pct}%`,l:"Accuracy",c:"var(--gold)"}];
+  const byLvlRows=Object.keys(sess.byLevel||{}).map(box=>{
+    const d=sess.byLevel[box];const def=boxDef(box);const a=d.total>0?Math.round(d.correct/d.total*100):0;
+    return`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
+      <span style="color:${def.color};font-size:13px">${def.label}</span>
+      <span style="font-size:12px;color:var(--muted)">${d.correct}/${d.total} <span style="color:var(--sand);margin-left:4px">${a}%</span></span>
+    </div>`;
+  }).join("");
+  const l1Tip=l1Diff>0?`<div style="background:rgba(196,158,60,0.07);border:1px solid rgba(196,158,60,0.22);border-radius:11px;padding:16px;margin-top:16px">
+    <div style="font-size:12px;color:var(--gold);font-weight:700;margin-bottom:5px">📝 Word Target</div>
+    <div style="font-size:12px;color:var(--muted)">L1 has <span style="color:var(--sand)">${l1Count}</span> words. Target is <span style="color:var(--goldL)">${l1Target}</span>. Consider adding <strong>${l1Diff}</strong> new word${l1Diff!==1?"s":""} today.</div>
+    <button class="btn2" style="margin-top:10px;font-size:12px;padding:8px 14px" onclick="setView('add')">+ Add Words</button>
+  </div>`:`<div style="font-size:12px;color:var(--muted);margin-top:14px">L1 has ${l1Count} words${l1Diff===0?` — exactly at your target of ${l1Target} 🎯`:` (${-l1Diff} above target of ${l1Target})`}.</div>`;
+  const stats=getStats();const wCut=Date.now()-7*86400000;const wS=stats.sessions.filter(s=>s.ts>=wCut);
+  const wT=wS.reduce((a,s)=>a+s.total,0);const wC=wS.reduce((a,s)=>a+s.correct,0);const wP=wT>0?Math.round(wC/wT*100):0;
+  return`<div class="ar" style="font-size:48px;text-align:center;color:var(--goldL);margin-bottom:4px">${praise}!</div>
+  <div style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:26px">Session complete — ${DAY_NAMES[sess.dow]}</div>
+  <div class="stat-grid" style="margin-bottom:22px">
+    ${statCols.map(({v,l,c})=>`<div class="stat-box"><div style="font-size:26px;font-weight:700;color:${c}">${v}</div><div style="font-size:9px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.08em">${l}</div></div>`).join("")}
+  </div>
+  ${byLvlRows?`<div class="card" style="margin-bottom:16px">${sHead("By Level")}${byLvlRows}</div>`:""}
+  <div class="card" style="margin-bottom:16px">${sHead("This Week")}
+    <div style="display:flex;gap:24px;font-size:13px;flex-wrap:wrap">
+      <span style="color:var(--muted)">Sessions: <span style="color:var(--sand)">${wS.length}</span></span>
+      <span style="color:var(--muted)">Reviewed: <span style="color:var(--sand)">${wT}</span></span>
+      <span style="color:var(--muted)">Accuracy: <span style="color:var(--sand)">${wP}%</span></span>
+    </div>
+  </div>${l1Tip}
+  <div style="display:flex;gap:10px;margin-top:22px">
+    <button class="btn1" onclick="clearSession();setView('home')">← Home</button>
+    <button class="btn3" onclick="setView('stats')">Full Stats</button>
+  </div><div class="ornament">✦</div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// BOXES VIEW
+// ═══════════════════════════════════════════════════════════
+let _activeBoxView="l1";
+function viewBox(id){_activeBoxView=id;setView("boxes");}
+function renderBoxes(){
+  const boxes=getBoxes();
+  const tabs=BOXES.filter(b=>!b.isQueue).map(b=>{
+    const cnt=(boxes[b.id]||[]).length;const rg=hexRgb(b.color);const act=b.id===_activeBoxView;
+    return`<button class="tab-btn" onclick="viewBox('${b.id}')" style="${act?`background:rgba(${rg},0.12);border-color:${b.color};color:${b.color}`:""}">${b.label} <span style="opacity:.4;font-size:11px">${cnt}</span></button>`;
+  }).join("");
+  const def=boxDef(_activeBoxView);const ids=boxes[_activeBoxView]||[];
+  const rows=ids.length===0?`<div style="text-align:center;color:var(--muted);padding:60px 0;font-size:13px">No words here yet.</div>`
+    :ids.map(id=>{const w=wordById(id);if(!w)return"";
+      return`<div class="word-row">
+        <div class="ar" style="font-size:23px;flex:0 0 auto;min-width:75px;text-align:right">${w.arabic}</div>
+        <div style="flex:1;min-width:0"><div style="font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${w.english}</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:3px">${w.dialect} · ${w.wordType}</div></div>
+        <button onclick="deleteWordFull('${id}')" style="background:none;border:none;cursor:pointer;color:rgba(176,48,48,0.3);font-size:20px;padding:3px 7px;line-height:1;transition:color .2s" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='rgba(176,48,48,0.3)'">×</button>
+      </div>`;}).join("");
+  return`<div class="tab-strip">${tabs}</div>
+    <div style="margin-bottom:18px"><div style="font-size:20px;font-weight:700;color:${def.color}">${def.label}</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:3px">${ids.length} word${ids.length!==1?"s":""}</div></div>${rows}`;
+}
+function deleteWordFull(id){
+  document.getElementById("modal-root").innerHTML=`
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal" style="text-align:center">
+        <div style="font-size:17px;font-weight:700;color:var(--sand);margin-bottom:10px">Remove this word?</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:24px">It will be deleted from all boxes permanently.</div>
+        <div style="display:flex;gap:10px;justify-content:center">
+          <button class="btn1" style="background:linear-gradient(135deg,var(--red),#8B2020)" onclick="closeModal();_deleteWordConfirmed('${id}')">Yes, remove</button>
+          <button class="btn3" onclick="closeModal()">Cancel</button>
+        </div>
+      </div>
+    </div>`;
+}
+function _deleteWordConfirmed(id){
+  saveWords(getWords().filter(w=>w.id!==id));
+  const boxes=getBoxes();Object.keys(boxes).forEach(k=>boxes[k]=(boxes[k]||[]).filter(x=>x!==id));
+  saveBoxes(boxes);render();toast("Word removed","var(--muted)");
+}
+
+// ═══════════════════════════════════════════════════════════
+// ADD VIEW
+// ═══════════════════════════════════════════════════════════
+let _addTab="manual";
+function renderAdd(){
+  const subTabs=`<div class="sub-tab-strip">
+    ${[["manual","Manual"],["quick","Quick Add ✦"],["bulk","Bulk Add"]].map(([id,lbl])=>
+      `<button class="sub-tab-btn${_addTab===id?" active":""}" onclick="_addTab='${id}';render()">${lbl}</button>`).join("")}
+  </div>`;
+  return`<button onclick="setView('home')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;margin-bottom:20px;padding:0;letter-spacing:.04em">← Back</button>
+  <div class="ar" style="font-size:30px;text-align:right;color:var(--goldL);margin-bottom:22px">إضافة كلمة</div>
+  ${subTabs}${_addTab==="manual"?renderManualAdd():_addTab==="quick"?renderQuickAdd():renderBulkAdd()}`;
+}
+
+// ── Manual ──
+function renderManualAdd(){
+  const sess=getSession();const sa=sess&&sess.active;
+  return`<div class="card">
+    <div class="field">
+      <label class="lbl">Arabic Script *</label>
+      <input id="f-ar" class="inp" style="font-family:'Amiri',serif;font-size:26px;direction:rtl;text-align:right" placeholder="اكتب الكلمة هنا" autocomplete="off"/>
+      <div id="e-ar" style="color:var(--red);font-size:11px;margin-top:5px;display:none">Required</div>
+    </div>
+    <div class="field">
+      <label class="lbl">English Meaning *</label>
+      <input id="f-en" class="inp" placeholder="Translation / meaning" autocomplete="off"/>
+      <div id="e-en" style="color:var(--red);font-size:11px;margin-top:5px;display:none">Required</div>
+    </div>
+    <div class="field">
+      <label class="lbl">Example Sentence</label>
+      <input id="f-ex" class="inp" placeholder="Usage in context…" autocomplete="off"/>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px">
+      <div><label class="lbl">Word Type</label>
+        <select id="f-type" class="inp" style="cursor:pointer;font-size:13px;padding:10px 12px">${WORD_TYPES.map(t=>`<option>${t}</option>`).join("")}</select></div>
+      <div><label class="lbl">Dialect</label>
+        <select id="f-dial" class="inp" style="cursor:pointer;font-size:13px;padding:10px 12px">${DIALECTS.map(d=>`<option>${d}</option>`).join("")}</select></div>
+    </div>
+    ${!sa?`<div class="field"><label class="lbl">Starting Box</label>
+      <select id="f-box" class="inp" style="cursor:pointer;font-size:13px;padding:10px 12px">${BOXES.map(b=>`<option value="${b.id}"${b.id==="l1"?" selected":""}>${b.label}</option>`).join("")}</select>
+      <div style="font-size:10px;color:var(--muted2);margin-top:5px">Defaults to Level 1. Use to migrate words from other systems.</div>
+    </div>`:`<div style="background:rgba(196,158,60,0.07);border:1px solid rgba(196,158,60,0.2);border-radius:9px;padding:11px 14px;margin-bottom:18px;font-size:12px;color:var(--muted)">Session in progress — new words go to the appropriate queue box.</div>`}
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn1" onclick="submitManual(false)">Save Word</button>
+      <button class="btn2" onclick="submitManual(true)">Save &amp; Add Another</button>
+    </div>
+    <div style="margin-top:22px;padding-top:18px;border-top:1px solid var(--border)">
+      <label class="lbl">L1 Word Target</label>
+      <div style="display:flex;gap:10px;align-items:center">
+        <input id="f-target" class="inp" type="number" min="1" max="500" style="max-width:110px" value="${getSettings().l1Target}"/>
+        <button class="btn3" onclick="saveTarget()">Save</button>
+        <span style="font-size:11px;color:var(--muted2)">words</span>
+      </div>
+    </div>
+  </div>`;
+}
+function saveTarget(){const v=parseInt(document.getElementById("f-target")?.value)||40;const s=getSettings();s.l1Target=Math.max(1,v);saveSettings(s);toast("Target saved");}
+function submitManual(andAnother){
+  const ar=document.getElementById("f-ar")?.value?.trim()||"";const en=document.getElementById("f-en")?.value?.trim()||"";
+  document.getElementById("e-ar").style.display=ar?"none":"block";document.getElementById("e-en").style.display=en?"none":"block";
+  if(!ar||!en)return;
+  const word={id:uid(),arabic:ar,english:en,example:document.getElementById("f-ex")?.value?.trim()||"",
+    wordType:document.getElementById("f-type")?.value||"Noun",dialect:document.getElementById("f-dial")?.value||"MSA",createdAt:Date.now()};
+  saveWords([...getWords(),word]);
+  const sess=getSession();const sa=sess&&sess.active;
+  const tb=sa?(SESSION_QUEUE_FOR_BOX[sess.steps[sess.stepIdx]?.box||"l1"]||"l1q"):(document.getElementById("f-box")?.value||"l1");
+  addWordToBox(word.id,tb);toast(`Added to ${boxDef(tb).label} ✓`);
+  if(andAnother){document.getElementById("f-ar").value="";document.getElementById("f-en").value="";document.getElementById("f-ex").value="";document.getElementById("f-ar").focus();}
+  else setView("home");
+}
+
+// ── Quick Add ──
+let _qaState={dialect:"MSA",wordType:"Noun",targetBox:"l1q",loading:false,preview:null,error:null};
+function renderQuickAdd(){
+  const s=_qaState;
+  const sess=getSession();const sa=sess&&sess.active;
+  const boxOptions=BOXES.map(b=>`<option value="${b.id}"${b.id===s.targetBox?" selected":""}>${b.label}</option>`).join("");
+  return`<div class="card">
+    <div style="font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.7">
+      Type an English word or phrase, choose dialect and type — the AI generates a fully vowelled Arabic card with the right forms and an example sentence.
+    </div>
+    <div class="field">
+      <label class="lbl">English Word / Phrase *</label>
+      <input id="qa-en" class="inp" placeholder="e.g. to understand, book, beautiful…" autocomplete="off"
+        onkeydown="if(event.key==='Enter')generateQuickAdd()"/>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px">
+      <div><label class="lbl">Dialect</label>
+        <select id="qa-dial" class="inp" style="cursor:pointer;font-size:13px;padding:10px 12px"
+          onchange="_qaState.dialect=this.value">
+          ${DIALECTS.map(d=>`<option${d===s.dialect?" selected":""}>${d}</option>`).join("")}
+        </select></div>
+      <div><label class="lbl">Word Type</label>
+        <select id="qa-type" class="inp" style="cursor:pointer;font-size:13px;padding:10px 12px"
+          onchange="_qaState.wordType=this.value">
+          ${WORD_TYPES.map(t=>`<option${t===s.wordType?" selected":""}>${t}</option>`).join("")}
+        </select></div>
+    </div>
+    ${!sa?`<div class="field">
+      <label class="lbl">Save to Box</label>
+      <select id="qa-box" class="inp" style="cursor:pointer;font-size:13px;padding:10px 12px" onchange="_qaState.targetBox=this.value">
+        ${boxOptions}
+      </select>
+    </div>`:`<div style="background:rgba(196,158,60,0.07);border:1px solid rgba(196,158,60,0.2);border-radius:9px;padding:10px 14px;margin-bottom:18px;font-size:12px;color:var(--muted)">Session in progress — new words go to the appropriate queue box.</div>`}
+    <button class="btn1" onclick="generateQuickAdd()" ${s.loading?"disabled":""} style="margin-bottom:20px">
+      ${s.loading?`<span class="spinner"></span> Generating…`:"✦ Generate Card"}
+    </button>
+    ${s.error?`<div style="color:var(--red);font-size:12px;margin-bottom:16px;padding:10px 14px;background:rgba(176,48,48,0.06);border-radius:8px">${s.error}</div>`:""}
+    ${s.preview?renderQAPreview(s.preview):""}
+  </div>`;
+}
+function renderQAPreview(p){
+  let extraHtml="";
+  const fieldKeys=Object.keys(p.extraFields||{});
+  fieldKeys.forEach((label,i)=>{
+    const val=(p.extraFields||{})[label]||"";
+    if(!val)return;
+    extraHtml+=`<div style="margin-bottom:10px">
+      <div style="font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">${label}</div>
+      <div class="ar" id="qa-ef-${i}" contenteditable="true" style="font-size:19px;outline:none;border-bottom:1px dashed rgba(154,122,26,0.3);padding-bottom:3px;min-height:28px">${val}</div>
+    </div>`;
+  });
+  return`<div style="border-top:1px solid var(--border);padding-top:20px">
+    ${sHead("Preview — edit before saving")}
+    <div class="preview-field">
+      <div class="preview-label">Arabic (main form)</div>
+      <div class="preview-ar" id="qa-ar" contenteditable="true" style="outline:none;border-bottom:1px dashed rgba(154,122,26,0.3);padding-bottom:4px">${p.arabic}</div>
+    </div>
+    <div class="preview-field">
+      <div class="preview-label">English</div>
+      <div style="font-size:15px;color:var(--sand)" id="qa-en-prev" contenteditable="true" style="outline:none">${p.english}</div>
+    </div>
+    ${extraHtml?`<div class="preview-field"><div class="preview-label">Additional Forms</div>${extraHtml}</div>`:""}
+    ${p.exampleAr?`<div class="preview-field">
+      <div class="preview-label">Example Sentence</div>
+      <div class="ar" style="font-size:18px;margin-bottom:5px" id="qa-ex-ar" contenteditable="true" style="outline:none">${p.exampleAr}</div>
+      <div style="font-size:12px;color:var(--muted);font-style:italic" id="qa-ex-en" contenteditable="true" style="outline:none">${p.exampleEn||""}</div>
+    </div>`:""}
+    <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+      <button class="btn1" onclick="saveQA()">Save Card</button>
+      <button class="btn3" onclick="_qaState.preview=null;render()">Clear</button>
+    </div>
+    <div style="font-size:10px;color:var(--muted2);margin-top:10px">All fields are editable — correct anything before saving.</div>
+  </div>`;
+}
+async function generateQuickAdd(){
+  const en=document.getElementById("qa-en")?.value?.trim()||"";
+  const dial=document.getElementById("qa-dial")?.value||_qaState.dialect;
+  const wtype=document.getElementById("qa-type")?.value||_qaState.wordType;
+  if(!en){toast("Enter an English word first","var(--red)");return;}
+  _qaState={..._qaState,dialect:dial,wordType:wtype,loading:true,error:null,preview:null};render();
+  let typeInstr="";
+  if(wtype==="Verb")typeInstr=`Include extraFields: "Past (هو)", "Present (هو)", "Masdar", "Imperative (أنت)".`;
+  else if(wtype==="Noun")typeInstr=`Include extraFields: "Singular", "Plural" (broken plural if one exists).`;
+  else if(wtype==="Adjective")typeInstr=`Include extraFields: "Masculine", "Feminine", "Plural" (broken plural if one exists).`;
+  else typeInstr=`extraFields can be empty {}.`;
+  const dialectNote={MSA:"Modern Standard Arabic",Darija:"Moroccan Darija",Shaami:"Levantine Arabic",Egyptian:"Egyptian Arabic",Iraqi:"Iraqi Arabic",Gulf:"Gulf Arabic",Universal:"MSA (note if pronunciation varies by dialect)",Other:"Arabic"};
+  const prompt=`You are an expert Arabic linguist specializing in all dialects. Generate a vocabulary flashcard.
+
+English: "${en}"
+Dialect: ${dialect_note(dial)}
+Word Type: ${wtype}
+
+Rules:
+- Use FULL Arabic diacritics (tashkeel) on EVERY Arabic word, no exceptions.
+- "arabic" = the main/primary form.
+- ${typeInstr}
+- Generate one natural example sentence in ${dial} using this word, with full diacritics.
+- Include English translation of the example.
+
+Respond ONLY with valid JSON (no markdown, no explanation):
+{"arabic":"","english":"${en}","extraFields":{},"exampleAr":"","exampleEn":""}`;
+
+  function dialect_note(d){return({MSA:"Modern Standard Arabic",Darija:"Moroccan Darija",Shaami:"Levantine Arabic",Egyptian:"Egyptian Arabic",Iraqi:"Iraqi Arabic",Gulf:"Gulf Arabic",Universal:"MSA",Other:"Arabic"})[d]||d;}
+
+  try{
+    const r=await fetch(apiUrl(),{method:"POST",headers:apiHeaders(),
+      body:JSON.stringify({model:"claude-sonnet-4-5-20250929",max_tokens:800,messages:[{role:"user",content:prompt}]})});
+    const data=await r.json();const raw=data.content?.find(c=>c.type==="text")?.text||"";
+    const parsed=JSON.parse(raw.replace(/```json|```/g,"").trim());
+    _qaState={..._qaState,loading:false,preview:{...parsed,wordType:wtype,dialect:dial}};
+  }catch(e){_qaState={..._qaState,loading:false,error:"Generation failed — check your connection and try again."};}
+  render();
+}
+function dialect_note(d){return({MSA:"Modern Standard Arabic",Darija:"Moroccan Darija",Shaami:"Levantine Arabic",Egyptian:"Egyptian Arabic",Iraqi:"Iraqi Arabic",Gulf:"Gulf Arabic",Universal:"MSA",Other:"Arabic"})[d]||d;}
+function saveQA(){
+  const p=_qaState.preview;if(!p)return;
+  const arabic=document.getElementById("qa-ar")?.innerText?.trim()||p.arabic;
+  const english=document.getElementById("qa-en-prev")?.innerText?.trim()||p.english;
+  if(!arabic||!english){toast("Arabic and English required","var(--red)");return;}
+  const exAr=document.getElementById("qa-ex-ar")?.innerText?.trim()||"";
+  const exEn=document.getElementById("qa-ex-en")?.innerText?.trim()||"";
+  const example=exAr?(exEn?`${exAr} — ${exEn}`:exAr):"";
+  const fieldKeys=Object.keys(p.extraFields||{});
+  const editedForms={};
+  fieldKeys.forEach((label,i)=>{const val=document.getElementById(`qa-ef-${i}`)?.innerText?.trim()||"";if(val)editedForms[label]=val;});
+  const word={id:uid(),arabic,english,example,wordType:p.wordType||"Noun",dialect:p.dialect||"MSA",forms:editedForms,createdAt:Date.now()};
+  saveWords([...getWords(),word]);
+  const sess=getSession();const sa=sess&&sess.active;
+  const tb=sa?(SESSION_QUEUE_FOR_BOX[sess.steps[sess.stepIdx]?.box||"l1"]||"l1q"):(_qaState.targetBox||"l1q");
+  addWordToBox(word.id,tb);toast(`"${english}" added to ${boxDef(tb).label} ✓`);
+  _qaState={..._qaState,preview:null};render();
+}
+
+// ── Bulk Add ──
+let _bulkState={loading:false,results:null,targetBox:"l1q"};
+function renderBulkAdd(){
+  const boxOptions=BOXES.map(b=>`<option value="${b.id}"${b.id===_bulkState.targetBox?" selected":""}>${b.label}</option>`).join("");
+  return`<div class="card">
+    <div style="font-size:13px;color:var(--muted);margin-bottom:6px;line-height:1.6">
+      One entry per line: <strong style="color:var(--sand)">English word or phrase, Dialect</strong>
+    </div>
+    <div style="font-size:11px;color:var(--muted2);margin-bottom:6px;line-height:1.7">
+      Available dialects: ${DIALECTS.join(", ")}
+    </div>
+    <div style="font-size:11px;color:var(--muted2);margin-bottom:18px">Word type is detected automatically.</div>
+    <div class="field">
+      <label class="lbl">Save all words to</label>
+      <select id="bulk-box" class="inp" style="cursor:pointer;font-size:13px;padding:10px 12px" onchange="_bulkState.targetBox=this.value">
+        ${boxOptions}
+      </select>
+    </div>
+    <div class="field">
+      <label class="lbl">Words to add</label>
+      <textarea id="bulk-ta" class="bulk-ta" placeholder="to understand, MSA&#10;book, Shaami&#10;beautiful, Egyptian&#10;to find out, Iraqi&#10;friend, Darija"></textarea>
+    </div>
+    <button class="btn1" onclick="runBulkAdd()" ${_bulkState.loading?"disabled":""} style="margin-bottom:20px">
+      ${_bulkState.loading?`<span class="spinner"></span> Generating (this may take a moment)…`:"✦ Generate All Cards"}
+    </button>
+    ${_bulkState.results?renderBulkResults(_bulkState.results):""}
+  </div>`;
+}
+function renderBulkResults(results){
+  const saved=results.filter(r=>!r.error).length;
+  const tb=_bulkState.targetBox||"l1q";
+  const rows=results.map(r=>r.error
+    ?`<div class="bulk-result err"><span>✗</span><span>"${r.input}" — ${r.error}</span></div>`
+    :`<div class="bulk-result ok"><span>✓</span><span class="ar" style="font-size:17px">${r.arabic}</span><span style="font-size:12px;color:var(--muted);flex:1">${r.english} · ${r.dialect}</span></div>`
+  ).join("");
+  return`<div style="border-top:1px solid var(--border);padding-top:18px">
+    ${sHead(`Results — ${saved}/${results.length} saved to ${boxDef(tb).label}`)}${rows}
+    <button class="btn3" style="margin-top:14px" onclick="_bulkState.results=null;render()">Clear</button>
+  </div>`;
+}
+async function runBulkAdd(){
+  const raw=document.getElementById("bulk-ta")?.value||"";
+  const lines=raw.split("\n").map(l=>l.trim()).filter(Boolean);
+  if(!lines.length){toast("Enter at least one word","var(--red)");return;}
+  const targetBox=_bulkState.targetBox||"l1q";
+  _bulkState={..._bulkState,loading:true,results:null};render();
+  const results=[];
+  for(const line of lines){
+    const parts=line.split(",").map(p=>p.trim());
+    const engInput=parts[0]||"";
+    const dialectRaw=parts[1]||"MSA";
+    const dialect=DIALECTS.find(d=>d.toLowerCase()===dialectRaw.toLowerCase())||"MSA";
+    if(!engInput){results.push({input:line,error:"Could not parse"});continue;}
+    const prompt=`You are an expert Arabic linguist. Generate a vocabulary flashcard.
+English: "${engInput}"
+Dialect: ${dialect_note(dialect)}
+Detect word type. Use FULL diacritics on ALL Arabic text.
+
+If Verb: extraFields MUST have exactly these 4 keys with non-empty values: "Past (هو)" (3rd person masc singular past), "Present (هو)" (3rd person masc singular present/mudari), "Masdar" (verbal noun), "Imperative (أنت)" (2nd person masc singular command).
+If Noun: extraFields MUST have exactly these 2 keys: "Singular", "Plural" (use broken plural if it exists, otherwise sound plural).
+If Adjective: extraFields MUST have exactly these 3 keys: "Masculine", "Feminine", "Plural" (broken plural if exists).
+Otherwise: extraFields = {}.
+
+Also provide one short natural example sentence in ${dialect_note(dialect)} with full diacritics, plus its English translation.
+
+Respond ONLY with this exact JSON structure, no markdown:
+{"arabic":"main form with diacritics","english":"${engInput}","wordType":"Verb or Noun or Adjective or Phrase or Other","extraFields":{"all keys filled as instructed"},"exampleAr":"sentence with diacritics","exampleEn":"english translation"}`;
+    try{
+      const r=await fetch(apiUrl(),{method:"POST",headers:apiHeaders(),
+        body:JSON.stringify({model:"claude-sonnet-4-5-20250929",max_tokens:600,messages:[{role:"user",content:prompt}]})});
+      const data=await r.json();const raw2=data.content?.find(c=>c.type==="text")?.text||"";
+      const p=JSON.parse(raw2.replace(/```json|```/g,"").trim());
+      const ex=p.exampleAr?(p.exampleEn?`${p.exampleAr} — ${p.exampleEn}`:p.exampleAr):"";
+      const word={id:uid(),arabic:p.arabic,english:p.english||engInput,example:ex,wordType:p.wordType||"Other",dialect,forms:p.extraFields||{},createdAt:Date.now()};
+      saveWords([...getWords(),word]);addWordToBox(word.id,targetBox);
+      results.push({arabic:p.arabic,english:p.english||engInput,dialect,input:line});
+    }catch(e){results.push({input:line,error:"Generation failed"});}
+  }
+  _bulkState={..._bulkState,loading:false,results};render();
+}
+
+// ═══════════════════════════════════════════════════════════
+// STATS
+// ═══════════════════════════════════════════════════════════
+let _statsWindow="week";
+function renderStats(){
+  const stats=getStats();const now=Date.now();const wl={week:7,month:30,lifetime:36500}[_statsWindow]||7;
+  const cutoff=now-wl*86400000;const sessions=wl>=36500?stats.sessions:stats.sessions.filter(s=>s.ts>=cutoff);
+  const rev=sessions.reduce((a,s)=>a+s.total,0);const cor=sessions.reduce((a,s)=>a+s.correct,0);
+  const pct=rev>0?Math.round(cor/rev*100):0;
+  const byLvl={};sessions.forEach(s=>Object.keys(s.byLevel||{}).forEach(box=>{
+    if(!byLvl[box])byLvl[box]={correct:0,total:0};byLvl[box].correct+=s.byLevel[box].correct;byLvl[box].total+=s.byLevel[box].total;
+  }));
+  const byLvlRows=Object.keys(byLvl).map(box=>{const d=byLvl[box];const def=boxDef(box);const a=d.total>0?Math.round(d.correct/d.total*100):0;
+    return`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
+      <span style="color:${def.color};font-size:13px">${def.label}</span>
+      <span style="font-size:12px;color:var(--muted)">${d.correct}/${d.total} <span style="color:var(--sand);margin-left:6px">${a}%</span></span>
+    </div>`;}).join("")||`<div style="color:var(--muted);font-size:13px">No data yet.</div>`;
+  const tabs=["week","month","lifetime"].map(w=>`<button class="tab-btn" onclick="_statsWindow='${w}';setView('stats')"
+    style="${_statsWindow===w?"background:rgba(196,158,60,0.12);border-color:var(--gold);color:var(--goldL)":""}">${w.charAt(0).toUpperCase()+w.slice(1)}</button>`).join("");
+  const boxes=getBoxes();
+  const bc=BOXES.map(b=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.04)">
+    <span style="color:${b.color};font-size:12px">${b.label}</span><span style="color:var(--sand);font-size:12px">${(boxes[b.id]||[]).length}</span>
+  </div>`).join("");
+  return`${sHead("Statistics")}<div class="tab-strip">${tabs}</div>
+  <div class="stat-grid" style="margin-bottom:22px">
+    ${[{v:sessions.length,l:"Sessions",c:"var(--goldL)"},{v:rev,l:"Reviewed",c:"var(--sand)"},{v:`${pct}%`,l:"Accuracy",c:"var(--green)"},{v:getWords().length,l:"Total Words",c:"var(--gold)"}]
+      .map(({v,l,c})=>`<div class="stat-box"><div style="font-size:24px;font-weight:700;color:${c}">${v}</div><div style="font-size:9px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.08em">${l}</div></div>`).join("")}
+  </div>
+  <div class="card" style="margin-bottom:14px">${sHead("Accuracy by Level")}${byLvlRows}</div>
+  <div class="card" style="margin-bottom:14px">${sHead("Box Counts")}${bc}</div>
+  <div class="card">
+    ${sHead("Data & Backup")}
+    <div style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.7">
+      Export saves everything — all words, box positions, stats history, and settings — as a single JSON file.
+      Import on any browser to restore exactly where you left off.
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <button class="btn1" onclick="exportData()" style="font-size:13px;padding:11px 20px">⬇ Export Backup</button>
+      <button class="btn2" onclick="document.getElementById('import-file').click()" style="font-size:13px;padding:10px 20px">⬆ Import Backup</button>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)"/>
+    </div>
+    <div style="margin-top:20px;padding-top:18px;border-top:1px solid var(--border)">
+      <div style="font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px">AI Proxy</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.6">${insideClaude()?"Running inside Claude.ai — no proxy needed.":"AI calls route through a Cloudflare Worker. Your API key is stored securely in Cloudflare."}</div>
+      ${insideClaude()?"":`<button class="btn3" onclick="sessionStorage.removeItem('muf-proxy-ok');sessionStorage.removeItem('muf-skip-key');renderApiSetup()" style="font-size:12px;padding:7px 14px">Check Connection</button>`}
+    </div>
+  </div>`;
+}
+
+function showApiKeyModal(){
+  document.getElementById("modal-root").innerHTML=`
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <div style="font-size:17px;font-weight:700;color:var(--sand);margin-bottom:6px">API Key</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.6">Saved only in this browser's localStorage. Never shared.</div>
+        <div class="field">
+          <label class="lbl">Anthropic API Key</label>
+          <input id="modal-key" class="inp" type="password" placeholder="sk-ant-api03-…" value="${getApiKey()}" autocomplete="off" style="font-size:13px"/>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn1" onclick="
+            const v=document.getElementById('modal-key').value.trim();
+            if(!v.startsWith('sk-ant')){toast('Invalid key format','var(--red)');return;}
+            saveApiKey(v);closeModal();setView('stats');toast('API key updated ✓');
+          ">Save</button>
+          <button class="btn3" onclick="closeModal()">Cancel</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function exportData(){
+  const keys=["muf-words","muf-boxes","muf-settings","muf-stats","muf-session","muf-last-clear"];
+  const snapshot={exportedAt:new Date().toISOString(),version:1};
+  keys.forEach(k=>{const v=localStorage.getItem(k);if(v!==null)snapshot[k]=JSON.parse(v);});
+  const blob=new Blob([JSON.stringify(snapshot,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download=`mufradaati-backup-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  toast("Backup downloaded ✓");
+}
+
+function importData(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const snapshot=JSON.parse(e.target.result);
+      if(!snapshot["muf-words"]&&!snapshot["muf-boxes"]){
+        toast("Invalid backup file","var(--red)");return;
+      }
+      const dateStr=snapshot.exportedAt?new Date(snapshot.exportedAt).toLocaleDateString("en",{month:"short",day:"numeric",year:"numeric"}):"this file";
+      const snap=snapshot;
+      document.getElementById("modal-root").innerHTML=`
+        <div class="modal-overlay">
+          <div class="modal" style="text-align:center">
+            <div style="font-size:17px;font-weight:700;color:var(--sand);margin-bottom:10px">Import backup?</div>
+            <div style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6">This will replace ALL current data with the backup from <strong>${dateStr}</strong>. This cannot be undone.</div>
+            <div style="display:flex;gap:10px;justify-content:center">
+              <button class="btn1" onclick="closeModal();_importConfirmed()">Yes, import</button>
+              <button class="btn3" onclick="closeModal()">Cancel</button>
+            </div>
+          </div>
+        </div>`;
+      window._pendingImport=snap;
+    }catch(err){toast("Could not read file","var(--red)");input.value="";}
+  };
+  reader.readAsText(file);
+}
+function _importConfirmed(){
+  const snap=window._pendingImport;if(!snap)return;
+  const keys=["muf-words","muf-boxes","muf-settings","muf-stats","muf-session","muf-last-clear"];
+  keys.forEach(k=>{if(snap[k]!==undefined)ss(k,snap[k]);});
+  window._pendingImport=null;
+  toast("Import successful — reloading…");
+  setTimeout(()=>location.reload(),1200);
+}
+
+// ═══════════════════════════════════════════════════════════
+// APPLY TAB
+// ═══════════════════════════════════════════════════════════
+const GRAMMAR_FOCUSES=[
+  {id:"past-simple",    label:"Past Tense",          desc:"فعل ماضٍ"},
+  {id:"present-simple", label:"Present / Imperfect",  desc:"فعل مضارع"},
+  {id:"future",         label:"Future Tense",          desc:"المستقبل"},
+  {id:"imperative",     label:"Imperative",            desc:"فعل أمر"},
+  {id:"negation-maa",   label:"Negation with ما/لا",   desc:"النفي"},
+  {id:"negation-lam",   label:"Negation with لم/لن",   desc:"النفي بلم ولن"},
+  {id:"idaafa",         label:"Idaafa (Construct)",    desc:"الإضافة"},
+  {id:"accusative",     label:"Accusative Case",       desc:"المفعول به"},
+  {id:"genitive",       label:"Genitive / Jar",        desc:"المجرور"},
+  {id:"dual",           label:"Dual Forms",            desc:"المثنى"},
+  {id:"broken-plural",  label:"Broken Plurals",        desc:"جمع التكسير"},
+  {id:"verb-agreement", label:"Verb–Subject Agreement",desc:"المطابقة"},
+  {id:"relative-clause",label:"Relative Clauses",      desc:"الجملة الوصفية"},
+  {id:"conditional",    label:"Conditional (لو/إذا)",  desc:"الشرط"},
+  {id:"passive",        label:"Passive Voice",         desc:"المبني للمجهول"},
+  {id:"comparative",    label:"Comparative/Superlative",desc:"التفضيل"},
+];
+
+const DIALECT_NOTES={
+  MSA:"Modern Standard Arabic (فصحى)",Darija:"Moroccan Darija",Shaami:"Levantine Arabic",
+  Egyptian:"Egyptian Arabic",Iraqi:"Iraqi Arabic",Gulf:"Gulf Arabic",Universal:"MSA",Other:"Arabic"
+};
+
+let _applyState={
+  mode:"reading",       // "reading" | "grammar"
+  dialect:"MSA",
+  grammarFocus:"past-simple",
+  loading:false,
+  result:null,          // {sentences:[{ar,en,words:[{token,meaning,isNew}]}], explanation?}
+  error:null,
+};
+
+function renderApply(){
+  const s=_applyState;
+  const masteredIds=(getBoxes().mastered||[]);
+  const masteredWords=masteredIds.map(id=>wordById(id)).filter(Boolean);
+  // Fall back to all words in system if mastered is empty
+  const allWords=getWords();
+  const wordPool=masteredWords.length>0?masteredWords:allWords;
+  const hasMastered=allWords.length>0;
+  const usingFallback=masteredWords.length===0&&allWords.length>0;
+
+  // Dialect selector
+  const dialectSel=`<div class="field">
+    <label class="lbl">Dialect</label>
+    <select class="inp" style="cursor:pointer;font-size:13px;padding:10px 12px" onchange="_applyState.dialect=this.value;_applyState.result=null;render()">
+      ${DIALECTS.map(d=>`<option value="${d}"${d===s.dialect?" selected":""}>${d}</option>`).join("")}
+    </select>
+  </div>`;
+
+  // Mode selector
+  const modeHtml=`<div class="apply-mode-grid">
+    <div class="apply-mode-btn${s.mode==="reading"?" active":""}" onclick="_applyState.mode='reading';_applyState.result=null;render()">
+      <div class="apply-mode-icon">📖</div>
+      <div class="apply-mode-label">Reading Practice</div>
+      <div class="apply-mode-desc">A paragraph using your mastered words — see them in context</div>
+    </div>
+    <div class="apply-mode-btn${s.mode==="grammar"?" active":""}" onclick="_applyState.mode='grammar';_applyState.result=null;render()">
+      <div class="apply-mode-icon">⚙️</div>
+      <div class="apply-mode-label">Grammar Focus</div>
+      <div class="apply-mode-desc">Targeted sentences drilling a specific grammatical structure</div>
+    </div>
+  </div>`;
+
+  // Low mastered warning
+  const warningHtml=!hasMastered
+    ?`<div style="background:rgba(176,48,48,0.07);border:1px solid rgba(176,48,48,0.2);border-radius:11px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:var(--muted)">
+        You don't have any words yet. Add words first.
+      </div>`
+    :usingFallback
+    ?`<div style="background:rgba(196,158,60,0.07);border:1px solid rgba(196,158,60,0.25);border-radius:11px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--muted)">
+        No mastered words yet — using all ${allWords.length} words in your system as the word bank. Keep reviewing to move words up to Mastered.
+      </div>`
+    :masteredWords.length<8
+    ?`<div style="background:rgba(196,158,60,0.07);border:1px solid rgba(196,158,60,0.25);border-radius:11px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--muted)">
+        You have ${masteredWords.length} mastered word${masteredWords.length!==1?"s":""}. The AI will fill in extra vocabulary as needed.
+      </div>`
+    :"";
+
+  // Grammar focus picker
+  const grammarHtml=s.mode==="grammar"?`
+    ${sHead("Pick a Structure")}
+    <div class="grammar-grid" style="margin-bottom:20px">
+      ${GRAMMAR_FOCUSES.map(f=>`
+        <button class="grammar-btn${s.grammarFocus===f.id?" active":""}"
+          onclick="_applyState.grammarFocus='${f.id}';_applyState.result=null;render()">
+          <div>${f.label}</div>
+          <div style="font-family:'Amiri',serif;font-size:13px;opacity:.65;margin-top:2px">${f.desc}</div>
+        </button>`).join("")}
+    </div>`:"";
+
+  const generateBtn=`<button class="btn1" onclick="generateApply()" ${s.loading||!hasMastered?"disabled":""} style="width:100%;justify-content:center;font-size:15px;padding:14px;margin-bottom:20px">
+    ${s.loading?`<span class="spinner"></span> Generating…`:`✦ Generate ${s.mode==="reading"?"Passage":"Sentences"}`}
+  </button>`;
+
+  const errorHtml=s.error?`<div style="color:var(--red);font-size:12px;margin-bottom:16px;padding:10px 14px;background:rgba(176,48,48,0.06);border-radius:8px">${s.error}</div>`:"";
+
+  const resultHtml=s.result?renderApplyResult(s.result):"";
+
+  return`${sHead("Apply — مطبّق")}
+  <div class="card" style="margin-bottom:16px">
+    ${dialectSel}
+    ${modeHtml}
+    ${warningHtml}
+    ${grammarHtml}
+    ${generateBtn}
+    ${errorHtml}
+  </div>
+  ${resultHtml}`;
+}
+
+function renderApplyResult(result){
+  // Grammar mode: list of sentences
+  if(_applyState.mode==="grammar"){
+    const explanation=result.explanation
+      ?`<div style="background:rgba(154,122,26,0.07);border:1px solid rgba(154,122,26,0.2);border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:var(--sand);line-height:1.7">${result.explanation}</div>`
+      :"";
+    const rows=result.sentences.map((s,i)=>renderSentenceRow(s,i)).join("");
+    return`<div>${explanation}${rows}
+      <button class="btn2" style="margin-top:8px" onclick="generateApply()">↻ Regenerate</button>
+    </div>`;
+  }
+  // Reading mode: paragraph with highlighted words
+  if(!result.sentences||!result.sentences.length)return"";
+  // Combine all sentences into one flowing paragraph display
+  const parasHtml=result.sentences.map((s,i)=>renderSentenceRow(s,i)).join("");
+  return`<div>${parasHtml}
+    <button class="btn2" style="margin-top:8px" onclick="generateApply()">↻ Regenerate</button>
+  </div>`;
+}
+
+function renderSentenceRow(s,idx){
+  // Build the Arabic line with highlighted tokens
+  const arHtml=s.words.map(w=>{
+    if(w.isNew){
+      const safeM=w.meaning.replace(/'/g,"&#39;").replace(/"/g,"&quot;");
+      const wId=`w-${idx}-${Math.random().toString(36).slice(2,5)}`;
+      return`<span class="w-new" id="${wId}" onclick="showWordPopup('${wId}','${safeM}','${encodeURIComponent(w.token)}')">${w.token}</span>`;
+    }
+    return`<span class="w-known">${w.token}</span>`;
+  }).join(" ");
+  return`<div class="sentence-row">
+    <div class="sentence-ar">${arHtml}</div>
+    ${s.en?`<div class="sentence-en">${s.en}</div>`:""}
+  </div>`;
+}
+
+function showWordPopup(elId,meaning,encodedToken){
+  // Remove any existing popup
+  document.querySelectorAll(".w-popup").forEach(el=>el.remove());
+  const trigger=document.getElementById(elId);if(!trigger)return;
+  const token=decodeURIComponent(encodedToken);
+  const popup=document.createElement("div");
+  popup.className="w-popup";
+  popup.style.cssText=`position:fixed;z-index:300;background:var(--card);border:1px solid rgba(42,94,168,0.3);border-radius:12px;padding:14px 16px;min-width:200px;max-width:260px;box-shadow:0 8px 32px rgba(0,0,0,.15);text-align:center;`;
+  popup.innerHTML=`
+    <div style="font-family:'Amiri',serif;font-size:22px;color:var(--goldL);direction:rtl;margin-bottom:4px">${token}</div>
+    <div style="font-size:14px;color:var(--sand);margin-bottom:12px;font-family:'Cormorant Garamond',serif">${meaning}</div>
+    <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap">
+      <button onclick="addWordFromApply('${encodeURIComponent(token)}','${meaning.replace(/'/g,"&#39;")}','mastered')" style="font-size:11px;padding:5px 10px;border-radius:7px;border:1px solid var(--green);color:var(--green);background:rgba(42,122,74,0.08);cursor:pointer;font-family:inherit">✓ Add to Mastered</button>
+      <button onclick="addWordFromApply('${encodeURIComponent(token)}','${meaning.replace(/'/g,"&#39;")}','l1q')" style="font-size:11px;padding:5px 10px;border-radius:7px;border:1px solid var(--blue);color:var(--blue);background:rgba(42,94,168,0.08);cursor:pointer;font-family:inherit">+ Add to L1 Queue</button>
+    </div>
+    <div style="font-size:10px;color:var(--muted2);margin-top:8px">or tap elsewhere to close</div>`;
+  // Position near trigger
+  const rect=trigger.getBoundingClientRect();
+  const top=rect.top-160>0?rect.top-150:rect.bottom+8;
+  popup.style.top=top+"px";
+  popup.style.left=Math.max(8,Math.min(rect.left,window.innerWidth-270))+"px";
+  document.body.appendChild(popup);
+  // Click outside to close
+  setTimeout(()=>document.addEventListener("click",function h(e){if(!popup.contains(e.target)&&e.target.id!==elId){popup.remove();document.removeEventListener("click",h);}},true),100);
+}
+
+function addWordFromApply(encodedToken,meaning,targetBox){
+  const token=decodeURIComponent(encodedToken);
+  // Check if already in system
+  const existing=getWords().find(w=>w.arabic===token);
+  if(existing){
+    // Just move to target box if not already there
+    const boxes=getBoxes();
+    const alreadyThere=(boxes[targetBox]||[]).includes(existing.id);
+    if(!alreadyThere){
+      // Remove from current boxes
+      Object.keys(boxes).forEach(k=>boxes[k]=(boxes[k]||[]).filter(x=>x!==existing.id));
+      boxes[targetBox]=[...(boxes[targetBox]||[]),existing.id];
+      saveBoxes(boxes);
+      toast(`"${token}" moved to ${boxDef(targetBox).label} ✓`);
+    }else{
+      toast(`Already in ${boxDef(targetBox).label}`,"var(--muted)");
+    }
+  }else{
+    // Create new word
+    const word={id:uid(),arabic:token,english:meaning,example:"",wordType:"Other",dialect:_applyState.dialect,forms:{},createdAt:Date.now()};
+    saveWords([...getWords(),word]);
+    addWordToBox(word.id,targetBox);
+    toast(`"${token}" added to ${boxDef(targetBox).label} ✓`);
+  }
+  document.querySelectorAll(".w-popup").forEach(el=>el.remove());
+}
+
+async function generateApply(){
+  const masteredIds=(getBoxes().mastered||[]);
+  const masteredWords=masteredIds.map(id=>wordById(id)).filter(Boolean);
+  const allWords=getWords();
+  const wordPool=masteredWords.length>0?masteredWords:allWords;
+  if(!wordPool.length){toast("No words in system yet","var(--red)");return;}
+
+  _applyState={..._applyState,loading:true,result:null,error:null};render();
+
+  const dialect=_applyState.dialect;
+  const dialectNote=DIALECT_NOTES[dialect]||dialect;
+  const mode=_applyState.mode;
+
+  // Build word bank — keep it under ~40 words to avoid prompt bloat
+  const wordBank=wordPool.slice(0,40).map(w=>{
+    let entry=w.arabic+" ("+w.english+", "+w.wordType+")";
+    if(w.forms&&Object.keys(w.forms).length>0){
+      const formStr=Object.entries(w.forms).map(function(kv){return kv[0]+": "+kv[1];}).join(", ");
+      entry+=" ["+formStr+"]";
+    }
+    return entry;
+  }).join("\n");
+
+  let prompt="";
+
+  if(mode==="reading"){
+    prompt=`You are an expert Arabic language teacher specializing in ${dialectNote}.
+
+The student has mastered these Arabic words:
+${wordBank}
+
+Task: Write a natural, flowing paragraph (5–7 sentences) in ${dialectNote} with FULL diacritics on every word. The paragraph should:
+- Use as many of the mastered words as possible in natural context
+- Have a coherent topic (daily life, a story, a scene, etc.)
+- Be at a slightly challenging but readable level
+- Feel authentic to the dialect, not like a textbook
+
+Then return a word-by-word analysis so new words can be highlighted.
+
+CRITICAL: Respond ONLY with valid JSON, no markdown:
+{
+  "sentences": [
+    {
+      "ar": "full Arabic sentence with diacritics",
+      "en": "English translation",
+      "words": [
+        {"token": "each Arabic word WITH diacritics exactly as it appears", "meaning": "English meaning", "isNew": true or false}
+      ]
+    }
+  ]
+}
+
+For "isNew": mark as false if the word (or its root/base form) is in the mastered list above. Mark as true if it is genuinely new vocabulary the student hasn't seen. Function words (و، في، على، من، إلى، هو، هي، ال etc.) should be marked isNew: false since they are basic grammar.`;
+  } else {
+    // Grammar mode
+    const focus=GRAMMAR_FOCUSES.find(f=>f.id===_applyState.grammarFocus)||GRAMMAR_FOCUSES[0];
+    const structureInstructions={
+      "past-simple":"Write 6 sentences using past tense verbs (فعل ماضٍ). Vary the subject (أنا، أنت، هو، هي، نحن، هم). Use mastered vocabulary as objects or context.",
+      "present-simple":"Write 6 sentences using present/imperfect tense (فعل مضارع). Vary subjects. Show the full conjugation range.",
+      "future":"Write 6 sentences about the future using سَـ / سَوْفَ (MSA) or appropriate dialect equivalents. Vary subjects and contexts.",
+      "imperative":"Write 6 imperative sentences (أوامر). Vary between masculine singular, feminine singular, and plural. Include both positive and negative imperatives.",
+      "negation-maa":"Write 6 sentences using ما or لا for negation. Show different negation patterns — negating verbs, nouns, adjectives.",
+      "negation-lam":"Write 6 sentences using لَمْ (negates present used as past) and لَنْ (negates future). Demonstrate the jussive/subjunctive mood they require.",
+      "idaafa":"Write 6 sentences showcasing the idaafa (إضافة) construct — two or more nouns in a genitive relationship. Show both definite and indefinite idaafa.",
+      "accusative":"Write 6 sentences clearly demonstrating the accusative case (المفعول به / المنصوب). Include direct objects, circumstantial accusatives (حال), and accusative of specification (تمييز) where natural.",
+      "genitive":"Write 6 sentences demonstrating the genitive case (المجرور) after prepositions (في، على، من، إلى، بـ، لـ، عن، مع). Vary the prepositions.",
+      "dual":"Write 6 sentences using dual forms (المثنى) for nouns, adjectives, and verbs. Show both nominative and oblique dual endings.",
+      "broken-plural":"Write 6 sentences that naturally include nouns or adjectives with broken plurals (جمع التكسير). Vary the patterns (فُعُول، أَفْعَال، فِعَال، فُعَلاء etc.).",
+      "verb-agreement":"Write 6 sentences showing verb–subject agreement rules: verb before subject (singular verb), verb after subject (fully inflected). Include both masculine and feminine subjects.",
+      "relative-clause":"Write 6 sentences using relative clauses with الذي، التي، الذين، اللواتي (MSA) or dialect equivalents. Include both definite and indefinite antecedents.",
+      "conditional":"Write 6 conditional sentences using لَوْ (unreal/past) and إِذَا (real/future). Show the correct mood in both clauses. Include 3 with لو and 3 with إذا.",
+      "passive":"Write 6 sentences in the passive voice (المبني للمجهول). Vary tenses (past and present passive). Show how the voweling changes from active.",
+      "comparative":"Write 6 sentences using comparative (أَفْعَل) and superlative forms. Include elative forms and comparisons with من.",
+    }[focus.id]||"Write 6 varied sentences demonstrating this grammar concept.";
+
+    prompt=`You are an expert Arabic language teacher specializing in ${dialectNote}.
+
+The student has mastered these Arabic words:
+${wordBank}
+
+Grammar focus: ${focus.label} (${focus.desc})
+
+Task: ${structureInstructions}
+
+Use mastered vocabulary where natural. Add other vocabulary as needed. FULL diacritics on every single Arabic word — this is essential for the student to learn pronunciation.
+
+Start your response with a 1–2 sentence plain-English explanation of the grammatical concept and what to notice in the sentences.
+
+CRITICAL: Respond ONLY with valid JSON, no markdown:
+{
+  "explanation": "Brief English explanation of the grammar concept and what to watch for",
+  "sentences": [
+    {
+      "ar": "Arabic sentence with FULL diacritics",
+      "en": "English translation",
+      "words": [
+        {"token": "each Arabic word with diacritics", "meaning": "English meaning", "isNew": true or false}
+      ]
+    }
+  ]
+}
+
+For "isNew": false = in mastered list or is a basic function word. true = genuinely new vocabulary.`;
+  }
+
+  try{
+    const resp=await fetch(apiUrl(),{
+      method:"POST",
+      headers:apiHeaders(),
+      body:JSON.stringify({
+        model:"claude-sonnet-4-5-20250929",
+        max_tokens:4000,
+        system:"You are an expert Arabic language teacher. Always respond with valid JSON only — no markdown fences, no explanation outside the JSON, no preamble.",
+        messages:[{role:"user",content:prompt}]
+      })
+    });
+    const data=await resp.json();
+    if(data.error){
+      _applyState={..._applyState,loading:false,error:`API error (${data.error.type}): ${data.error.message}`};
+      render();return;
+    }
+    const raw=data.content?.find(c=>c.type==="text")?.text||"";
+    if(!raw){
+      _applyState={..._applyState,loading:false,error:`Empty response from API. Full: ${JSON.stringify(data).slice(0,200)}`};
+      render();return;
+    }
+    // Strip any markdown fences robustly
+    const jsonMatch=raw.match(/\{[\s\S]*\}/);
+    if(!jsonMatch){
+      _applyState={..._applyState,loading:false,error:`No JSON found in response: ${raw.slice(0,200)}`};
+      render();return;
+    }
+    let parsed;
+    try{parsed=JSON.parse(jsonMatch[0]);}
+    catch(je){_applyState={..._applyState,loading:false,error:`JSON parse error: ${je.message}. Text: ${raw.slice(0,200)}`};render();return;}
+    _applyState={..._applyState,loading:false,result:parsed};
+  }catch(e){
+    _applyState={..._applyState,loading:false,error:`Fetch failed: ${e.message||String(e)}`};
+  }
+  render();
+}
+
+// ═══════════════════════════════════════════════════════════
+// API KEY — stored in localStorage, never in the file itself
+// ═══════════════════════════════════════════════════════════
+function getApiKey(){try{return localStorage.getItem("muf-api-key")||"";}catch{return "";}}
+function saveApiKey(k){try{localStorage.setItem("muf-api-key",k);}catch{}}
+function clearApiKey(){try{localStorage.removeItem("muf-api-key");}catch{}}
+
+// Cloudflare Worker URL — the secure proxy that holds your API key
+const WORKER_URL="https://mufradaati-worker.justin-andre00.workers.dev";
+
+// Returns the correct API endpoint depending on environment
+function apiUrl(){
+  if(insideClaude())return"https://api.anthropic.com/v1/messages";
+  return WORKER_URL;
+}
+
+// Returns headers for fetch calls
+function apiHeaders(){
+  const h={"Content-Type":"application/json"};
+  // Only needed inside Claude.ai sandbox
+  if(insideClaude())h["anthropic-dangerous-direct-browser-access"]="true";
+  return h;
+}
+
+// Detect if we're running inside Claude.ai (no key needed)
+function insideClaude(){return window.location.hostname.includes("claude.ai");}
+
+function renderApiSetup(){
+  document.getElementById("main").innerHTML=`
+    <div style="max-width:480px;margin:0 auto;padding-top:20px">
+      <div class="ar" style="font-size:36px;text-align:center;color:var(--goldL);margin-bottom:8px">مفرداتي</div>
+      <div style="text-align:center;font-size:12px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;margin-bottom:32px">Mufradaati</div>
+      <div class="card" style="margin-bottom:14px">
+        ${sHead("AI Features")}
+        <div style="font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:20px">
+          Quick Add, Bulk Add, and Apply use AI via a secure Cloudflare Worker.<br/><br/>
+          Click <strong style="color:var(--sand)">Check Connection</strong> to verify the worker is reachable, then continue.
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn1" onclick="checkProxyAndContinue()">&#10003; Check Connection</button>
+          <button class="btn3" onclick="skipApiKey()">Skip (AI features disabled)</button>
+        </div>
+        <div id="proxy-check-result" style="margin-top:12px;font-size:12px"></div>
+      </div>
+      <div class="card">
+        ${sHead("About")}
+        <div style="font-size:12px;color:var(--muted);line-height:1.8">
+          AI calls are routed through a Cloudflare Worker proxy.<br/>
+          Your API key is stored securely in Cloudflare — never exposed in this app.<br/>
+          Works on any device, including mobile.
+        </div>
+      </div>
+    </div>`;
+}
+
+async function checkProxyAndContinue(){
+  const el=document.getElementById("proxy-check-result");
+  el.style.color="var(--muted)";el.textContent="Checking…";
+  try{
+    // Simple GET ping — Worker responds "Method not allowed" which means it's alive
+    const r=await fetch(WORKER_URL,{method:"GET"});
+    // 405 = Method Not Allowed = Worker is running perfectly
+    if(r.status===405||r.status===200){
+      sessionStorage.setItem("muf-proxy-ok","1");
+      el.style.color="var(--green)";el.textContent="✓ Connected!";
+      setTimeout(()=>bootApp(),800);
+    }else{throw new Error(`Unexpected status ${r.status}`);}
+  }catch(e){
+    el.style.color="var(--red)";
+    el.textContent="✗ Can't reach Cloudflare Worker — check that it's deployed correctly.";
+  }
+}
+
+function skipApiKey(){
+  // Save a sentinel so we don't show setup again this session
+  sessionStorage.setItem("muf-skip-key","1");
+  bootApp();
+}
+
+function bootApp(){
+  runMidnightClear();
+  const sess=getSession();
+  if(sess&&sess.active)_view="review";
+  render();
+}
+
+// ═══════════════════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════════════════
+(function init(){
+  // Show setup screen if outside Claude.ai and proxy hasn't been confirmed this session
+  if(!insideClaude()&&!sessionStorage.getItem("muf-proxy-ok")&&!sessionStorage.getItem("muf-skip-key")){
+    runMidnightClear();
+    renderApiSetup();
+    return;
+  }
+  bootApp();
+})();
+</script>
+</body>
+</html>
