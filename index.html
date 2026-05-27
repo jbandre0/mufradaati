@@ -158,8 +158,8 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0
 <body>
 <div class="atmo"></div>
 <div class="toast" id="toast"></div>
-<div id="modal-root"></div>
 <div id="sync-indicator" style="position:fixed;bottom:18px;right:18px;z-index:150;font-size:10px;color:var(--muted);letter-spacing:.06em;opacity:0;transition:opacity .4s;pointer-events:none"></div>
+<div id="modal-root"></div>
 <div class="shell">
   <nav>
     <div class="brand" onclick="goHome()">
@@ -208,7 +208,6 @@ const SESSION_QUEUE_FOR_BOX={l1:"l1q",l1q:"l1q",l2a:"l2a",l2b:"l2a",l3:"l3q",l3q
 function getPin(){return localStorage.getItem("muf-pin")||"";}
 function savePin(p){localStorage.setItem("muf-pin",p);}
 function pinKey(k){const p=getPin();return p?`${p}-${k}`:k;}
-
 // ═══════════════════════════════════════════════════════════
 // STORAGE — localStorage as cache, KV as source of truth
 // ═══════════════════════════════════════════════════════════
@@ -221,7 +220,6 @@ function getStats(){return ls("muf-stats",{sessions:[],lifetime:{reviewed:0,corr
 function getSession(){return ls("muf-session",null);}
 function saveSession(s){ss("muf-session",s);}
 function clearSession(){localStorage.removeItem(pinKey("muf-session"));}
-
 // ── KV sync helpers ──
 let _syncT=null;
 function setSyncStatus(msg,col){
@@ -230,7 +228,6 @@ function setSyncStatus(msg,col){
   el.textContent=msg;el.style.color=col||"var(--muted)";el.style.opacity="1";
   clearTimeout(_syncT);_syncT=setTimeout(()=>{el.style.opacity="0";},2500);
 }
-
 async function kvSet(key,value){
   if(insideClaude())return;
   try{
@@ -241,7 +238,6 @@ async function kvSet(key,value){
     });
   }catch(e){}
 }
-
 async function kvGetAll(){
   if(insideClaude())return null;
   try{
@@ -253,25 +249,15 @@ async function kvGetAll(){
     return await r.json();
   }catch(e){return null;}
 }
-
 // Save functions — write to localStorage immediately, sync to KV async
 function saveWords(w){
   ss("muf-words",w);
   setSyncStatus("↑ syncing…","var(--muted)");
   kvSet("muf-words",w).then(()=>setSyncStatus("✓ synced","var(--green)")).catch(()=>setSyncStatus("⚠ sync failed","var(--gold)"));
 }
-function saveBoxes(b){
-  ss("muf-boxes",b);
-  kvSet("muf-boxes",b).catch(()=>{});
-}
-function saveSettings(s){
-  ss("muf-settings",s);
-  kvSet("muf-settings",s).catch(()=>{});
-}
-function saveStats(s){
-  ss("muf-stats",s);
-  kvSet("muf-stats",s).catch(()=>{});
-}
+function saveBoxes(b){ss("muf-boxes",b);kvSet("muf-boxes",b).catch(()=>{});}
+function saveSettings(s){ss("muf-settings",s);kvSet("muf-settings",s).catch(()=>{});}
+function saveStats(s){ss("muf-stats",s);kvSet("muf-stats",s).catch(()=>{});}
 
 // ═══════════════════════════════════════════════════════════
 // MIDNIGHT QUEUE CLEAR — runs once per calendar day on load
@@ -564,7 +550,7 @@ function renderReview(){
     <div class="flip-inner${sess.flipped?" flipped":""}">
       <div class="flip-face">
         ${frontHtml}
-        <div style="position:absolute;bottom:16px;font-size:10px;color:var(--muted);opacity:.4">tap to reveal</div>
+        <div style="position:absolute;bottom:16px;font-size:10px;color:var(--muted);opacity:.4">tap or [Space] to reveal</div>
       </div>
       <div class="flip-face flip-back">
         ${backHtml}
@@ -572,15 +558,21 @@ function renderReview(){
     </div>
   </div>
   ${sess.flipped?`<div class="rating-grid">
-    <button class="rate-btn" style="background:rgba(42,122,74,0.1);border-color:var(--green);color:var(--green)" onclick="rateWord('correct')">✓ Got it</button>
-    <button class="rate-btn" style="background:rgba(176,48,48,0.1);border-color:var(--red);color:var(--red)" onclick="rateWord('incorrect')">✗ Missed</button>
-  </div>`:`<button class="btn1" style="width:100%;justify-content:center;font-size:15px;padding:15px" onclick="doFlip()">Reveal Answer</button>`}`;
+    <button class="rate-btn" style="background:rgba(42,122,74,0.1);border-color:var(--green);color:var(--green)" onclick="rateWord('correct')">✓ Got it <span style="font-size:10px;opacity:.5;font-weight:400">[J]</span></button>
+    <button class="rate-btn" style="background:rgba(176,48,48,0.1);border-color:var(--red);color:var(--red)" onclick="rateWord('incorrect')">✗ Missed <span style="font-size:10px;opacity:.5;font-weight:400">[K]</span></button>
+  </div>`:`<button class="btn1" style="width:100%;justify-content:center;font-size:15px;padding:15px" onclick="doFlip()">Reveal Answer</button>`}
+  ${!sess.flipped&&_undoState?`<div style="text-align:center;margin-top:10px"><button onclick="undoLastCard()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit;letter-spacing:.04em;text-decoration:underline;text-underline-offset:2px;">↩ Undo last card</button></div>`:""}`;
 }
 function doFlip(){const sess=getSession();if(!sess)return;sess.flipped=true;saveSession(sess);render();}
+let _undoState=null;
 function rateWord(rating){
   const sess=getSession();if(!sess||!sess.active)return;
   const step=sess.steps[sess.stepIdx];const wordId=sess.queue[sess.queueIdx];
   const dest=rating==="correct"?correctDest(step.box,sess.dow):incorrectDest(step.box);
+  _undoState={wordId,from:step.box,to:dest,queueIdx:sess.queueIdx,
+    sessionCorrect:sess.sessionCorrect,sessionTotal:sess.sessionTotal,
+    byLevel:JSON.parse(JSON.stringify(sess.byLevel||{})),
+    stepCorrect:step.correct,stepIncorrect:step.incorrect};
   removeWordFromBox(wordId,step.box);addWordToBox(wordId,dest);
   sess.ratings[wordId]=rating;sess.moveLog.push({wordId,from:step.box,to:dest});
   if(rating==="correct")step.correct++;else step.incorrect++;
@@ -588,6 +580,19 @@ function rateWord(rating){
   if(!sess.byLevel[step.box])sess.byLevel[step.box]={correct:0,total:0};
   sess.byLevel[step.box].total++;if(rating==="correct")sess.byLevel[step.box].correct++;
   sess.queueIdx++;sess.flipped=false;saveSession(sess);render();
+}
+function undoLastCard(){
+  if(!_undoState)return;
+  const u=_undoState;_undoState=null;
+  const sess=getSession();if(!sess||!sess.active)return;
+  const step=sess.steps[sess.stepIdx];
+  removeWordFromBox(u.wordId,u.to);addWordToBox(u.wordId,u.from);
+  sess.queueIdx=u.queueIdx;sess.sessionCorrect=u.sessionCorrect;sess.sessionTotal=u.sessionTotal;
+  sess.byLevel=u.byLevel;step.correct=u.stepCorrect;step.incorrect=u.stepIncorrect;
+  if(sess.moveLog.length>0)sess.moveLog.pop();
+  delete sess.ratings[u.wordId];
+  sess.flipped=true;saveSession(sess);render();
+  toast("Card undone — re-rate it","var(--gold)");
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -948,14 +953,10 @@ Respond ONLY with valid JSON (no markdown, no explanation):
   try{
     const r=await fetch(apiUrl(),{method:"POST",headers:apiHeaders(),
       body:JSON.stringify({model:"claude-sonnet-4-5-20250929",max_tokens:800,messages:[{role:"user",content:prompt}]})});
-    const data=await r.json();
-    // Surface any API-level errors clearly
-    if(data.error){throw new Error(`API error ${r.status}: ${JSON.stringify(data.error)}`);}
-    const raw=data.content?.find(c=>c.type==="text")?.text||"";
-    if(!raw){throw new Error(`Empty response. Full response: ${JSON.stringify(data)}`);}
+    const data=await r.json();const raw=data.content?.find(c=>c.type==="text")?.text||"";
     const parsed=JSON.parse(raw.replace(/```json|```/g,"").trim());
     _qaState={..._qaState,loading:false,preview:{...parsed,wordType:wtype,dialect:dial}};
-  }catch(e){_qaState={..._qaState,loading:false,error:`${e.message||String(e)}`};}
+  }catch(e){_qaState={..._qaState,loading:false,error:"Generation failed — check your connection and try again."};}
   render();
 }
 function dialect_note(d){return({MSA:"Modern Standard Arabic",Darija:"Moroccan Darija",Shaami:"Levantine Arabic",Egyptian:"Egyptian Arabic",Iraqi:"Iraqi Arabic",Gulf:"Gulf Arabic",Universal:"MSA",Other:"Arabic"})[d]||d;}
@@ -1101,7 +1102,7 @@ function renderStats(){
       <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)"/>
     </div>
     <div style="margin-top:20px;padding-top:18px;border-top:1px solid var(--border)">
-      <div style="font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px">AI &amp; Sync</div>
+      <div style="font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px">AI Proxy</div>
       <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.6">${insideClaude()?"Running inside Claude.ai — no setup needed.":getApiKey()?"✓ API key saved — AI features active.":"⚠ No API key — AI features disabled."}</div>
       ${insideClaude()?"":`<div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn3" onclick="showApiKeyModal()" style="font-size:12px;padding:7px 14px">${getApiKey()?"Update API Key":"Add API Key"}</button>
@@ -1139,7 +1140,8 @@ function showApiKeyModal(){
 function exportData(){
   const keys=["muf-words","muf-boxes","muf-settings","muf-stats","muf-session","muf-last-clear"];
   const snapshot={exportedAt:new Date().toISOString(),version:1};
-  keys.forEach(k=>{const v=localStorage.getItem(k);if(v!==null)snapshot[k]=JSON.parse(v);});
+  // Always read from pinned keys (where data actually lives with PIN system)
+  keys.forEach(k=>{const v=localStorage.getItem(pinKey(k));if(v!==null)snapshot[k]=JSON.parse(v);});
   const blob=new Blob([JSON.stringify(snapshot,null,2)],{type:"application/json"});
   const url=URL.createObjectURL(blob);
   const a=document.createElement("a");
@@ -1154,14 +1156,12 @@ function importData(input){
   reader.onload=function(e){
     try{
       const snapshot=JSON.parse(e.target.result);
-      // Accept both namespaced and un-namespaced backups
+      // Accept both namespaced ({pin}-muf-words) and plain (muf-words) backups
       const pin=getPin();
       const hasNamespaced=snapshot[`${pin}-muf-words`]||snapshot[`${pin}-muf-boxes`];
       const hasPlain=snapshot["muf-words"]||snapshot["muf-boxes"];
-      if(!hasNamespaced&&!hasPlain){
-        toast("Invalid backup file","var(--red)");return;
-      }
-      const wordCount=(hasNamespaced?(snapshot[`${pin}-muf-words`]||[]):(snapshot["muf-words"]||[])).length;
+      if(!hasNamespaced&&!hasPlain){toast("Invalid backup file","var(--red)");return;}
+      const wordCount=((hasNamespaced?(snapshot[`${pin}-muf-words`]||[]):(snapshot["muf-words"]||[]))).length;
       const dateStr=snapshot.exportedAt?new Date(snapshot.exportedAt).toLocaleDateString("en",{month:"short",day:"numeric",year:"numeric"}):"this file";
       document.getElementById("modal-root").innerHTML=`
         <div class="modal-overlay">
@@ -1180,25 +1180,28 @@ function importData(input){
   };
   reader.readAsText(file);
 }
-
 function _importConfirmed(){
   const snap=window._pendingImport;if(!snap)return;
   const pin=getPin();
   const dataKeys=["muf-words","muf-boxes","muf-settings","muf-stats","muf-session","muf-last-clear"];
   dataKeys.forEach(k=>{
-    // Try namespaced key first, fall back to plain key (old backups)
-    const namespacedVal=snap[`${pin}-${k}`];
-    const plainVal=snap[k];
-    const val=namespacedVal!==undefined?namespacedVal:plainVal;
+    // Try namespaced key first (backups made with PIN), fall back to plain key (old backups)
+    const val=snap[`${pin}-${k}`]!==undefined?snap[`${pin}-${k}`]:snap[k];
     if(val!==undefined)ss(k,val);
   });
-  // Also sync imported data to KV
-  const words=getWords();const boxes=getBoxes();const stats=getStats();const settings=getSettings();
-  Promise.all([kvSet("muf-words",words),kvSet("muf-boxes",boxes),kvSet("muf-stats",stats),kvSet("muf-settings",settings)])
-    .then(()=>toast("Import successful — reloading…"))
-    .catch(()=>toast("Import successful — reloading…"));
   window._pendingImport=null;
-  setTimeout(()=>location.reload(),1400);
+  // Flag so bootApp skips KV fetch on reload — prevents stale KV from overwriting what we just imported
+  sessionStorage.setItem("muf-just-imported","1");
+  // Sync imported data up to KV, then reload
+  Promise.all([
+    kvSet("muf-words",getWords()),
+    kvSet("muf-boxes",getBoxes()),
+    kvSet("muf-stats",getStats()),
+    kvSet("muf-settings",getSettings())
+  ]).finally(()=>{
+    toast("Import successful — reloading…");
+    setTimeout(()=>location.reload(),1200);
+  });
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1553,29 +1556,23 @@ For "isNew": false = in mastered list or is a basic function word. true = genuin
 function getApiKey(){try{return localStorage.getItem(pinKey("muf-api-key"))||"";}catch{return "";}}
 function saveApiKey(k){try{localStorage.setItem(pinKey("muf-api-key"),k);}catch{}}
 function clearApiKey(){try{localStorage.removeItem(pinKey("muf-api-key"));}catch{}}
-
 // Cloudflare Worker URL — proxy that forwards your own API key
 const WORKER_URL="https://mufradaati-worker.justin-andre00.workers.dev";
-
 // Returns the correct API endpoint depending on environment
 function apiUrl(){
   if(insideClaude())return"https://api.anthropic.com/v1/messages";
   return WORKER_URL;
 }
-
 // Returns headers for fetch calls
 function apiHeaders(){
   const h={"Content-Type":"application/json"};
   if(insideClaude()){
     h["anthropic-dangerous-direct-browser-access"]="true";
   } else {
-    // Send the user's own API key to the Worker via header
-    const key=getApiKey();
-    if(key)h["X-Api-Key"]=key;
+    const key=getApiKey();if(key)h["X-Api-Key"]=key;
   }
   return h;
 }
-
 // Detect if we're running inside Claude.ai (no key needed)
 function insideClaude(){return window.location.hostname.includes("claude.ai");}
 
@@ -1605,7 +1602,6 @@ function renderApiSetup(){
       </div>
     </div>`;
 }
-
 async function checkProxyAndContinue(){
   const el=document.getElementById("proxy-check-result");
   el.style.color="var(--muted)";el.textContent="Checking…";
@@ -1615,7 +1611,6 @@ async function checkProxyAndContinue(){
       sessionStorage.setItem("muf-proxy-ok","1");
       el.style.color="var(--green)";el.textContent="✓ Connected!";
       setTimeout(()=>{
-        // After connection check, go to PIN screen if no PIN yet, otherwise boot
         if(!getPin())renderPinScreen();
         else bootApp();
       },800);
@@ -1625,13 +1620,10 @@ async function checkProxyAndContinue(){
     el.textContent="✗ Can't reach Cloudflare Worker — check that it's deployed correctly.";
   }
 }
-
 function skipApiKey(){
-  // Save a sentinel so we don't show setup again this session
   sessionStorage.setItem("muf-skip-key","1");
   bootApp();
 }
-
 // ═══════════════════════════════════════════════════════════
 // PIN SCREEN
 // ═══════════════════════════════════════════════════════════
@@ -1642,14 +1634,11 @@ function renderPinScreen(){
       <div style="font-size:10px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase;margin-bottom:40px">Mufradaati</div>
       <div class="card">
         ${sHead("Create Your Profile")}
-        <div style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:22px">
-          You'll only need to do this once per device.
-        </div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:22px">You'll only need to do this once per device.</div>
         <div class="field">
           <label class="lbl">Your PIN (4+ digits)</label>
           <input id="pin-input" class="inp" type="number" placeholder="e.g. 482910"
-            style="font-size:24px;text-align:center;letter-spacing:.2em"
-            autocomplete="off"/>
+            style="font-size:24px;text-align:center;letter-spacing:.2em" autocomplete="off"/>
           <div style="font-size:10px;color:var(--muted2);margin-top:5px">Keeps your words separate from other users</div>
         </div>
         <div class="field">
@@ -1665,7 +1654,6 @@ function renderPinScreen(){
     </div>`;
   setTimeout(()=>document.getElementById("pin-input")?.focus(),100);
 }
-
 function submitPin(skipKey){
   const pin=(document.getElementById("pin-input")?.value||"").trim();
   const key=(document.getElementById("apikey-input")?.value||"").trim();
@@ -1677,46 +1665,59 @@ function submitPin(skipKey){
   if(!skipKey&&key)saveApiKey(key);
   bootApp();
 }
-
 async function bootApp(){
   if(!insideClaude()){
-    setSyncStatus("↓ loading…","var(--muted)");
-    const remote=await kvGetAll();
-    if(remote){
-      const keys=["muf-words","muf-boxes","muf-settings","muf-stats","muf-last-clear"];
-      keys.forEach(k=>{
-        const pk=pinKey(k);
-        if(remote[pk]!==undefined)localStorage.setItem(pk,remote[pk]);
-      });
-      setSyncStatus("✓ synced","var(--green)");
-    } else {
-      setSyncStatus("","var(--muted)");
+    const justImported=sessionStorage.getItem("muf-just-imported");
+    sessionStorage.removeItem("muf-just-imported");
+    if(!justImported){
+      // Normal boot: pull latest data from KV
+      setSyncStatus("↓ loading…","var(--muted)");
+      const remote=await kvGetAll();
+      if(remote){
+        const keys=["muf-words","muf-boxes","muf-settings","muf-stats","muf-last-clear"];
+        keys.forEach(k=>{const pk=pinKey(k);if(remote[pk]!==undefined)localStorage.setItem(pk,remote[pk]);});
+        setSyncStatus("✓ synced","var(--green)");
+      } else {setSyncStatus("","var(--muted)");}
     }
+    // If justImported: localStorage already has fresh data — skip KV fetch to avoid overwrite
   }
   runMidnightClear();
   const sess=getSession();
   if(sess&&sess.active)_view="review";
   render();
 }
-
 // ═══════════════════════════════════════════════════════════
 // BOOT
 // ═══════════════════════════════════════════════════════════
 (function init(){
   if(insideClaude()){bootApp();return;}
-  // First time setup — check proxy/worker
   if(!sessionStorage.getItem("muf-proxy-ok")&&!sessionStorage.getItem("muf-skip-key")){
     runMidnightClear();
     renderApiSetup();
     return;
   }
-  // PIN gate — show once per device
-  if(!getPin()){
-    renderPinScreen();
-    return;
-  }
+  if(!getPin()){renderPinScreen();return;}
   bootApp();
 })();
+
+// ═══════════════════════════════════════════════════════════
+// KEYBOARD SHORTCUTS — session mode only
+// Space = flip card  |  J / 1 = Got it  |  K / 2 = Missed
+// ═══════════════════════════════════════════════════════════
+document.addEventListener('keydown',function(e){
+  if(_view!=='review')return;
+  const sess=getSession();
+  if(!sess||!sess.active||sess.pendingPrompt)return;
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.isContentEditable)return;
+  if(e.key===' '||e.code==='Space'){
+    e.preventDefault();
+    if(!sess.flipped)doFlip();
+  }else if((e.key==='j'||e.key==='J'||e.key==='1')&&sess.flipped){
+    e.preventDefault();rateWord('correct');
+  }else if((e.key==='k'||e.key==='K'||e.key==='2')&&sess.flipped){
+    e.preventDefault();rateWord('incorrect');
+  }
+});
 </script>
 </body>
 </html>
