@@ -847,31 +847,45 @@ function submitManual(andAnother){
 }
 
 // ── Quick Add ──
-let _qaState={dialect:"MSA",wordType:"Noun",targetBox:"l1q",loading:false,preview:null,error:null};
+let _qaState={dialect:"MSA",wordType:"Noun",targetBox:"l1q",loading:false,preview:null,error:null,mode:"english"};
 function renderQuickAdd(){
   const s=_qaState;
   const sess=getSession();const sa=sess&&sess.active;
   const boxOptions=BOXES.map(b=>`<option value="${b.id}"${b.id===s.targetBox?" selected":""}>${b.label}</option>`).join("");
   return`<div class="card">
-    <div style="font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.7">
-      Type an English word or phrase, choose dialect and type — the AI generates a fully vowelled Arabic card with the right forms and an example sentence.
+    <div style="display:flex;gap:8px;margin-bottom:20px">
+      <button onclick="_qaState.mode='english';_qaState.preview=null;render()" style="flex:1;padding:10px;border-radius:9px;border:1.5px solid ${s.mode==='english'?'rgba(196,158,60,0.6)':'var(--border)'};background:${s.mode==='english'?'rgba(196,158,60,0.1)':'transparent'};cursor:pointer;font-size:12px;color:${s.mode==='english'?'var(--goldL)':'var(--muted)'};font-weight:${s.mode==='english'?'700':'400'};transition:all .2s">
+        🇬🇧 English → Arabic
+      </button>
+      <button onclick="_qaState.mode='arabic';_qaState.preview=null;render()" style="flex:1;padding:10px;border-radius:9px;border:1.5px solid ${s.mode==='arabic'?'rgba(196,158,60,0.6)':'var(--border)'};background:${s.mode==='arabic'?'rgba(196,158,60,0.1)':'transparent'};cursor:pointer;font-size:12px;color:${s.mode==='arabic'?'var(--goldL)':'var(--muted)'};font-weight:${s.mode==='arabic'?'700':'400'};transition:all .2s">
+        🔤 Arabic → Full Card
+      </button>
     </div>
-    <div class="field">
-      <label class="lbl">English Word / Phrase *</label>
-      <input id="qa-en" class="inp" placeholder="e.g. to understand, book, beautiful…" autocomplete="off"
-        onkeydown="if(event.key==='Enter')generateQuickAdd()"/>
-    </div>
+    ${s.mode==='english'
+      ? `<div style="font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.7">Type an English word or phrase — the AI generates a fully vowelled Arabic card with all forms and an example sentence.</div>
+         <div class="field"><label class="lbl">English Word / Phrase *</label>
+         <input id="qa-en" class="inp" placeholder="e.g. to understand, book, beautiful…" autocomplete="off"
+           onkeydown="if(event.key==='Enter')generateQuickAdd()"/></div>`
+      : `<div style="font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.7">Type any Arabic word (any form — conjugated, construct, etc.) — the AI finds the base form, detects the type, and generates the full card.</div>
+         <div class="field"><label class="lbl">Arabic Word *</label>
+         <input id="qa-ar-in" class="inp ar" placeholder="اكتب كلمة عربية هنا…" autocomplete="off" dir="rtl"
+           style="font-size:22px;text-align:right"
+           onkeydown="if(event.key==='Enter')generateFromArabic()"/></div>`
+    }
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px">
       <div><label class="lbl">Dialect</label>
         <select id="qa-dial" class="inp" style="cursor:pointer;font-size:13px;padding:10px 12px"
           onchange="_qaState.dialect=this.value">
           ${DIALECTS.map(d=>`<option${d===s.dialect?" selected":""}>${d}</option>`).join("")}
         </select></div>
-      <div><label class="lbl">Word Type</label>
-        <select id="qa-type" class="inp" style="cursor:pointer;font-size:13px;padding:10px 12px"
-          onchange="_qaState.wordType=this.value">
-          ${WORD_TYPES.map(t=>`<option${t===s.wordType?" selected":""}>${t}</option>`).join("")}
-        </select></div>
+      ${s.mode==='english'
+        ? `<div><label class="lbl">Word Type</label>
+           <select id="qa-type" class="inp" style="cursor:pointer;font-size:13px;padding:10px 12px"
+             onchange="_qaState.wordType=this.value">
+             ${WORD_TYPES.map(t=>`<option${t===s.wordType?" selected":""}>${t}</option>`).join("")}
+           </select></div>`
+        : `<div style="display:flex;align-items:flex-end;padding-bottom:2px"><div style="font-size:11px;color:var(--muted);font-style:italic;line-height:1.6">Word type is detected automatically from the Arabic.</div></div>`
+      }
     </div>
     ${!sa?`<div class="field">
       <label class="lbl">Save to Box</label>
@@ -879,7 +893,7 @@ function renderQuickAdd(){
         ${boxOptions}
       </select>
     </div>`:`<div style="background:rgba(196,158,60,0.07);border:1px solid rgba(196,158,60,0.2);border-radius:9px;padding:10px 14px;margin-bottom:18px;font-size:12px;color:var(--muted)">Session in progress — new words go to the appropriate queue box.</div>`}
-    <button class="btn1" onclick="generateQuickAdd()" ${s.loading?"disabled":""} style="margin-bottom:20px">
+    <button class="btn1" onclick="${s.mode==='arabic'?'generateFromArabic':'generateQuickAdd'}()" ${s.loading?"disabled":""} style="margin-bottom:20px">
       ${s.loading?`<span class="spinner"></span> Generating…`:"✦ Generate Card"}
     </button>
     ${s.error?`<div style="color:var(--red);font-size:12px;margin-bottom:16px;padding:10px 14px;background:rgba(176,48,48,0.06);border-radius:8px">${s.error}</div>`:""}
@@ -977,6 +991,39 @@ function saveQA(){
   const tb=sa?(SESSION_QUEUE_FOR_BOX[sess.steps[sess.stepIdx]?.box||"l1"]||"l1q"):(_qaState.targetBox||"l1q");
   addWordToBox(word.id,tb);toast(`"${english}" added to ${boxDef(tb).label} ✓`);
   _qaState={..._qaState,preview:null};render();
+}
+
+async function generateFromArabic(){
+  const arIn=document.getElementById("qa-ar-in")?.value?.trim()||"";
+  const dial=document.getElementById("qa-dial")?.value||_qaState.dialect;
+  if(!arIn){toast("Enter an Arabic word first","var(--red)");return;}
+  _qaState={..._qaState,dialect:dial,loading:true,error:null,preview:null};render();
+  const prompt=`You are an expert Arabic linguist. The user has typed an Arabic word that may be in ANY form (conjugated verb, bound/construct noun, inflected adjective, etc.).
+
+Your tasks:
+1. Identify the BASE FORM (lemma/dictionary citation form) with FULL diacritics (tashkeel) on every letter — no exceptions.
+2. Determine the word type: Verb, Noun, Adjective, or Other.
+3. Provide the primary English meaning (concise, 1–6 words).
+4. Generate the appropriate grammatical forms with full diacritics:
+   - Verb → extraFields: {"Past (هو)":"3rd masc. sing. past","Present (هو)":"3rd masc. sing. present/mudari","Masdar":"verbal noun","Imperative (أنت)":"2nd masc. sing. command"}
+   - Noun → extraFields: {"Singular":"with diacritics","Plural":"broken plural if exists, else sound plural"}
+   - Adjective → extraFields: {"Masculine":"with diacritics","Feminine":"with diacritics","Plural":"with diacritics"}
+   - Other → extraFields: {}
+5. Compose one short, natural example sentence in ${dialect_note(dial)} using the word, with FULL diacritics on every Arabic word, plus an English translation.
+
+Input word: "${arIn}"
+Assumed dialect: ${dialect_note(dial)}
+
+Respond ONLY with this exact JSON — no markdown, no explanation:
+{"arabic":"base form with full diacritics","english":"meaning","wordType":"Verb or Noun or Adjective or Other","extraFields":{},"exampleAr":"example sentence with full diacritics","exampleEn":"english translation"}`;
+  try{
+    const r=await fetch(apiUrl(),{method:"POST",headers:apiHeaders(),
+      body:JSON.stringify({model:"claude-sonnet-4-5-20250929",max_tokens:800,messages:[{role:"user",content:prompt}]})});
+    const data=await r.json();const raw=data.content?.find(c=>c.type==="text")?.text||"";
+    const parsed=JSON.parse(raw.replace(/```json|```/g,"").trim());
+    _qaState={..._qaState,loading:false,preview:{...parsed,dialect:dial}};
+  }catch(e){_qaState={..._qaState,loading:false,error:"Generation failed — check your API key and connection."};}
+  render();
 }
 
 // ── Bulk Add ──
