@@ -329,6 +329,8 @@ function render(){
   else if(_view==="stats")m.innerHTML=renderStats();
   else if(_view==="review")m.innerHTML=renderReview();
   else if(_view==="summary")m.innerHTML=renderSummary();
+  else if(_view==="mastered-review")m.innerHTML=renderMasteredReview();
+  else if(_view==="mastered-summary")m.innerHTML=renderMasteredSummary();
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -372,11 +374,14 @@ function renderHome(){
       }
     </div>`;
   }
+  const masteredCount=(getBoxes().mastered||[]).length;
+  const masteredBtn=masteredCount>0?`<button class="btn3" style="flex:1;border-color:rgba(58,152,100,0.3);color:var(--lm)" onclick="openMasteredModal()">★ Mastered Review</button>`:"";
   return`${ctaHtml}${sHead("Vocabulary Boxes")}
     <div class="dialect-pills">${pills}</div>
     ${renderBoxGrid()}
     <div style="display:flex;gap:9px;margin-top:14px">
       <button class="btn2" style="flex:1" onclick="setView('add')">+ Add Word</button>
+      ${masteredBtn}
       <button class="btn3" style="flex:1" onclick="setView('stats')">📊 Stats</button>
     </div><div class="ornament">❧ ✦ ❧</div>`;
 }
@@ -392,7 +397,15 @@ function renderBoxGrid(){
     const def=boxDef(item.id);const c=def.color;const rg=hexRgb(c);const n=cnt(item.id);
     h+=item.q
       ?`<div class="box-card queue-box" style="border-color:rgba(${rg},0.4)"><div class="queue-label" style="color:${c}">${def.label}</div><div class="queue-count" style="color:${c}">${n}</div></div>`
-      :`<div class="box-card" onclick="viewBox('${item.id}')" style="background:rgba(${rg},0.04);border-color:rgba(${rg},0.25)"><div class="box-label" style="color:${c}">${def.label}</div><div class="box-count" style="color:${c}">${n}</div></div>`;
+      :(()=>{
+        if(item.id==="mastered"&&n>0){
+          const mStars=getMasteredStars();const mastIds=boxes["mastered"]||[];
+          const fiveStars=mastIds.filter(id=>mStars[id]&&mStars[id].stars>=5).length;
+          const starBar=fiveStars>0?`<div style="font-size:9px;color:var(--lm);margin-top:3px">★${fiveStars} perfect</div>`:"";
+          return`<div class="box-card" onclick="viewBox('mastered')" style="background:rgba(${rg},0.04);border-color:rgba(${rg},0.25)"><div class="box-label" style="color:${c}">Mastered</div><div class="box-count" style="color:${c}">${n}</div>${starBar}</div>`;
+        }
+        return`<div class="box-card" onclick="viewBox('${item.id}')" style="background:rgba(${rg},0.04);border-color:rgba(${rg},0.25)"><div class="box-label" style="color:${c}">${def.label}</div><div class="box-count" style="color:${c}">${n}</div></div>`;
+      })()
   }
   return h+`</div>`;
 }
@@ -1052,25 +1065,98 @@ function renderBulkAdd(){
       ${_bulkState.loading?`<span class="spinner"></span> Generating (this may take a moment)…`:"✦ Generate All Cards"}
     </button>
     ${_bulkState.results?renderBulkResults(_bulkState.results):""}
+
   </div>`;
 }
 function renderBulkResults(results){
-  const saved=results.filter(r=>!r.error).length;
   const tb=_bulkState.targetBox||"l1q";
-  const rows=results.map(r=>r.error
-    ?`<div class="bulk-result err"><span>✗</span><span>"${r.input}" — ${r.error}</span></div>`
-    :`<div class="bulk-result ok"><span>✓</span><span class="ar" style="font-size:17px">${r.arabic}</span><span style="font-size:12px;color:var(--muted);flex:1">${r.english} · ${r.dialect}</span></div>`
-  ).join("");
+  const saveable=results.filter(r=>!r.error&&!r.removed).length;
+  const rows=results.map((r,i)=>{
+    if(r.error)return`<div class="bulk-result err"><span>✗</span><span>"${r.input}" — ${r.error}</span></div>`;
+    if(r.removed)return`<div class="bulk-result" style="opacity:.4;text-decoration:line-through;background:rgba(0,0,0,0.02);border:1px solid var(--border);border-radius:8px;margin-bottom:5px;padding:8px 12px;display:flex;align-items:center;gap:10px">
+      <span class="ar" style="font-size:15px;color:var(--muted);flex:1">${r.word.arabic}</span>
+      <span style="font-size:11px;color:var(--muted)">removed</span>
+      <button onclick="restoreBulkWord(${i})" style="background:none;border:1px solid var(--border);border-radius:6px;cursor:pointer;color:var(--muted);font-size:11px;padding:3px 9px;font-family:inherit;transition:all .2s">undo</button>
+    </div>`;
+    return`<div class="bulk-result ok" style="flex-direction:column;align-items:stretch;padding:0;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer" onclick="toggleBulkExpand(${i})">
+        <span style="color:var(--green);flex-shrink:0;font-size:14px">✓</span>
+        <span class="ar" style="font-size:18px;flex-shrink:0">${r.word.arabic}</span>
+        <span style="font-size:12px;color:var(--muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.word.english} · ${r.word.dialect}</span>
+        <span style="font-size:11px;color:var(--muted2);flex-shrink:0;margin-right:4px">${r.expanded?"▲":"▼"}</span>
+        <button onclick="event.stopPropagation();removeBulkWord(${i})" title="Remove"
+          style="background:none;border:none;cursor:pointer;color:rgba(176,48,48,0.35);font-size:20px;padding:2px 5px;line-height:1;flex-shrink:0;transition:color .2s"
+          onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='rgba(176,48,48,0.35)'">×</button>
+      </div>
+      ${r.expanded?`<div style="border-top:1px solid var(--border);padding:14px 14px 12px;background:rgba(196,158,60,0.03)">
+        <div style="margin-bottom:11px">
+          <div class="lbl">Arabic (main form)</div>
+          <div class="ar" id="bedit-ar-${i}" contenteditable="true"
+            style="font-size:26px;outline:none;border-bottom:1px dashed rgba(154,122,26,0.3);padding-bottom:4px;min-height:36px">${r.word.arabic}</div>
+        </div>
+        <div style="margin-bottom:11px">
+          <div class="lbl">English</div>
+          <div id="bedit-en-${i}" contenteditable="true"
+            style="font-size:14px;outline:none;border-bottom:1px dashed rgba(0,0,0,0.12);padding-bottom:4px;min-height:22px">${r.word.english}</div>
+        </div>
+        ${Object.entries(r.word.forms||{}).map(([lbl,val],fi)=>`<div style="margin-bottom:9px">
+          <div class="lbl">${lbl}</div>
+          <div class="ar" id="bedit-form-${i}-${fi}" contenteditable="true"
+            style="font-size:19px;outline:none;border-bottom:1px dashed rgba(154,122,26,0.2);padding-bottom:2px;min-height:28px">${val}</div>
+        </div>`).join("")}
+        ${r.word.example?`<div style="margin-bottom:9px">
+          <div class="lbl">Example</div>
+          <div class="ar" style="font-size:16px;color:var(--goldL)">${r.word.example.split(" — ")[0]||""}</div>
+          <div style="font-size:11px;color:var(--muted);font-style:italic;margin-top:3px">${r.word.example.split(" — ")[1]||""}</div>
+        </div>`:""}
+        <div style="font-size:10px;color:var(--muted2);margin-bottom:10px">${r.word.wordType} · ${r.word.dialect}</div>
+        <button onclick="applyBulkEdits(${i})"
+          style="background:none;border:1px solid var(--border);border-radius:7px;padding:6px 14px;font-size:12px;cursor:pointer;color:var(--muted);font-family:inherit;transition:all .2s"
+          onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--goldL)'"
+          onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Apply edits ✓</button>
+      </div>`:""}
+    </div>`;
+  }).join("");
   return`<div style="border-top:1px solid var(--border);padding-top:18px">
-    ${sHead(`Results — ${saved}/${results.length} saved to ${boxDef(tb).label}`)}${rows}
-    <button class="btn3" style="margin-top:14px" onclick="_bulkState.results=null;render()">Clear</button>
+    ${sHead(`${saveable} card${saveable!==1?"s":""} ready — review, edit or remove before saving`)}${rows}
+    <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+      ${saveable?`<button class="btn1" onclick="saveBulkWords()">Save ${saveable} Card${saveable!==1?"s":""} to ${boxDef(tb).label}</button>`:""}
+      <button class="btn3" onclick="_bulkState.results=null;render()">Clear All</button>
+    </div>
+    <div style="font-size:10px;color:var(--muted2);margin-top:8px">▼ to expand & edit a card · × to remove · Apply edits to confirm changes</div>
   </div>`;
+}
+function removeBulkWord(idx){if(!_bulkState.results)return;_bulkState.results[idx].removed=true;_bulkState.results[idx].expanded=false;render();}
+function restoreBulkWord(idx){if(!_bulkState.results)return;_bulkState.results[idx].removed=false;render();}
+function toggleBulkExpand(idx){if(!_bulkState.results)return;_bulkState.results[idx].expanded=!_bulkState.results[idx].expanded;render();}
+function applyBulkEdits(idx){
+  if(!_bulkState.results)return;
+  const r=_bulkState.results[idx];
+  const arEl=document.getElementById(`bedit-ar-${idx}`);
+  const enEl=document.getElementById(`bedit-en-${idx}`);
+  if(arEl)r.word.arabic=arEl.innerText.trim()||r.word.arabic;
+  if(enEl)r.word.english=enEl.innerText.trim()||r.word.english;
+  Object.keys(r.word.forms||{}).forEach((lbl,fi)=>{
+    const el=document.getElementById(`bedit-form-${idx}-${fi}`);
+    if(el){const v=el.innerText.trim();if(v)r.word.forms[lbl]=v;}
+  });
+  toast("Edits saved","var(--green)");
+}
+function saveBulkWords(){
+  if(!_bulkState.results)return;
+  const tb=_bulkState.targetBox||"l1q";
+  const toSave=_bulkState.results.filter(r=>!r.error&&!r.removed);
+  if(!toSave.length){toast("Nothing to save","var(--muted)");return;}
+  let words=getWords();
+  toSave.forEach(r=>{words=[...words,r.word];addWordToBox(r.word.id,tb);});
+  saveWords(words);
+  toast(`${toSave.length} card${toSave.length!==1?"s":""} saved to ${boxDef(tb).label} ✓`);
+  _bulkState={..._bulkState,results:null};render();
 }
 async function runBulkAdd(){
   const raw=document.getElementById("bulk-ta")?.value||"";
   const lines=raw.split("\n").map(l=>l.trim()).filter(Boolean);
   if(!lines.length){toast("Enter at least one word","var(--red)");return;}
-  const targetBox=_bulkState.targetBox||"l1q";
   _bulkState={..._bulkState,loading:true,results:null};render();
   const results=[];
   for(const line of lines){
@@ -1078,7 +1164,7 @@ async function runBulkAdd(){
     const engInput=parts[0]||"";
     const dialectRaw=parts[1]||"MSA";
     const dialect=DIALECTS.find(d=>d.toLowerCase()===dialectRaw.toLowerCase())||"MSA";
-    if(!engInput){results.push({input:line,error:"Could not parse"});continue;}
+    if(!engInput){results.push({input:line,error:"Could not parse",removed:false,expanded:false});continue;}
     const prompt=`You are an expert Arabic linguist. Generate a vocabulary flashcard.
 English: "${engInput}"
 Dialect: ${dialect_note(dialect)}
@@ -1100,9 +1186,9 @@ Respond ONLY with this exact JSON structure, no markdown:
       const p=JSON.parse(raw2.replace(/```json|```/g,"").trim());
       const ex=p.exampleAr?(p.exampleEn?`${p.exampleAr} — ${p.exampleEn}`:p.exampleAr):"";
       const word={id:uid(),arabic:p.arabic,english:p.english||engInput,example:ex,wordType:p.wordType||"Other",dialect,forms:p.extraFields||{},createdAt:Date.now()};
-      saveWords([...getWords(),word]);addWordToBox(word.id,targetBox);
-      results.push({arabic:p.arabic,english:p.english||engInput,dialect,input:line});
-    }catch(e){results.push({input:line,error:"Generation failed"});}
+      // Don't save yet — user reviews first
+      results.push({word,input:line,error:null,removed:false,expanded:false});
+    }catch(e){results.push({input:line,error:"Generation failed",removed:false,expanded:false});}
   }
   _bulkState={..._bulkState,loading:false,results};render();
 }
@@ -1749,13 +1835,223 @@ async function bootApp(){
 
 // ═══════════════════════════════════════════════════════════
 // KEYBOARD SHORTCUTS — session mode only
+// ═══════════════════════════════════════════════════════════
+// MASTERED REVIEW
+// ═══════════════════════════════════════════════════════════
+function getMasteredStars(){return ls("muf-mastered-stars",{});}
+function saveMasteredStars(s){ss("muf-mastered-stars",s);kvSet("muf-mastered-stars",s).catch(()=>{});}
+
+let _masteredSess=null;
+let _masteredModalCount=25;
+let _masteredModalDir="ar-en";
+
+function openMasteredModal(){
+  const boxes=getBoxes();
+  const masteredIds=boxes.mastered||[];
+  if(!masteredIds.length){toast("No mastered words yet","var(--muted)");return;}
+  const stars=getMasteredStars();
+  const total=masteredIds.length;
+  const unquizzed=masteredIds.filter(id=>!stars[id]).length;
+  // clamp count to available
+  if(_masteredModalCount>total)_masteredModalCount=total;
+  const presets=[10,25,50,100].filter(c=>c<total);
+  const countBtns=[...presets,total].map(c=>{
+    const active=_masteredModalCount===c;
+    return`<button onclick="_masteredModalCount=${c};openMasteredModal()"
+      style="flex:1;padding:10px;border-radius:8px;border:1.5px solid ${active?"var(--gold)":"var(--border)"};
+        background:${active?"rgba(196,158,60,0.1)":"transparent"};cursor:pointer;font-size:13px;
+        font-weight:${active?"700":"400"};color:${active?"var(--goldL)":"var(--muted)"};
+        font-family:inherit;transition:all .2s">${c===total?"All "+total:c}</button>`;
+  }).join("");
+  document.getElementById("modal-root").innerHTML=`
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <div style="font-size:10px;color:var(--lm);letter-spacing:.15em;text-transform:uppercase;margin-bottom:5px">Bonus Session</div>
+        <div style="font-size:22px;font-weight:700;color:var(--goldL);margin-bottom:6px">★ Mastered Review</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:22px">${total} mastered words · <span style="color:var(--goldL)">${unquizzed} not yet quizzed</span> (prioritised)</div>
+        ${sHead("How many words?")}
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px">${countBtns}</div>
+        <div style="padding-top:16px;border-top:1px solid var(--border)">
+          <div style="font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px">Card Direction</div>
+          <div style="display:flex;gap:0;border:1px solid var(--border);border-radius:9px;overflow:hidden">
+            <button onclick="_masteredModalDir='ar-en';openMasteredModal()"
+              style="flex:1;padding:9px 8px;border:none;cursor:pointer;font-size:12px;letter-spacing:.04em;transition:all .2s;font-family:inherit;
+                ${_masteredModalDir==="ar-en"?"background:rgba(196,158,60,0.12);color:var(--goldL);font-weight:600":"background:transparent;color:var(--muted)"}">
+              Arabic → English</button>
+            <button onclick="_masteredModalDir='en-ar';openMasteredModal()"
+              style="flex:1;padding:9px 8px;border:none;border-left:1px solid var(--border);cursor:pointer;font-size:12px;letter-spacing:.04em;transition:all .2s;font-family:inherit;
+                ${_masteredModalDir==="en-ar"?"background:rgba(196,158,60,0.12);color:var(--goldL);font-weight:600":"background:transparent;color:var(--muted)"}">
+              English → Arabic</button>
+          </div>
+          <div style="font-size:10px;color:var(--muted2);margin-top:6px">${_masteredModalDir==="ar-en"?"See Arabic, recall English meaning":"See English, recall Arabic word &amp; forms"}</div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);background:rgba(196,158,60,0.05);border:1px solid rgba(196,158,60,0.15);border-radius:8px;padding:10px 12px;margin-top:16px;line-height:1.65">
+          Words earn <strong style="color:var(--goldL)">★ stars</strong> (1–5) as you get them right. Wrong answers lose a star. Two wrong answers in a row at 0 stars will drop the word back into L5B.
+        </div>
+        <div style="display:flex;gap:10px;margin-top:22px">
+          <button class="btn1" onclick="startMasteredSession()">Begin ★</button>
+          <button class="btn3" onclick="closeModal()">Cancel</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function startMasteredSession(){
+  closeModal();
+  const boxes=getBoxes();
+  const masteredIds=[...(boxes.mastered||[])];
+  if(!masteredIds.length){toast("No mastered words","var(--muted)");return;}
+  const stars=getMasteredStars();
+  // Sort: unquizzed first → fewest stars → least recently quizzed → shuffle ties
+  const sorted=[...masteredIds].sort((a,b)=>{
+    const sa=stars[a],sb=stars[b];
+    if(!sa&&!sb)return Math.random()-.5;
+    if(!sa)return-1;if(!sb)return 1;
+    if(sa.stars!==sb.stars)return sa.stars-sb.stars;
+    return(sa.lastQuizzed||0)-(sb.lastQuizzed||0);
+  });
+  const count=Math.min(_masteredModalCount||25,sorted.length);
+  _masteredSess={
+    queue:sorted.slice(0,count),
+    queueIdx:0,flipped:false,
+    direction:_masteredModalDir||"ar-en",
+    correct:0,total:0,
+    changes:{}
+  };
+  setView("mastered-review");
+}
+
+function renderMasteredReview(){
+  if(!_masteredSess){setView("home");return renderHome();}
+  const {queue,queueIdx,flipped,direction,correct,total}=_masteredSess;
+  if(queueIdx>=queue.length)return renderMasteredSummary();
+  const wordId=queue[queueIdx];
+  const word=wordById(wordId);
+  if(!word){_masteredSess.queueIdx++;render();return`<div style="padding:60px 0"></div>`;}
+  const stars=getMasteredStars();
+  const ws=stars[wordId];
+  const starCount=ws?ws.stars:1;
+  const starsHtml=Array.from({length:5},(_,i)=>
+    `<span style="font-size:17px;color:${i<starCount?"#F5C518":"rgba(0,0,0,0.15)"}">${i<starCount?"★":"☆"}</span>`
+  ).join("");
+  const pct=(queueIdx/queue.length)*100;
+  const arEn=direction==="ar-en";
+  let formsHtml="";
+  if(word.forms&&Object.keys(word.forms).length){
+    formsHtml=`<div class="card-back-forms">`;
+    Object.entries(word.forms).forEach(([lbl,val])=>{if(val)formsHtml+=`<div class="card-back-form"><div class="card-back-form-label">${lbl}</div><div class="card-back-form-val">${val}</div></div>`;});
+    formsHtml+=`</div>`;
+  }
+  const frontHtml=arEn
+    ?`<div style="font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:20px">What does this mean?</div>
+       <div class="ar" style="font-size:54px;text-align:center;line-height:1.45">${word.arabic}</div>`
+    :`<div style="font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:20px">How do you say this?</div>
+       <div style="font-size:32px;font-weight:600;color:var(--sand);text-align:center;line-height:1.4">${word.english}</div>`;
+  const backHtml=arEn
+    ?`<div style="font-size:10px;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;opacity:.7;margin-bottom:10px;flex-shrink:0">Answer</div>
+       <div class="card-back-english">${word.english}</div>
+       ${word.example?`<div class="card-back-example">${word.example.split(" — ")[0]||""}</div><div class="card-back-example-en">${word.example.split(" — ")[1]||""}</div>`:""}${formsHtml}`
+    :`<div style="font-size:10px;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;opacity:.7;margin-bottom:10px;flex-shrink:0">Answer</div>
+       <div class="ar" style="font-size:48px;text-align:center;line-height:1.45;margin-bottom:10px">${word.arabic}</div>
+       ${word.example?`<div class="card-back-example">${word.example.split(" — ")[0]||""}</div><div class="card-back-example-en">${word.example.split(" — ")[1]||""}</div>`:""}${formsHtml}`;
+  return`
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+    <div class="prog-bar" style="flex:1"><div class="prog-fill" style="width:${pct.toFixed(1)}%;background:linear-gradient(90deg,var(--lm),var(--gold))"></div></div>
+    <span style="font-size:11px;color:var(--muted);flex-shrink:0">${queueIdx+1}/${queue.length}</span>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:8px">${starsHtml}<span style="font-size:10px;color:var(--muted);margin-left:2px">${starCount}/5</span></div>
+    <button class="end-btn" onclick="endMasteredSession()">■ End</button>
+  </div>
+  <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">
+    <span class="badge" style="background:rgba(58,152,100,0.12);color:var(--lm)">★ Mastered</span>
+    <span class="badge" style="background:rgba(0,0,0,0.04);color:var(--muted)">${word.dialect||""}</span>
+    <span class="badge" style="background:rgba(0,0,0,0.04);color:var(--muted)">${word.wordType||""}</span>
+  </div>
+  <div class="flip-wrap" onclick="if(!${flipped})doMasteredFlip()">
+    <div class="flip-inner${flipped?" flipped":""}">
+      <div class="flip-face">${frontHtml}
+        <div style="position:absolute;bottom:16px;font-size:10px;color:var(--muted);opacity:.4">tap or [Space] to reveal</div>
+      </div>
+      <div class="flip-face flip-back">${backHtml}</div>
+    </div>
+  </div>
+  ${flipped?`<div class="rating-grid">
+    <button class="rate-btn" style="background:rgba(42,122,74,0.1);border-color:var(--green);color:var(--green)" onclick="rateMasteredWord('correct')">✓ Got it <span style="font-size:10px;opacity:.5;font-weight:400">[J]</span></button>
+    <button class="rate-btn" style="background:rgba(176,48,48,0.1);border-color:var(--red);color:var(--red)" onclick="rateMasteredWord('incorrect')">✗ Missed <span style="font-size:10px;opacity:.5;font-weight:400">[K]</span></button>
+  </div>`:`<button class="btn1" style="width:100%;justify-content:center;font-size:15px;padding:15px" onclick="doMasteredFlip()">Reveal Answer</button>`}
+  <div style="text-align:center;margin-top:14px;font-size:11px;color:var(--muted)">★ Mastered Review — words don't move unless demoted</div>`;
+}
+
+function doMasteredFlip(){if(!_masteredSess)return;_masteredSess.flipped=true;render();}
+
+function rateMasteredWord(rating){
+  if(!_masteredSess)return;
+  const wordId=_masteredSess.queue[_masteredSess.queueIdx];
+  const stars=getMasteredStars();
+  const ws=stars[wordId]||{stars:1,wrongAt0:0,lastQuizzed:0};
+  const starsBefore=ws.stars;
+  let newStars=ws.stars,newWrongAt0=ws.wrongAt0||0,demoted=false;
+  if(rating==="correct"){
+    newStars=Math.min(5,ws.stars+1);newWrongAt0=0;
+  } else {
+    if(ws.stars>0){newStars=ws.stars-1;newWrongAt0=0;}
+    else{
+      newWrongAt0=(ws.wrongAt0||0)+1;
+      if(newWrongAt0>=2){
+        demoted=true;
+        removeWordFromBox(wordId,"mastered");addWordToBox(wordId,"l5b");
+        delete stars[wordId];
+        saveMasteredStars(stars);
+        toast("Demoted back to L5B — needs more work","var(--red)");
+      }
+    }
+  }
+  if(!demoted){stars[wordId]={stars:newStars,wrongAt0:newWrongAt0,lastQuizzed:Date.now()};saveMasteredStars(stars);}
+  _masteredSess.changes[wordId]={starsBefore,starsAfter:demoted?0:newStars,demoted};
+  _masteredSess.total++;if(rating==="correct")_masteredSess.correct++;
+  _masteredSess.queueIdx++;_masteredSess.flipped=false;render();
+}
+
+function endMasteredSession(){setView("mastered-summary");}
+
+function renderMasteredSummary(){
+  if(!_masteredSess)return renderHome();
+  const {correct,total,changes}=_masteredSess;
+  const pct=total>0?Math.round(correct/total*100):0;
+  const starsGained=Object.values(changes).filter(c=>!c.demoted&&c.starsAfter>c.starsBefore).length;
+  const demotedCount=Object.values(changes).filter(c=>c.demoted).length;
+  const praise=pct>=90?"ممتاز":pct>=70?"أحسنت":"استمر";
+  const statCols=[{v:total,l:"Reviewed",c:"var(--goldL)"},{v:correct,l:"Correct",c:"var(--green)"},{v:total-correct,l:"Missed",c:"var(--red)"},{v:`${pct}%`,l:"Accuracy",c:"var(--gold)"}];
+  return`<div class="ar" style="font-size:48px;text-align:center;color:var(--goldL);margin-bottom:4px">${praise}!</div>
+  <div style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:26px">★ Mastered Review complete</div>
+  <div class="stat-grid" style="margin-bottom:22px">
+    ${statCols.map(({v,l,c})=>`<div class="stat-box"><div style="font-size:26px;font-weight:700;color:${c}">${v}</div><div style="font-size:9px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.08em">${l}</div></div>`).join("")}
+  </div>
+  ${starsGained?`<div style="background:rgba(245,197,24,0.08);border:1px solid rgba(245,197,24,0.2);border-radius:10px;padding:14px 16px;margin-bottom:14px;font-size:13px;color:var(--goldL)">★ ${starsGained} word${starsGained!==1?"s":""} gained a star</div>`:""}
+  ${demotedCount?`<div style="background:rgba(176,48,48,0.07);border:1px solid rgba(176,48,48,0.2);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+    <div style="font-size:12px;color:var(--red);font-weight:700;margin-bottom:4px">⚠ ${demotedCount} word${demotedCount!==1?"s":""} demoted to L5B</div>
+    <div style="font-size:12px;color:var(--muted)">They'll work their way back up through the regular SRS boxes.</div>
+  </div>`:""}
+  <div style="display:flex;gap:10px;margin-top:22px">
+    <button class="btn1" onclick="_masteredSess=null;setView('home')">← Home</button>
+    <button class="btn2" onclick="_masteredSess=null;openMasteredModal()">Go Again ★</button>
+  </div><div class="ornament">✦</div>`;
+}
+
 // Space = flip card  |  J / 1 = Got it  |  K / 2 = Missed
 // ═══════════════════════════════════════════════════════════
 document.addEventListener('keydown',function(e){
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.isContentEditable)return;
+  if(_view==='mastered-review'&&_masteredSess){
+    if(e.key===' '||e.code==='Space'){e.preventDefault();if(!_masteredSess.flipped)doMasteredFlip();}
+    else if((e.key==='j'||e.key==='J'||e.key==='1')&&_masteredSess.flipped){e.preventDefault();rateMasteredWord('correct');}
+    else if((e.key==='k'||e.key==='K'||e.key==='2')&&_masteredSess.flipped){e.preventDefault();rateMasteredWord('incorrect');}
+    return;
+  }
   if(_view!=='review')return;
   const sess=getSession();
   if(!sess||!sess.active||sess.pendingPrompt)return;
-  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.isContentEditable)return;
   if(e.key===' '||e.code==='Space'){
     e.preventDefault();
     if(!sess.flipped)doFlip();
