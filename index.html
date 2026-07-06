@@ -751,7 +751,21 @@ function renderSummary(){
 let _activeBoxView="l1";
 let _boxSearch="";
 function viewBox(id){_activeBoxView=id;_boxSearch="";setView("boxes");}
-function onBoxSearch(val){_boxSearch=val;render();}
+function onBoxSearch(val){
+  _boxSearch=val;
+  render();
+  // Restore focus + cursor after DOM rebuild
+  const inp=document.getElementById("box-search-inp");
+  if(inp){const l=inp.value.length;inp.focus();inp.setSelectionRange(l,l);}
+}
+function moveWordBox(wordId,fromBoxId,toBoxId){
+  if(!toBoxId)return;
+  if(fromBoxId&&fromBoxId!=="orphan")removeWordFromBox(wordId,fromBoxId);
+  addWordToBox(wordId,toBoxId);
+  render();
+  const inp=document.getElementById("box-search-inp");
+  if(inp){const l=inp.value.length;inp.focus();inp.setSelectionRange(l,l);}
+}
 function renderBoxes(){
   const boxes=getBoxes();
   const searchBar=`<div style="position:relative;margin-bottom:18px">
@@ -773,26 +787,34 @@ function renderBoxes(){
     const matches=words.filter(w=>
       w.english.toLowerCase().includes(q)||
       w.arabic.includes(_boxSearch.trim())||
-      (w.arabic.replace(/[ً-ٟ]/g,"")).includes(_boxSearch.trim()) // also match without diacritics
+      w.arabic.replace(/[ً-ٟ]/g,"").includes(_boxSearch.trim())
     );
+    const boxOpts=BOXES.filter(b=>!b.isQueue).map(b=>`<option value="${b.id}">${b.label}</option>`).join("");
     const rows=matches.length===0
       ?`<div style="text-align:center;color:var(--muted);padding:60px 0;font-size:13px">No words found for "${_boxSearch}"</div>`
       :matches.map(w=>{
-        const boxId=wordBox[w.id]||"—";
-        const def=boxDef(boxId);
-        const rg=hexRgb(def.color||"#888");
-        return`<div class="word-row">
-          <div class="ar" style="font-size:23px;flex:0 0 auto;min-width:75px;text-align:right">${w.arabic}</div>
-          <div style="flex:1;min-width:0">
+        const boxId=wordBox[w.id]||"orphan";
+        const def=boxId==="orphan"?{label:"Not in box",color:"#AAA090"}:boxDef(boxId);
+        const selectVal=boxId==="orphan"?"":boxId;
+        return`<div class="word-row" style="flex-wrap:wrap;gap:8px">
+          <div class="ar" style="font-size:23px;flex:0 0 auto;min-width:70px;text-align:right">${w.arabic}</div>
+          <div style="flex:1;min-width:120px">
             <div style="font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${w.english}</div>
             <div style="font-size:10px;color:var(--muted);margin-top:3px">${w.dialect} · ${w.wordType}</div>
           </div>
-          <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;white-space:nowrap;flex-shrink:0;
-            background:rgba(${rg},0.12);color:${def.color}">${def.label}</span>
-          <button onclick="deleteWordFull('${w.id}')" style="background:none;border:none;cursor:pointer;color:rgba(176,48,48,0.3);font-size:20px;padding:3px 7px;line-height:1;transition:color .2s" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='rgba(176,48,48,0.3)'">×</button>
+          <select onchange="moveWordBox('${w.id}','${boxId}',this.value)"
+            style="font-size:11px;border:1px solid ${boxId==="orphan"?"rgba(176,48,48,0.35)":"var(--border)"};border-radius:7px;
+              padding:4px 7px;background:${boxId==="orphan"?"rgba(176,48,48,0.05)":"var(--card2)"};
+              color:${def.color};cursor:pointer;font-family:inherit;flex-shrink:0;outline:none">
+            ${boxId==="orphan"?`<option value="" disabled selected style="color:var(--muted)">⚠ not in a box</option>`:""}
+            ${boxOpts.replace(`value="${selectVal}"`,`value="${selectVal}" selected`)}
+          </select>
+          <button onclick="deleteWordFull('${w.id}')" style="background:none;border:none;cursor:pointer;color:rgba(176,48,48,0.3);font-size:20px;padding:3px 5px;line-height:1;transition:color .2s;flex-shrink:0" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='rgba(176,48,48,0.3)'">×</button>
         </div>`;
       }).join("");
-    return`${searchBar}<div style="font-size:11px;color:var(--muted);margin-bottom:14px">${matches.length} result${matches.length!==1?"s":""} across all boxes</div>${rows}`;
+    const orphanCount=matches.filter(w=>!wordBox[w.id]).length;
+    const orphanNote=orphanCount?`<div style="font-size:11px;color:var(--red);margin-bottom:10px">⚠ ${orphanCount} word${orphanCount!==1?"s":""} not assigned to any box — use the dropdown to place them</div>`:"";
+    return`${searchBar}<div style="font-size:11px;color:var(--muted);margin-bottom:10px">${matches.length} result${matches.length!==1?"s":""} across all boxes</div>${orphanNote}${rows}`;
   }
 
   // ── Normal box tab mode ──
