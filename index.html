@@ -749,9 +749,53 @@ function renderSummary(){
 // BOXES VIEW
 // ═══════════════════════════════════════════════════════════
 let _activeBoxView="l1";
-function viewBox(id){_activeBoxView=id;setView("boxes");}
+let _boxSearch="";
+function viewBox(id){_activeBoxView=id;_boxSearch="";setView("boxes");}
+function onBoxSearch(val){_boxSearch=val;render();}
 function renderBoxes(){
   const boxes=getBoxes();
+  const searchBar=`<div style="position:relative;margin-bottom:18px">
+    <input class="inp" id="box-search-inp" placeholder="Search Arabic or English…" value="${_boxSearch.replace(/"/g,'&quot;')}"
+      oninput="onBoxSearch(this.value)" autocomplete="off"
+      style="padding-left:36px;font-size:14px"/>
+    <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--muted);pointer-events:none">🔍</span>
+    ${_boxSearch?`<button onclick="onBoxSearch('');document.getElementById('box-search-inp').value=''"
+      style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:18px;padding:2px 6px;line-height:1">×</button>`:""}
+  </div>`;
+
+  // ── Search mode ──
+  if(_boxSearch.trim()){
+    const q=_boxSearch.trim().toLowerCase();
+    const words=getWords();
+    // Build reverse map: wordId → boxId
+    const wordBox={};
+    Object.keys(boxes).forEach(boxId=>(boxes[boxId]||[]).forEach(id=>{wordBox[id]=boxId;}));
+    const matches=words.filter(w=>
+      w.english.toLowerCase().includes(q)||
+      w.arabic.includes(_boxSearch.trim())||
+      (w.arabic.replace(/[ً-ٟ]/g,"")).includes(_boxSearch.trim()) // also match without diacritics
+    );
+    const rows=matches.length===0
+      ?`<div style="text-align:center;color:var(--muted);padding:60px 0;font-size:13px">No words found for "${_boxSearch}"</div>`
+      :matches.map(w=>{
+        const boxId=wordBox[w.id]||"—";
+        const def=boxDef(boxId);
+        const rg=hexRgb(def.color||"#888");
+        return`<div class="word-row">
+          <div class="ar" style="font-size:23px;flex:0 0 auto;min-width:75px;text-align:right">${w.arabic}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${w.english}</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:3px">${w.dialect} · ${w.wordType}</div>
+          </div>
+          <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;white-space:nowrap;flex-shrink:0;
+            background:rgba(${rg},0.12);color:${def.color}">${def.label}</span>
+          <button onclick="deleteWordFull('${w.id}')" style="background:none;border:none;cursor:pointer;color:rgba(176,48,48,0.3);font-size:20px;padding:3px 7px;line-height:1;transition:color .2s" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='rgba(176,48,48,0.3)'">×</button>
+        </div>`;
+      }).join("");
+    return`${searchBar}<div style="font-size:11px;color:var(--muted);margin-bottom:14px">${matches.length} result${matches.length!==1?"s":""} across all boxes</div>${rows}`;
+  }
+
+  // ── Normal box tab mode ──
   const tabs=BOXES.filter(b=>!b.isQueue).map(b=>{
     const cnt=(boxes[b.id]||[]).length;const rg=hexRgb(b.color);const act=b.id===_activeBoxView;
     return`<button class="tab-btn" onclick="viewBox('${b.id}')" style="${act?`background:rgba(${rg},0.12);border-color:${b.color};color:${b.color}`:""}">${b.label} <span style="opacity:.4;font-size:11px">${cnt}</span></button>`;
@@ -765,7 +809,7 @@ function renderBoxes(){
           <div style="font-size:10px;color:var(--muted);margin-top:3px">${w.dialect} · ${w.wordType}</div></div>
         <button onclick="deleteWordFull('${id}')" style="background:none;border:none;cursor:pointer;color:rgba(176,48,48,0.3);font-size:20px;padding:3px 7px;line-height:1;transition:color .2s" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='rgba(176,48,48,0.3)'">×</button>
       </div>`;}).join("");
-  return`<div class="tab-strip">${tabs}</div>
+  return`${searchBar}<div class="tab-strip">${tabs}</div>
     <div style="margin-bottom:18px"><div style="font-size:20px;font-weight:700;color:${def.color}">${def.label}</div>
     <div style="font-size:11px;color:var(--muted);margin-top:3px">${ids.length} word${ids.length!==1?"s":""}</div></div>${rows}`;
 }
