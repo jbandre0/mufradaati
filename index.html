@@ -9,25 +9,25 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#F7F4EF;--bg2:#F0EDE8;--bg3:#EAE6DF;
-  --card:#FFFFFF;--card2:#F5F2ED;--card3:#EDE9E2;
-  --border:rgba(0,0,0,0.09);--border-hi:rgba(160,110,20,0.55);
-  --gold:#9A7A1A;--goldL:#7A5F10;--goldD:#6A5010;
-  --sand:#2C2420;--muted:#8A8070;--muted2:#AAA090;
-  --accent:#B85C28;--green:#2A7A4A;--red:#B03030;--blue:#2A5EA8;--purple:#6B3F9A;
-  --l1:#B03030;--l2:#B85C28;--l3:#9A7A1A;--l4:#2A5EA8;--l5:#6B3F9A;--lm:#2A7A4A;
+  --bg:#04140F;--bg2:#06201A;--bg3:#0A2A21;
+  --card:rgba(13,50,39,0.58);--card2:rgba(22,78,62,0.42);--card3:rgba(32,100,80,0.42);
+  --border:rgba(226,190,110,0.17);--border-hi:rgba(240,212,138,0.65);
+  --gold:#D9B45E;--goldL:#F0D48A;--goldD:#8A6420;
+  --sand:#EEE8D5;--muted:#8DB5A5;--muted2:#5E8677;
+  --accent:#E6C36E;--green:#5FD3A0;--red:#F07A7A;--blue:#7FD6C8;--purple:#B7A6E8;
+  --l1:#D9B45E;--l2:#D9B45E;--l3:#D9B45E;--l4:#D9B45E;--l5:#D9B45E;--lm:#F0D48A;
 }
 body{background:var(--bg);color:var(--sand);font-family:'Cormorant Garamond','Amiri',Georgia,serif;min-height:100vh;overflow-x:hidden;}
 input,select,textarea,button{font-family:inherit;}
 input::placeholder,textarea::placeholder{color:var(--muted2);}
-::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:2px;}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:rgba(226,190,110,.28);border-radius:2px;}
 select option{background:var(--card);color:var(--sand);}
 .atmo{position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:radial-gradient(ellipse 60% 40% at 15% 10%,rgba(154,122,26,0.07) 0%,transparent 70%),
+  background:radial-gradient(ellipse 60% 40% at 15% 10%,rgba(217,180,94,0.07) 0%,transparent 70%),
     radial-gradient(ellipse 50% 60% at 85% 85%,rgba(184,92,40,0.05) 0%,transparent 70%);}
 .atmo::after{content:'';position:absolute;inset:0;
-  background-image:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(0,0,0,0.012) 40px,rgba(0,0,0,0.012) 41px),
-    repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(0,0,0,0.012) 40px,rgba(0,0,0,0.012) 41px);
+  background-image:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,0.022) 40px,rgba(255,255,255,0.022) 41px),
+    repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(255,255,255,0.022) 40px,rgba(255,255,255,0.022) 41px);
   mask-image:radial-gradient(ellipse at 50% 50%,black 30%,transparent 80%);}
 .shell{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:0 18px 90px;}
 nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0 16px;border-bottom:1px solid var(--border);margin-bottom:28px;}
@@ -37,35 +37,35 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0
 .nav-btns{display:flex;gap:2px;}
 .nav-btn{padding:6px 12px;border-radius:7px;border:none;cursor:pointer;font-size:12px;letter-spacing:.05em;background:transparent;color:var(--muted);transition:all .2s;}
 .nav-btn:hover{color:var(--sand);}
-.nav-btn.active{background:rgba(196,158,60,0.12);color:var(--goldL);border:1px solid rgba(196,158,60,0.2);}
-.inp{width:100%;background:rgba(0,0,0,0.02);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--sand);font-size:15px;outline:none;transition:border-color .2s;}
+.nav-btn.active{background:rgba(217,180,94,0.12);color:var(--goldL);border:1px solid rgba(217,180,94,0.2);}
+.inp{width:100%;background:rgba(255,255,255,0.036);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--sand);font-size:15px;outline:none;transition:border-color .2s;}
 .inp:focus{border-color:var(--border-hi);}
 .lbl{display:block;font-size:11px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:7px;}
 .field{margin-bottom:18px;}
 .btn1{background:linear-gradient(135deg,var(--goldD),var(--accent));color:#fff;border:none;border-radius:10px;padding:13px 26px;font-size:14px;cursor:pointer;font-weight:600;letter-spacing:.05em;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(196,96,42,0.2);transition:all .2s;}
 .btn1:hover{opacity:.9;transform:translateY(-1px);}
 .btn1:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none;}
-.btn2{background:transparent;color:var(--goldL);border:1px solid rgba(196,158,60,0.35);border-radius:10px;padding:11px 22px;font-size:13px;cursor:pointer;letter-spacing:.04em;transition:all .2s;}
-.btn2:hover{border-color:var(--gold);background:rgba(196,158,60,0.06);}
-.btn3{background:rgba(0,0,0,0.03);color:var(--sand);border:1px solid var(--border);border-radius:8px;padding:9px 16px;font-size:13px;cursor:pointer;transition:all .2s;}
-.btn3:hover{background:rgba(0,0,0,0.06);}
+.btn2{background:transparent;color:var(--goldL);border:1px solid rgba(217,180,94,0.35);border-radius:10px;padding:11px 22px;font-size:13px;cursor:pointer;letter-spacing:.04em;transition:all .2s;}
+.btn2:hover{border-color:var(--gold);background:rgba(217,180,94,0.06);}
+.btn3{background:rgba(255,255,255,0.054);color:var(--sand);border:1px solid var(--border);border-radius:8px;padding:9px 16px;font-size:13px;cursor:pointer;transition:all .2s;}
+.btn3:hover{background:rgba(255,255,255,0.108);}
 .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;}
 .ar{font-family:'Amiri',serif;direction:rtl;color:var(--goldL);}
 .s-head{font-size:10px;color:var(--gold);letter-spacing:.15em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
-.s-head-line{flex:1;height:1px;background:linear-gradient(90deg,rgba(196,158,60,0.25),transparent);}
-.prog-bar{height:2px;background:rgba(0,0,0,0.06);border-radius:2px;}
+.s-head-line{flex:1;height:1px;background:linear-gradient(90deg,rgba(217,180,94,0.25),transparent);}
+.prog-bar{height:2px;background:rgba(255,255,255,0.108);border-radius:2px;}
 .prog-fill{height:100%;border-radius:2px;transition:width .4s ease;background:linear-gradient(90deg,var(--gold),var(--accent));}
 .flip-wrap{perspective:1400px;height:340px;margin-bottom:20px;cursor:pointer;}
 .flip-inner{transform-style:preserve-3d;transition:transform .6s cubic-bezier(.4,0,.2,1);height:100%;position:relative;}
 .flip-inner.flipped{transform:rotateY(180deg);cursor:default;}
 .flip-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.flip-back{transform:rotateY(180deg);background:linear-gradient(145deg,var(--card),var(--card2));border-color:rgba(154,122,26,0.25);overflow-y:auto;justify-content:flex-start;padding-top:22px;}
-.flip-face::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:60%;height:3px;border-radius:0 0 40px 40px;background:linear-gradient(90deg,transparent,rgba(196,158,60,0.4),transparent);}
+.flip-back{transform:rotateY(180deg);background:linear-gradient(145deg,var(--card),var(--card2));border-color:rgba(217,180,94,0.25);overflow-y:auto;justify-content:flex-start;padding-top:22px;}
+.flip-face::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:60%;height:3px;border-radius:0 0 40px 40px;background:linear-gradient(90deg,transparent,rgba(217,180,94,0.4),transparent);}
 .rating-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .rate-btn{border-radius:12px;padding:14px 5px;cursor:pointer;text-align:center;border:1px solid;transition:all .15s;font-weight:700;font-family:inherit;font-size:15px;letter-spacing:.03em;}
 .rate-btn:hover{transform:translateY(-2px);}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px);}
-.modal{background:var(--card);border:1px solid rgba(154,122,26,0.2);border-radius:20px;padding:30px;max-width:460px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.15);}
+.modal{background:var(--card);border:1px solid rgba(217,180,94,0.2);border-radius:20px;padding:30px;max-width:460px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.15);}
 .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:200;background:var(--card);border-radius:10px;padding:10px 20px;font-size:13px;letter-spacing:.04em;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.15);opacity:0;transition:opacity .3s;pointer-events:none;border:1px solid var(--border);}
 .toast.show{opacity:1;}
 .badge{font-size:10px;padding:3px 9px;border-radius:20px;white-space:nowrap;display:inline-block;letter-spacing:.04em;}
@@ -74,15 +74,15 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0
 .tab-btn{flex-shrink:0;border-radius:8px;border:1px solid var(--border);padding:6px 14px;cursor:pointer;font-size:12px;color:var(--muted);background:transparent;transition:all .2s;white-space:nowrap;}
 .tab-btn:hover{color:var(--sand);}
 .word-row{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:13px 15px;display:flex;align-items:center;gap:13px;margin-bottom:7px;transition:border-color .2s;}
-.word-row:hover{border-color:rgba(154,122,26,0.2);}
+.word-row:hover{border-color:rgba(217,180,94,0.2);}
 .box-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:14px;}
 .box-card{border-radius:13px;padding:14px 11px;cursor:pointer;transition:all .15s;text-align:center;border:1.5px solid var(--border);background:var(--card);}
 .box-card:hover{transform:translateY(-2px);}
 .reserve-panel{grid-column:3;grid-row:1 / span 6;display:flex;flex-direction:column;gap:9px;}
-.reserve-ctl{border:1.5px solid rgba(110,127,141,0.28);border-radius:13px;padding:14px 13px;background:rgba(110,127,141,0.04);}
+.reserve-ctl{border:1.5px solid rgba(141,181,165,0.28);border-radius:13px;padding:14px 13px;background:rgba(141,181,165,0.04);}
 .reserve-ctl .inp{padding:8px 10px;font-size:14px;}
 .reserve-row{display:flex;gap:8px;align-items:center;}
-.reserve-star{background:none;border:none;cursor:pointer;font-size:19px;line-height:1;padding:3px 6px;color:rgba(0,0,0,0.18);transition:color .15s;}
+.reserve-star{background:none;border:none;cursor:pointer;font-size:19px;line-height:1;padding:3px 6px;color:rgba(255,255,255,0.28);transition:color .15s;}
 .reserve-star.on{color:var(--gold);}
 .box-card.queue-box{border-style:dashed;opacity:.7;padding:10px 9px;cursor:default;}
 .box-card.queue-box:hover{transform:none;}
@@ -94,47 +94,47 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0
 .step-row:last-child{border-bottom:none;}
 .step-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
 .step-toggle{width:26px;height:26px;border-radius:7px;border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:all .2s;}
-.step-toggle.on{background:rgba(196,158,60,0.15);border-color:var(--gold);color:var(--goldL);}
+.step-toggle.on{background:rgba(217,180,94,0.15);border-color:var(--gold);color:var(--goldL);}
 .step-toggle.off{color:var(--muted2);}
-.prompt-banner{background:rgba(196,158,60,0.07);border:1px solid rgba(196,158,60,0.28);border-radius:14px;padding:24px 20px;margin-bottom:18px;}
+.prompt-banner{background:rgba(217,180,94,0.07);border:1px solid rgba(217,180,94,0.28);border-radius:14px;padding:24px 20px;margin-bottom:18px;}
 .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;}
 .stat-box{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:16px 6px;text-align:center;}
 .dialect-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
 .dialect-pill{border-radius:20px;border:1px solid var(--border);padding:5px 13px;font-size:11px;cursor:pointer;color:var(--muted);background:transparent;transition:all .2s;letter-spacing:.04em;}
 .dialect-pill:hover{color:var(--sand);}
-.dialect-pill.active{background:rgba(196,158,60,0.15);border-color:rgba(196,158,60,0.4);color:var(--goldL);}
-.ornament{text-align:center;color:rgba(196,158,60,0.3);font-family:'Amiri',serif;font-size:20px;margin:20px 0;letter-spacing:8px;}
-.end-btn{background:rgba(176,48,48,0.06);border:1px solid rgba(176,48,48,0.2);color:var(--red);border-radius:8px;cursor:pointer;font-size:12px;padding:5px 14px;letter-spacing:.04em;transition:all .2s;}
-.end-btn:hover{background:rgba(176,48,48,0.12);}
+.dialect-pill.active{background:rgba(217,180,94,0.15);border-color:rgba(217,180,94,0.4);color:var(--goldL);}
+.ornament{text-align:center;color:rgba(217,180,94,0.3);font-family:'Amiri',serif;font-size:20px;margin:20px 0;letter-spacing:8px;}
+.end-btn{background:rgba(240,122,122,0.06);border:1px solid rgba(240,122,122,0.2);color:var(--red);border-radius:8px;cursor:pointer;font-size:12px;padding:5px 14px;letter-spacing:.04em;transition:all .2s;}
+.end-btn:hover{background:rgba(240,122,122,0.12);}
 .sub-tab-strip{display:flex;gap:0;margin-bottom:24px;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
 .sub-tab-btn{flex:1;padding:10px 6px;cursor:pointer;font-size:12px;color:var(--muted);background:transparent;border:none;border-right:1px solid var(--border);letter-spacing:.05em;transition:all .2s;text-align:center;}
 .sub-tab-btn:last-child{border-right:none;}
-.sub-tab-btn:hover{color:var(--sand);background:rgba(0,0,0,0.02);}
-.sub-tab-btn.active{background:rgba(196,158,60,0.1);color:var(--goldL);font-weight:600;}
+.sub-tab-btn:hover{color:var(--sand);background:rgba(255,255,255,0.036);}
+.sub-tab-btn.active{background:rgba(217,180,94,0.1);color:var(--goldL);font-weight:600;}
 .preview-field{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px;}
 .preview-ar{font-family:'Amiri',serif;direction:rtl;font-size:24px;color:var(--goldL);}
 .preview-label{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
-.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(196,158,60,0.2);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(217,180,94,0.2);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;}
 @keyframes spin{to{transform:rotate(360deg);}}
-.bulk-ta{width:100%;background:rgba(0,0,0,0.02);border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--sand);font-size:14px;outline:none;resize:vertical;min-height:160px;line-height:1.8;transition:border-color .2s;}
+.bulk-ta{width:100%;background:rgba(255,255,255,0.036);border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--sand);font-size:14px;outline:none;resize:vertical;min-height:160px;line-height:1.8;transition:border-color .2s;}
 .bulk-ta:focus{border-color:var(--border-hi);}
 .bulk-result{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;margin-bottom:5px;font-size:13px;}
-.bulk-result.ok{background:rgba(42,122,74,0.07);border:1px solid rgba(42,122,74,0.18);}
-.bulk-result.err{background:rgba(176,48,48,0.06);border:1px solid rgba(176,48,48,0.15);color:var(--muted);}
+.bulk-result.ok{background:rgba(95,211,160,0.07);border:1px solid rgba(95,211,160,0.18);}
+.bulk-result.err{background:rgba(240,122,122,0.06);border:1px solid rgba(240,122,122,0.15);color:var(--muted);}
 @media(max-width:480px){.box-grid,.stat-grid{grid-template-columns:1fr 1fr;}.reserve-panel{grid-column:1 / -1;grid-row:auto;}.rating-grid{grid-template-columns:1fr 1fr;}}
 /* ── Bigger card back content ── */
 .card-back-english{font-size:26px;font-weight:600;color:var(--sand);text-align:center;margin-bottom:10px;}
 .card-back-example{font-family:'Amiri',serif;direction:rtl;font-size:22px;color:var(--goldL);text-align:center;line-height:1.6;margin-bottom:6px;}
 .card-back-example-en{font-size:14px;color:var(--muted);font-style:italic;text-align:center;line-height:1.5;margin-bottom:12px;}
 .card-back-forms{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px;}
-.card-back-form{text-align:center;background:rgba(154,122,26,0.08);border-radius:9px;padding:7px 12px;}
+.card-back-form{text-align:center;background:rgba(217,180,94,0.08);border-radius:9px;padding:7px 12px;}
 .card-back-form-label{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;}
 .card-back-form-val{font-family:'Amiri',serif;direction:rtl;font-size:18px;color:var(--goldL);}
 /* ── Apply tab ── */
 .apply-mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px;}
 .apply-mode-btn{border-radius:13px;padding:18px 14px;cursor:pointer;text-align:center;border:1.5px solid var(--border);background:var(--card);transition:all .2s;}
-.apply-mode-btn:hover{border-color:rgba(154,122,26,0.3);transform:translateY(-1px);}
-.apply-mode-btn.active{background:rgba(154,122,26,0.08);border-color:rgba(154,122,26,0.45);}
+.apply-mode-btn:hover{border-color:rgba(217,180,94,0.3);transform:translateY(-1px);}
+.apply-mode-btn.active{background:rgba(217,180,94,0.08);border-color:rgba(217,180,94,0.45);}
 .apply-mode-icon{font-size:26px;margin-bottom:8px;}
 .apply-mode-label{font-size:13px;font-weight:600;color:var(--sand);margin-bottom:4px;}
 .apply-mode-desc{font-size:11px;color:var(--muted);line-height:1.4;}
@@ -146,23 +146,70 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0
 .w-known{color:var(--goldL);cursor:default;}
 .w-new{color:var(--blue);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;cursor:pointer;position:relative;}
 .w-new:hover .w-tooltip{display:block;}
-.w-tooltip{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--card);border:1px solid rgba(42,94,168,0.3);border-radius:10px;padding:10px 14px;min-width:180px;max-width:240px;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.12);text-align:center;}
+.w-tooltip{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--card);border:1px solid rgba(127,214,200,0.3);border-radius:10px;padding:10px 14px;min-width:180px;max-width:240px;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.12);text-align:center;}
 .w-tooltip-meaning{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--sand);margin-bottom:8px;direction:ltr;}
 .w-tooltip-btns{display:flex;gap:6px;justify-content:center;}
 .w-tooltip-btn{font-size:10px;padding:4px 10px;border-radius:6px;border:1px solid;cursor:pointer;font-family:inherit;letter-spacing:.04em;white-space:nowrap;}
 /* Grammar focus grid */
 .grammar-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:18px;}
 .grammar-btn{border-radius:9px;padding:9px 10px;cursor:pointer;text-align:center;border:1px solid var(--border);background:transparent;font-size:12px;color:var(--muted);transition:all .2s;line-height:1.3;}
-.grammar-btn:hover{color:var(--sand);border-color:rgba(154,122,26,0.25);}
-.grammar-btn.active{background:rgba(154,122,26,0.1);border-color:rgba(154,122,26,0.4);color:var(--goldL);font-weight:600;}
+.grammar-btn:hover{color:var(--sand);border-color:rgba(217,180,94,0.25);}
+.grammar-btn.active{background:rgba(217,180,94,0.1);border-color:rgba(217,180,94,0.4);color:var(--goldL);font-weight:600;}
 /* Sentence list for grammar mode */
 .sentence-row{background:var(--card2);border:1px solid var(--border);border-radius:11px;padding:14px 16px;margin-bottom:10px;}
 .sentence-ar{font-family:'Amiri',serif;direction:rtl;font-size:24px;color:var(--sand);line-height:1.7;text-align:right;margin-bottom:6px;}
 .sentence-en{font-size:13px;color:var(--muted);line-height:1.5;}
+
+/* ═══ AESTHETIC — deep emerald + gold, glass panels, calligraphy, geometry ═══ */
+body{background:linear-gradient(180deg,#03110D 0%,#062219 42%,#04160F 100%) fixed;}
+.atmo{background:radial-gradient(ellipse 65% 42% at 12% 6%,rgba(28,150,118,0.24) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 40% at 92% 30%,rgba(217,180,94,0.07) 0%,transparent 70%),
+    radial-gradient(ellipse 70% 45% at 50% 100%,rgba(30,120,96,0.22) 0%,transparent 72%);}
+.atmo::after{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72' fill='none' stroke='%23E6C36E' stroke-width='.9'%3E%3Crect x='18' y='18' width='36' height='36'/%3E%3Crect x='18' y='18' width='36' height='36' transform='rotate(45 36 36)'/%3E%3Ccircle cx='36' cy='36' r='9'/%3E%3Cpath d='M0 36H18M54 36H72M36 0V18M36 54V72'/%3E%3Cpath d='M0 0L18 18M72 0L54 18M0 72L18 54M72 72L54 54' stroke-opacity='.6'/%3E%3C/svg%3E");background-size:72px 72px;background-repeat:repeat;opacity:.11;
+  mask-image:radial-gradient(ellipse at 50% 30%,black 5%,transparent 78%);-webkit-mask-image:radial-gradient(ellipse at 50% 30%,black 5%,transparent 78%);}
+/* calligraphy watermark: أَسْتَغْفِرُ اللَّهَ */
+.atmo::before,body::before{content:'أَسْتَغْفِرُ اللَّهَ';position:fixed;font-family:'Amiri',serif;direction:rtl;white-space:nowrap;color:rgba(230,195,110,0.06);pointer-events:none;z-index:0;line-height:1;}
+.atmo::before{top:5vh;right:-3vw;font-size:clamp(90px,17vw,250px);transform:rotate(-8deg);}
+body::before{bottom:24vh;left:-5vw;font-size:clamp(70px,12vw,180px);transform:rotate(6deg);color:rgba(230,195,110,0.045);}
+.skyline{position:fixed;left:0;right:0;bottom:0;height:min(19vh,170px);min-height:100px;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 220'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%233FBFA0' stop-opacity='.55'/%3E%3Cstop offset='1' stop-color='%230B3B2E' stop-opacity='.95'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill='url(%23g)' stroke='%23E6C36E' stroke-opacity='.4' stroke-width='1.3'%3E%3Cpath d='M0 220V196H1200V220Z'/%3E%3Cpath d='M470 196V125 C470 80 541 68 600 68 C658 68 730 80 730 125 V196Z'/%3E%3Cpath d='M600 68V42' fill='none'/%3E%3Cpath d='M605 30A10 10 0 1 0 605 50A7.5 7.5 0 1 1 605 30Z' fill='%23E6C36E' fill-opacity='.7' stroke='none'/%3E%3Cpath d='M338 196V156 C338 131 366 124 390 124 C413 124 442 131 442 156 V196Z'/%3E%3Cpath d='M758 196V156 C758 131 786 124 810 124 C833 124 862 131 862 156 V196Z'/%3E%3Cpath d='M225 196V171 C225 156 241 152 255 152 C268 152 285 156 285 171 V196Z'/%3E%3Cpath d='M915 196V171 C915 156 931 152 945 152 C958 152 975 156 975 171 V196Z'/%3E%3Cpath transform='translate(-184 0)' d='M297 196V112H291V104H297V90L304 60L311 90V104H317V112H311V196Z'/%3E%3Cpath transform='translate(0 0)' d='M297 196V112H291V104H297V90L304 60L311 90V104H317V112H311V196Z'/%3E%3Cpath transform='translate(596 0)' d='M297 196V112H291V104H297V90L304 60L311 90V104H317V112H311V196Z'/%3E%3Cpath transform='translate(780 0)' d='M297 196V112H291V104H297V90L304 60L311 90V104H317V112H311V196Z'/%3E%3Cpath d='M0 196V180H40V196Z'/%3E%3Cpath d='M1160 196V180H1200V196Z'/%3E%3C/g%3E%3C/svg%3E");background-repeat:repeat-x;background-position:center bottom;background-size:auto 100%;opacity:.34;
+  -webkit-mask-image:linear-gradient(to top,black 40%,transparent);mask-image:linear-gradient(to top,black 40%,transparent);}
+select option{background:#0A2A20;color:var(--sand);}
+/* glass panels — shapes unchanged */
+.card,.box-card,.word-row,.stat-box,.reserve-ctl,.apply-text-wrap,.preview-field,.sentence-row,.apply-mode-btn{-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  box-shadow:0 8px 30px rgba(0,0,0,0.32),inset 0 1px 0 rgba(255,255,255,0.07);}
+.card{background:linear-gradient(160deg,rgba(20,72,58,0.62),rgba(9,38,30,0.6));}
+.box-card:not(.queue-box){background:linear-gradient(160deg,rgba(30,104,84,0.5),rgba(10,44,35,0.55))!important;border-color:rgba(240,212,138,0.3)!important;}
+.box-card:not(.queue-box):hover{border-color:rgba(240,212,138,0.6)!important;box-shadow:0 8px 30px rgba(0,0,0,0.35),0 0 20px rgba(230,195,110,0.15),inset 0 1px 0 rgba(255,255,255,0.1);}
+.box-card.queue-box{box-shadow:none;background:rgba(255,255,255,0.02);}
+.btn1:disabled{background:rgba(255,255,255,0.05);color:var(--muted);border:1px solid var(--border);opacity:1;box-shadow:none;}
+.modal{background:linear-gradient(165deg,#10402F,#08241B);border-color:rgba(240,212,138,0.3);box-shadow:0 24px 70px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,0.08);}
+.toast{background:#0B2D22;box-shadow:0 6px 26px rgba(0,0,0,.5);}
+.flip-face{background:linear-gradient(160deg,#0F3F31,#082219);border-color:rgba(240,212,138,0.28);box-shadow:0 10px 36px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,0.07);}
+.flip-back{background:linear-gradient(150deg,#13503D,#0A2A20);border-color:rgba(240,212,138,0.4);}
+.w-tooltip{background:#0B2D22;}
+/* glow + gold */
+.btn1{background:linear-gradient(135deg,#B98A2E,#F0D48A);color:#06251B;box-shadow:0 4px 22px rgba(230,195,110,0.28);}
+.btn1[style*="--red"]{color:#fff;}
+.btn2{border-color:rgba(230,195,110,0.45);}
+.box-count,.queue-count{text-shadow:0 0 16px rgba(230,195,110,0.35);}
+.brand-ar{text-shadow:0 0 18px rgba(230,195,110,0.35);}
+.ar{text-shadow:0 0 14px rgba(230,195,110,0.16);}
+.nav-btn.active,.dialect-pill.active{box-shadow:0 0 14px rgba(230,195,110,0.14);}
+.prog-fill{background:linear-gradient(90deg,#B98A2E,#F0D48A);}
+.ornament{color:rgba(230,195,110,0.55);text-shadow:0 0 12px rgba(230,195,110,0.3);}
+/* lanterns (fanous) hanging from the session card */
+.hero-wrap{position:relative;}
+.lantern{position:absolute;top:0;transform-origin:50% 0;animation:sway 5s ease-in-out infinite;filter:drop-shadow(0 0 9px rgba(255,214,120,0.55));z-index:2;pointer-events:none;}
+.lantern.l-a{right:26px;width:30px;}
+.lantern.l-b{right:72px;width:24px;animation-delay:-2s;}
+@keyframes sway{0%,100%{transform:rotate(-3deg);}50%{transform:rotate(3deg);}}
+@media(prefers-reduced-motion:reduce){.lantern{animation:none;}}
 </style>
 </head>
 <body>
 <div class="atmo"></div>
+<div class="skyline"></div>
 <div class="toast" id="toast"></div>
 <div id="sync-indicator" style="position:fixed;bottom:18px;right:18px;z-index:150;font-size:10px;color:var(--muted);letter-spacing:.06em;opacity:0;transition:opacity .4s;pointer-events:none"></div>
 <div id="modal-root"></div>
@@ -189,18 +236,18 @@ const WORD_TYPES=["Noun","Verb","Adjective","Adverb","Phrase","Preposition","Con
 const DIALECTS=["Universal","MSA","Darija","Shaami","Egyptian","Iraqi","Gulf","Other"];
 const DAY_NAMES=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const BOXES=[
-  {id:"l1q",label:"L1 Queue",color:"#C04848",isQueue:true,main:1},
-  {id:"l1",label:"Level 1",color:"#C04848",isQueue:false,main:1},
-  {id:"l2a",label:"L2A",color:"#C4602A",isQueue:false,main:2},
-  {id:"l2b",label:"L2B",color:"#C4602A",isQueue:false,main:2},
-  {id:"l3q",label:"L3 Queue",color:"#C49E3C",isQueue:true,main:3},
-  {id:"l3",label:"Level 3",color:"#C49E3C",isQueue:false,main:3},
-  {id:"l4q",label:"L4 Queue",color:"#3A7BC8",isQueue:true,main:4},
-  {id:"l4",label:"Level 4",color:"#3A7BC8",isQueue:false,main:4},
-  {id:"l5a",label:"L5A",color:"#9B59B6",isQueue:false,main:5},
-  {id:"l5b",label:"L5B",color:"#9B59B6",isQueue:false,main:5},
-  {id:"mastered",label:"Mastered",color:"#3A9864",isQueue:false,main:6},
-  {id:"reserve",label:"Reserves",color:"#6E7F8D",isQueue:false,main:7},
+  {id:"l1q",label:"L1 Queue",color:"#D9B45E",isQueue:true,main:1},
+  {id:"l1",label:"Level 1",color:"#D9B45E",isQueue:false,main:1},
+  {id:"l2a",label:"L2A",color:"#D9B45E",isQueue:false,main:2},
+  {id:"l2b",label:"L2B",color:"#D9B45E",isQueue:false,main:2},
+  {id:"l3q",label:"L3 Queue",color:"#D9B45E",isQueue:true,main:3},
+  {id:"l3",label:"Level 3",color:"#D9B45E",isQueue:false,main:3},
+  {id:"l4q",label:"L4 Queue",color:"#D9B45E",isQueue:true,main:4},
+  {id:"l4",label:"Level 4",color:"#D9B45E",isQueue:false,main:4},
+  {id:"l5a",label:"L5A",color:"#D9B45E",isQueue:false,main:5},
+  {id:"l5b",label:"L5B",color:"#D9B45E",isQueue:false,main:5},
+  {id:"mastered",label:"Mastered",color:"#F0D48A",isQueue:false,main:6},
+  {id:"reserve",label:"Reserves",color:"#8DB5A5",isQueue:false,main:7},
 ];
 const DAY_LEVELS={
   0:["l5b","l4","l3","l2b","l1"],1:["l2b","l1"],2:["l2b","l1"],
@@ -344,6 +391,7 @@ function render(){
 // HOME
 // ═══════════════════════════════════════════════════════════
 let _dialectFilter="All";
+function lanternHtml(){return`<svg class="lantern l-a" viewBox="0 0 40 100" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6DC96"/><stop offset="1" stop-color="#B98A2E"/></linearGradient></defs><line x1="20" y1="0" x2="20" y2="20" stroke="#E6C36E" stroke-opacity=".7"/><path d="M13 20h14l-3 6H16z" fill="#C9973A"/><path d="M12 26h16l4 22-4 24H12L8 48z" fill="url(#lg)" stroke="#F0D48A" stroke-width="1"/><path d="M16 28v42M24 28v42" stroke="#6B4A14" stroke-opacity=".55" stroke-width=".9"/><ellipse cx="20" cy="49" rx="4.2" ry="10" fill="#FFF0BE" opacity=".9"/><path d="M14 72h12l-3 7h-6z" fill="#C9973A"/><circle cx="20" cy="84" r="2.2" fill="#E6C36E"/></svg><svg class="lantern l-b" viewBox="0 0 40 100" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6DC96"/><stop offset="1" stop-color="#B98A2E"/></linearGradient></defs><line x1="20" y1="0" x2="20" y2="20" stroke="#E6C36E" stroke-opacity=".7"/><path d="M13 20h14l-3 6H16z" fill="#C9973A"/><path d="M12 26h16l4 22-4 24H12L8 48z" fill="url(#lg)" stroke="#F0D48A" stroke-width="1"/><path d="M16 28v42M24 28v42" stroke="#6B4A14" stroke-opacity=".55" stroke-width=".9"/><ellipse cx="20" cy="49" rx="4.2" ry="10" fill="#FFF0BE" opacity=".9"/><path d="M14 72h12l-3 7h-6z" fill="#C9973A"/><circle cx="20" cy="84" r="2.2" fill="#E6C36E"/></svg>`;}
 function renderHome(){
   const boxes=getBoxes();const words=getWords();const dow=todayDow();const sess=getSession();
   const pills=["All",...DIALECTS].map(d=>`<button class="dialect-pill${_dialectFilter===d?" active":""}" onclick="_dialectFilter='${d}';setView('home')">${d}</button>`).join("");
@@ -382,8 +430,8 @@ function renderHome(){
     </div>`;
   }
   const masteredCount=(getBoxes().mastered||[]).length;
-  const masteredBtn=masteredCount>0?`<button class="btn3" style="flex:1;border-color:rgba(58,152,100,0.3);color:var(--lm)" onclick="openMasteredModal()">★ Mastered Review</button>`:"";
-  return`${ctaHtml}${sHead("Vocabulary Boxes")}
+  const masteredBtn=masteredCount>0?`<button class="btn3" style="flex:1;border-color:rgba(95,211,160,0.3);color:var(--lm)" onclick="openMasteredModal()">★ Mastered Review</button>`:"";
+  return`<div class="hero-wrap">${lanternHtml()}${ctaHtml}</div>${sHead("Vocabulary Boxes")}
     <div class="dialect-pills">${pills}</div>
     ${renderBoxGrid()}
     <div style="display:flex;gap:9px;margin-top:14px">
@@ -542,12 +590,12 @@ function renderSessionModal(){
     <div style="display:flex;gap:0;border:1px solid var(--border);border-radius:9px;overflow:hidden">
       <button onclick="_sessionModalCtx.cardDirection='ar-en';renderSessionModal()"
         style="flex:1;padding:9px 8px;border:none;cursor:pointer;font-size:12px;letter-spacing:.04em;transition:all .2s;font-family:inherit;
-          ${arEn?"background:rgba(196,158,60,0.12);color:var(--goldL);font-weight:600":"background:transparent;color:var(--muted)"}">
+          ${arEn?"background:rgba(217,180,94,0.12);color:var(--goldL);font-weight:600":"background:transparent;color:var(--muted)"}">
         Arabic → English
       </button>
       <button onclick="_sessionModalCtx.cardDirection='en-ar';renderSessionModal()"
         style="flex:1;padding:9px 8px;border:none;border-left:1px solid var(--border);cursor:pointer;font-size:12px;letter-spacing:.04em;transition:all .2s;font-family:inherit;
-          ${!arEn?"background:rgba(196,158,60,0.12);color:var(--goldL);font-weight:600":"background:transparent;color:var(--muted)"}">
+          ${!arEn?"background:rgba(217,180,94,0.12);color:var(--goldL);font-weight:600":"background:transparent;color:var(--muted)"}">
         English → Arabic
       </button>
     </div>
@@ -641,8 +689,8 @@ function renderReview(){
   </div>
   <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">
     <span class="badge" style="background:rgba(${rg},0.12);color:${c}">${def.label}</span>
-    <span class="badge" style="background:rgba(0,0,0,0.04);color:var(--muted)">${word.dialect||""}</span>
-    <span class="badge" style="background:rgba(0,0,0,0.04);color:var(--muted)">${word.wordType||""}</span>
+    <span class="badge" style="background:rgba(255,255,255,0.072);color:var(--muted)">${word.dialect||""}</span>
+    <span class="badge" style="background:rgba(255,255,255,0.072);color:var(--muted)">${word.wordType||""}</span>
   </div>
   <div class="flip-wrap" onclick="if(!${sess.flipped})doFlip()">
     <div class="flip-inner${sess.flipped?" flipped":""}">
@@ -656,8 +704,8 @@ function renderReview(){
     </div>
   </div>
   ${sess.flipped?`<div class="rating-grid">
-    <button class="rate-btn" style="background:rgba(42,122,74,0.1);border-color:var(--green);color:var(--green)" onclick="rateWord('correct')">✓ Got it <span style="font-size:10px;opacity:.5;font-weight:400">[J]</span></button>
-    <button class="rate-btn" style="background:rgba(176,48,48,0.1);border-color:var(--red);color:var(--red)" onclick="rateWord('incorrect')">✗ Missed <span style="font-size:10px;opacity:.5;font-weight:400">[K]</span></button>
+    <button class="rate-btn" style="background:rgba(95,211,160,0.1);border-color:var(--green);color:var(--green)" onclick="rateWord('correct')">✓ Got it <span style="font-size:10px;opacity:.5;font-weight:400">[J]</span></button>
+    <button class="rate-btn" style="background:rgba(240,122,122,0.1);border-color:var(--red);color:var(--red)" onclick="rateWord('incorrect')">✗ Missed <span style="font-size:10px;opacity:.5;font-weight:400">[K]</span></button>
   </div>`:`<button class="btn1" style="width:100%;justify-content:center;font-size:15px;padding:15px" onclick="doFlip()">Reveal Answer</button>`}
   ${!sess.flipped&&_undoState?`<div style="text-align:center;margin-top:10px"><button onclick="undoLastCard()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit;letter-spacing:.04em;text-decoration:underline;text-underline-offset:2px;">↩ Undo last card</button></div>`:""}`;
 }
@@ -804,7 +852,7 @@ function renderSummary(){
       <span style="font-size:12px;color:var(--muted)">${d.correct}/${d.total} <span style="color:var(--sand);margin-left:4px">${a}%</span></span>
     </div>`;
   }).join("");
-  const l1Tip=l1Diff>0?`<div style="background:rgba(196,158,60,0.07);border:1px solid rgba(196,158,60,0.22);border-radius:11px;padding:16px;margin-top:16px">
+  const l1Tip=l1Diff>0?`<div style="background:rgba(217,180,94,0.07);border:1px solid rgba(217,180,94,0.22);border-radius:11px;padding:16px;margin-top:16px">
     <div style="font-size:12px;color:var(--gold);font-weight:700;margin-bottom:5px">📝 Word Target</div>
     <div style="font-size:12px;color:var(--muted)">L1 has <span style="color:var(--sand)">${l1Count}</span> words. Target is <span style="color:var(--goldL)">${l1Target}</span>. Consider adding <strong>${l1Diff}</strong> new word${l1Diff!==1?"s":""} today.</div>
     <button class="btn2" style="margin-top:10px;font-size:12px;padding:8px 14px" onclick="setView('add')">+ Add Words</button>
@@ -888,13 +936,13 @@ function renderBoxes(){
             <div style="font-size:10px;color:var(--muted);margin-top:3px">${w.dialect} · ${w.wordType}</div>
           </div>
           <select onchange="moveWordBox('${w.id}','${boxId}',this.value)"
-            style="font-size:11px;border:1px solid ${boxId==="orphan"?"rgba(176,48,48,0.35)":"var(--border)"};border-radius:7px;
-              padding:4px 7px;background:${boxId==="orphan"?"rgba(176,48,48,0.05)":"var(--card2)"};
+            style="font-size:11px;border:1px solid ${boxId==="orphan"?"rgba(240,122,122,0.35)":"var(--border)"};border-radius:7px;
+              padding:4px 7px;background:${boxId==="orphan"?"rgba(240,122,122,0.05)":"var(--card2)"};
               color:${def.color};cursor:pointer;font-family:inherit;flex-shrink:0;outline:none">
             ${boxId==="orphan"?`<option value="" disabled selected style="color:var(--muted)">⚠ not in a box</option>`:""}
             ${boxOpts.replace(`value="${selectVal}"`,`value="${selectVal}" selected`)}
           </select>
-          <button onclick="deleteWordFull('${w.id}')" style="background:none;border:none;cursor:pointer;color:rgba(176,48,48,0.3);font-size:20px;padding:3px 5px;line-height:1;transition:color .2s;flex-shrink:0" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='rgba(176,48,48,0.3)'">×</button>
+          <button onclick="deleteWordFull('${w.id}')" style="background:none;border:none;cursor:pointer;color:rgba(240,122,122,0.3);font-size:20px;padding:3px 5px;line-height:1;transition:color .2s;flex-shrink:0" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='rgba(240,122,122,0.3)'">×</button>
         </div>`;
       }).join("");
     const orphanCount=matches.filter(w=>!wordBox[w.id]).length;
@@ -916,7 +964,7 @@ function renderBoxes(){
         <div style="flex:1;min-width:0"><div style="font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${w.english}</div>
           <div style="font-size:10px;color:var(--muted);margin-top:3px">${w.dialect} · ${w.wordType}</div></div>
         ${isRes?`<button class="reserve-star${w.priority?" on":""}" title="Fill first" onclick="toggleReserveStar('${id}')">${w.priority?"★":"☆"}</button>`:""}
-        <button onclick="deleteWordFull('${id}')" style="background:none;border:none;cursor:pointer;color:rgba(176,48,48,0.3);font-size:20px;padding:3px 7px;line-height:1;transition:color .2s" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='rgba(176,48,48,0.3)'">×</button>
+        <button onclick="deleteWordFull('${id}')" style="background:none;border:none;cursor:pointer;color:rgba(240,122,122,0.3);font-size:20px;padding:3px 7px;line-height:1;transition:color .2s" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='rgba(240,122,122,0.3)'">×</button>
       </div>`;}).join("");
   return`${searchBar}<div class="tab-strip">${tabs}</div>
     <div style="margin-bottom:18px"><div style="font-size:20px;font-weight:700;color:${def.color}">${def.label}</div>
@@ -983,7 +1031,7 @@ function renderManualAdd(){
       <select id="f-box" class="inp" style="cursor:pointer;font-size:13px;padding:10px 12px" onchange="document.getElementById('f-star-wrap').style.display=this.value==='reserve'?'block':'none'">${BOXES.map(b=>`<option value="${b.id}"${b.id==="l1"?" selected":""}>${b.label}</option>`).join("")}</select>
       <div style="font-size:10px;color:var(--muted2);margin-top:5px">Defaults to Level 1. Use to migrate words from other systems.</div>
       <label id="f-star-wrap" style="display:none;margin-top:10px;font-size:12px;color:var(--muted);cursor:pointer"><input type="checkbox" id="f-star" style="margin-right:7px"/>★ Fill first (priority in Reserves)</label>
-    </div>`:`<div style="background:rgba(196,158,60,0.07);border:1px solid rgba(196,158,60,0.2);border-radius:9px;padding:11px 14px;margin-bottom:18px;font-size:12px;color:var(--muted)">Session in progress — new words go to the appropriate queue box.</div>`}
+    </div>`:`<div style="background:rgba(217,180,94,0.07);border:1px solid rgba(217,180,94,0.2);border-radius:9px;padding:11px 14px;margin-bottom:18px;font-size:12px;color:var(--muted)">Session in progress — new words go to the appropriate queue box.</div>`}
     <div style="display:flex;gap:10px;flex-wrap:wrap">
       <button class="btn1" onclick="submitManual(false)">Save Word</button>
       <button class="btn2" onclick="submitManual(true)">Save &amp; Add Another</button>
@@ -1022,10 +1070,10 @@ function renderQuickAdd(){
   const boxOptions=BOXES.map(b=>`<option value="${b.id}"${b.id===s.targetBox?" selected":""}>${b.label}</option>`).join("");
   return`<div class="card">
     <div style="display:flex;gap:8px;margin-bottom:20px">
-      <button onclick="_qaState.mode='english';_qaState.preview=null;render()" style="flex:1;padding:10px;border-radius:9px;border:1.5px solid ${s.mode==='english'?'rgba(196,158,60,0.6)':'var(--border)'};background:${s.mode==='english'?'rgba(196,158,60,0.1)':'transparent'};cursor:pointer;font-size:12px;color:${s.mode==='english'?'var(--goldL)':'var(--muted)'};font-weight:${s.mode==='english'?'700':'400'};transition:all .2s">
+      <button onclick="_qaState.mode='english';_qaState.preview=null;render()" style="flex:1;padding:10px;border-radius:9px;border:1.5px solid ${s.mode==='english'?'rgba(217,180,94,0.6)':'var(--border)'};background:${s.mode==='english'?'rgba(217,180,94,0.1)':'transparent'};cursor:pointer;font-size:12px;color:${s.mode==='english'?'var(--goldL)':'var(--muted)'};font-weight:${s.mode==='english'?'700':'400'};transition:all .2s">
         🇬🇧 English → Arabic
       </button>
-      <button onclick="_qaState.mode='arabic';_qaState.preview=null;render()" style="flex:1;padding:10px;border-radius:9px;border:1.5px solid ${s.mode==='arabic'?'rgba(196,158,60,0.6)':'var(--border)'};background:${s.mode==='arabic'?'rgba(196,158,60,0.1)':'transparent'};cursor:pointer;font-size:12px;color:${s.mode==='arabic'?'var(--goldL)':'var(--muted)'};font-weight:${s.mode==='arabic'?'700':'400'};transition:all .2s">
+      <button onclick="_qaState.mode='arabic';_qaState.preview=null;render()" style="flex:1;padding:10px;border-radius:9px;border:1.5px solid ${s.mode==='arabic'?'rgba(217,180,94,0.6)':'var(--border)'};background:${s.mode==='arabic'?'rgba(217,180,94,0.1)':'transparent'};cursor:pointer;font-size:12px;color:${s.mode==='arabic'?'var(--goldL)':'var(--muted)'};font-weight:${s.mode==='arabic'?'700':'400'};transition:all .2s">
         🔤 Arabic → Full Card
       </button>
     </div>
@@ -1060,11 +1108,11 @@ function renderQuickAdd(){
       <select id="qa-box" class="inp" style="cursor:pointer;font-size:13px;padding:10px 12px" onchange="_qaState.targetBox=this.value">
         ${boxOptions}
       </select>
-    </div>`:`<div style="background:rgba(196,158,60,0.07);border:1px solid rgba(196,158,60,0.2);border-radius:9px;padding:10px 14px;margin-bottom:18px;font-size:12px;color:var(--muted)">Session in progress — new words go to the appropriate queue box.</div>`}
+    </div>`:`<div style="background:rgba(217,180,94,0.07);border:1px solid rgba(217,180,94,0.2);border-radius:9px;padding:10px 14px;margin-bottom:18px;font-size:12px;color:var(--muted)">Session in progress — new words go to the appropriate queue box.</div>`}
     <button class="btn1" onclick="${s.mode==='arabic'?'generateFromArabic':'generateQuickAdd'}()" ${s.loading?"disabled":""} style="margin-bottom:20px">
       ${s.loading?`<span class="spinner"></span> Generating…`:"✦ Generate Card"}
     </button>
-    ${s.error?`<div style="color:var(--red);font-size:12px;margin-bottom:16px;padding:10px 14px;background:rgba(176,48,48,0.06);border-radius:8px">${s.error}</div>`:""}
+    ${s.error?`<div style="color:var(--red);font-size:12px;margin-bottom:16px;padding:10px 14px;background:rgba(240,122,122,0.06);border-radius:8px">${s.error}</div>`:""}
     ${s.preview?renderQAPreview(s.preview):""}
   </div>`;
 }
@@ -1076,14 +1124,14 @@ function renderQAPreview(p){
     if(!val)return;
     extraHtml+=`<div style="margin-bottom:10px">
       <div style="font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">${label}</div>
-      <div class="ar" id="qa-ef-${i}" contenteditable="true" style="font-size:19px;outline:none;border-bottom:1px dashed rgba(154,122,26,0.3);padding-bottom:3px;min-height:28px">${val}</div>
+      <div class="ar" id="qa-ef-${i}" contenteditable="true" style="font-size:19px;outline:none;border-bottom:1px dashed rgba(217,180,94,0.3);padding-bottom:3px;min-height:28px">${val}</div>
     </div>`;
   });
   return`<div style="border-top:1px solid var(--border);padding-top:20px">
     ${sHead("Preview — edit before saving")}
     <div class="preview-field">
       <div class="preview-label">Arabic (main form)</div>
-      <div class="preview-ar" id="qa-ar" contenteditable="true" style="outline:none;border-bottom:1px dashed rgba(154,122,26,0.3);padding-bottom:4px">${p.arabic}</div>
+      <div class="preview-ar" id="qa-ar" contenteditable="true" style="outline:none;border-bottom:1px dashed rgba(217,180,94,0.3);padding-bottom:4px">${p.arabic}</div>
     </div>
     <div class="preview-field">
       <div class="preview-label">English</div>
@@ -1228,7 +1276,7 @@ function renderBulkResults(results){
   const saveable=results.filter(r=>!r.error&&!r.removed).length;
   const rows=results.map((r,i)=>{
     if(r.error)return`<div class="bulk-result err"><span>✗</span><span>"${r.input}" — ${r.error}</span></div>`;
-    if(r.removed)return`<div class="bulk-result" style="opacity:.4;text-decoration:line-through;background:rgba(0,0,0,0.02);border:1px solid var(--border);border-radius:8px;margin-bottom:5px;padding:8px 12px;display:flex;align-items:center;gap:10px">
+    if(r.removed)return`<div class="bulk-result" style="opacity:.4;text-decoration:line-through;background:rgba(255,255,255,0.036);border:1px solid var(--border);border-radius:8px;margin-bottom:5px;padding:8px 12px;display:flex;align-items:center;gap:10px">
       <span class="ar" style="font-size:15px;color:var(--muted);flex:1">${r.word.arabic}</span>
       <span style="font-size:11px;color:var(--muted)">removed</span>
       <button onclick="restoreBulkWord(${i})" style="background:none;border:1px solid var(--border);border-radius:6px;cursor:pointer;color:var(--muted);font-size:11px;padding:3px 9px;font-family:inherit;transition:all .2s">undo</button>
@@ -1240,24 +1288,24 @@ function renderBulkResults(results){
         <span style="font-size:12px;color:var(--muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.word.english} · ${r.word.dialect}</span>
         <span style="font-size:11px;color:var(--muted2);flex-shrink:0;margin-right:4px">${r.expanded?"▲":"▼"}</span>
         <button onclick="event.stopPropagation();removeBulkWord(${i})" title="Remove"
-          style="background:none;border:none;cursor:pointer;color:rgba(176,48,48,0.35);font-size:20px;padding:2px 5px;line-height:1;flex-shrink:0;transition:color .2s"
-          onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='rgba(176,48,48,0.35)'">×</button>
+          style="background:none;border:none;cursor:pointer;color:rgba(240,122,122,0.35);font-size:20px;padding:2px 5px;line-height:1;flex-shrink:0;transition:color .2s"
+          onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='rgba(240,122,122,0.35)'">×</button>
       </div>
-      ${r.expanded?`<div style="border-top:1px solid var(--border);padding:14px 14px 12px;background:rgba(196,158,60,0.03)">
+      ${r.expanded?`<div style="border-top:1px solid var(--border);padding:14px 14px 12px;background:rgba(217,180,94,0.03)">
         <div style="margin-bottom:11px">
           <div class="lbl">Arabic (main form)</div>
           <div class="ar" id="bedit-ar-${i}" contenteditable="true"
-            style="font-size:26px;outline:none;border-bottom:1px dashed rgba(154,122,26,0.3);padding-bottom:4px;min-height:36px">${r.word.arabic}</div>
+            style="font-size:26px;outline:none;border-bottom:1px dashed rgba(217,180,94,0.3);padding-bottom:4px;min-height:36px">${r.word.arabic}</div>
         </div>
         <div style="margin-bottom:11px">
           <div class="lbl">English</div>
           <div id="bedit-en-${i}" contenteditable="true"
-            style="font-size:14px;outline:none;border-bottom:1px dashed rgba(0,0,0,0.12);padding-bottom:4px;min-height:22px">${r.word.english}</div>
+            style="font-size:14px;outline:none;border-bottom:1px dashed rgba(255,255,255,0.22);padding-bottom:4px;min-height:22px">${r.word.english}</div>
         </div>
         ${Object.entries(r.word.forms||{}).map(([lbl,val],fi)=>`<div style="margin-bottom:9px">
           <div class="lbl">${lbl}</div>
           <div class="ar" id="bedit-form-${i}-${fi}" contenteditable="true"
-            style="font-size:19px;outline:none;border-bottom:1px dashed rgba(154,122,26,0.2);padding-bottom:2px;min-height:28px">${val}</div>
+            style="font-size:19px;outline:none;border-bottom:1px dashed rgba(217,180,94,0.2);padding-bottom:2px;min-height:28px">${val}</div>
         </div>`).join("")}
         ${r.word.example?`<div style="margin-bottom:9px">
           <div class="lbl">Example</div>
@@ -1366,9 +1414,9 @@ function renderStats(){
       <span style="font-size:12px;color:var(--muted)">${d.correct}/${d.total} <span style="color:var(--sand);margin-left:6px">${a}%</span></span>
     </div>`;}).join("")||`<div style="color:var(--muted);font-size:13px">No data yet.</div>`;
   const tabs=["week","month","lifetime"].map(w=>`<button class="tab-btn" onclick="_statsWindow='${w}';setView('stats')"
-    style="${_statsWindow===w?"background:rgba(196,158,60,0.12);border-color:var(--gold);color:var(--goldL)":""}">${w.charAt(0).toUpperCase()+w.slice(1)}</button>`).join("");
+    style="${_statsWindow===w?"background:rgba(217,180,94,0.12);border-color:var(--gold);color:var(--goldL)":""}">${w.charAt(0).toUpperCase()+w.slice(1)}</button>`).join("");
   const boxes=getBoxes();
-  const bc=BOXES.map(b=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.04)">
+  const bc=BOXES.map(b=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.072)">
     <span style="color:${b.color};font-size:12px">${b.label}</span><span style="color:var(--sand);font-size:12px">${(boxes[b.id]||[]).length}</span>
   </div>`).join("");
   return`${sHead("Statistics")}<div class="tab-strip">${tabs}</div>
@@ -1562,15 +1610,15 @@ function renderApply(){
 
   // Low mastered warning
   const warningHtml=!hasMastered
-    ?`<div style="background:rgba(176,48,48,0.07);border:1px solid rgba(176,48,48,0.2);border-radius:11px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:var(--muted)">
+    ?`<div style="background:rgba(240,122,122,0.07);border:1px solid rgba(240,122,122,0.2);border-radius:11px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:var(--muted)">
         You don't have any words yet. Add words first.
       </div>`
     :usingFallback
-    ?`<div style="background:rgba(196,158,60,0.07);border:1px solid rgba(196,158,60,0.25);border-radius:11px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--muted)">
+    ?`<div style="background:rgba(217,180,94,0.07);border:1px solid rgba(217,180,94,0.25);border-radius:11px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--muted)">
         No mastered words yet — using all ${allWords.length} words in your system as the word bank. Keep reviewing to move words up to Mastered.
       </div>`
     :masteredWords.length<8
-    ?`<div style="background:rgba(196,158,60,0.07);border:1px solid rgba(196,158,60,0.25);border-radius:11px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--muted)">
+    ?`<div style="background:rgba(217,180,94,0.07);border:1px solid rgba(217,180,94,0.25);border-radius:11px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--muted)">
         You have ${masteredWords.length} mastered word${masteredWords.length!==1?"s":""}. The AI will fill in extra vocabulary as needed.
       </div>`
     :"";
@@ -1591,7 +1639,7 @@ function renderApply(){
     ${s.loading?`<span class="spinner"></span> Generating…`:`✦ Generate ${s.mode==="reading"?"Passage":"Sentences"}`}
   </button>`;
 
-  const errorHtml=s.error?`<div style="color:var(--red);font-size:12px;margin-bottom:16px;padding:10px 14px;background:rgba(176,48,48,0.06);border-radius:8px">${s.error}</div>`:"";
+  const errorHtml=s.error?`<div style="color:var(--red);font-size:12px;margin-bottom:16px;padding:10px 14px;background:rgba(240,122,122,0.06);border-radius:8px">${s.error}</div>`:"";
 
   const resultHtml=s.result?renderApplyResult(s.result):"";
 
@@ -1611,7 +1659,7 @@ function renderApplyResult(result){
   // Grammar mode: list of sentences
   if(_applyState.mode==="grammar"){
     const explanation=result.explanation
-      ?`<div style="background:rgba(154,122,26,0.07);border:1px solid rgba(154,122,26,0.2);border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:var(--sand);line-height:1.7">${result.explanation}</div>`
+      ?`<div style="background:rgba(217,180,94,0.07);border:1px solid rgba(217,180,94,0.2);border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:var(--sand);line-height:1.7">${result.explanation}</div>`
       :"";
     const rows=result.sentences.map((s,i)=>renderSentenceRow(s,i)).join("");
     return`<div>${explanation}${rows}
@@ -1650,13 +1698,13 @@ function showWordPopup(elId,meaning,encodedToken){
   const token=decodeURIComponent(encodedToken);
   const popup=document.createElement("div");
   popup.className="w-popup";
-  popup.style.cssText=`position:fixed;z-index:300;background:var(--card);border:1px solid rgba(42,94,168,0.3);border-radius:12px;padding:14px 16px;min-width:200px;max-width:260px;box-shadow:0 8px 32px rgba(0,0,0,.15);text-align:center;`;
+  popup.style.cssText=`position:fixed;z-index:300;background:var(--card);border:1px solid rgba(127,214,200,0.3);border-radius:12px;padding:14px 16px;min-width:200px;max-width:260px;box-shadow:0 8px 32px rgba(0,0,0,.15);text-align:center;`;
   popup.innerHTML=`
     <div style="font-family:'Amiri',serif;font-size:22px;color:var(--goldL);direction:rtl;margin-bottom:4px">${token}</div>
     <div style="font-size:14px;color:var(--sand);margin-bottom:12px;font-family:'Cormorant Garamond',serif">${meaning}</div>
     <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap">
-      <button onclick="addWordFromApply('${encodeURIComponent(token)}','${meaning.replace(/'/g,"&#39;")}','mastered')" style="font-size:11px;padding:5px 10px;border-radius:7px;border:1px solid var(--green);color:var(--green);background:rgba(42,122,74,0.08);cursor:pointer;font-family:inherit">✓ Add to Mastered</button>
-      <button onclick="addWordFromApply('${encodeURIComponent(token)}','${meaning.replace(/'/g,"&#39;")}','l1q')" style="font-size:11px;padding:5px 10px;border-radius:7px;border:1px solid var(--blue);color:var(--blue);background:rgba(42,94,168,0.08);cursor:pointer;font-family:inherit">+ Add to L1 Queue</button>
+      <button onclick="addWordFromApply('${encodeURIComponent(token)}','${meaning.replace(/'/g,"&#39;")}','mastered')" style="font-size:11px;padding:5px 10px;border-radius:7px;border:1px solid var(--green);color:var(--green);background:rgba(95,211,160,0.08);cursor:pointer;font-family:inherit">✓ Add to Mastered</button>
+      <button onclick="addWordFromApply('${encodeURIComponent(token)}','${meaning.replace(/'/g,"&#39;")}','l1q')" style="font-size:11px;padding:5px 10px;border-radius:7px;border:1px solid var(--blue);color:var(--blue);background:rgba(127,214,200,0.08);cursor:pointer;font-family:inherit">+ Add to L1 Queue</button>
     </div>
     <div style="font-size:10px;color:var(--muted2);margin-top:8px">or tap elsewhere to close</div>`;
   // Position near trigger
@@ -2014,7 +2062,7 @@ function openMasteredModal(){
     const active=_masteredModalCount===c;
     return`<button onclick="_masteredModalCount=${c};openMasteredModal()"
       style="flex:1;padding:10px;border-radius:8px;border:1.5px solid ${active?"var(--gold)":"var(--border)"};
-        background:${active?"rgba(196,158,60,0.1)":"transparent"};cursor:pointer;font-size:13px;
+        background:${active?"rgba(217,180,94,0.1)":"transparent"};cursor:pointer;font-size:13px;
         font-weight:${active?"700":"400"};color:${active?"var(--goldL)":"var(--muted)"};
         font-family:inherit;transition:all .2s">${c===total?"All "+total:c}</button>`;
   }).join("");
@@ -2031,16 +2079,16 @@ function openMasteredModal(){
           <div style="display:flex;gap:0;border:1px solid var(--border);border-radius:9px;overflow:hidden">
             <button onclick="_masteredModalDir='ar-en';openMasteredModal()"
               style="flex:1;padding:9px 8px;border:none;cursor:pointer;font-size:12px;letter-spacing:.04em;transition:all .2s;font-family:inherit;
-                ${_masteredModalDir==="ar-en"?"background:rgba(196,158,60,0.12);color:var(--goldL);font-weight:600":"background:transparent;color:var(--muted)"}">
+                ${_masteredModalDir==="ar-en"?"background:rgba(217,180,94,0.12);color:var(--goldL);font-weight:600":"background:transparent;color:var(--muted)"}">
               Arabic → English</button>
             <button onclick="_masteredModalDir='en-ar';openMasteredModal()"
               style="flex:1;padding:9px 8px;border:none;border-left:1px solid var(--border);cursor:pointer;font-size:12px;letter-spacing:.04em;transition:all .2s;font-family:inherit;
-                ${_masteredModalDir==="en-ar"?"background:rgba(196,158,60,0.12);color:var(--goldL);font-weight:600":"background:transparent;color:var(--muted)"}">
+                ${_masteredModalDir==="en-ar"?"background:rgba(217,180,94,0.12);color:var(--goldL);font-weight:600":"background:transparent;color:var(--muted)"}">
               English → Arabic</button>
           </div>
           <div style="font-size:10px;color:var(--muted2);margin-top:6px">${_masteredModalDir==="ar-en"?"See Arabic, recall English meaning":"See English, recall Arabic word &amp; forms"}</div>
         </div>
-        <div style="font-size:11px;color:var(--muted);background:rgba(196,158,60,0.05);border:1px solid rgba(196,158,60,0.15);border-radius:8px;padding:10px 12px;margin-top:16px;line-height:1.65">
+        <div style="font-size:11px;color:var(--muted);background:rgba(217,180,94,0.05);border:1px solid rgba(217,180,94,0.15);border-radius:8px;padding:10px 12px;margin-top:16px;line-height:1.65">
           Words earn <strong style="color:var(--goldL)">★ stars</strong> (1–5) as you get them right. Wrong answers lose a star. Two wrong answers in a row at 0 stars will drop the word back into L5B.
         </div>
         <div style="display:flex;gap:10px;margin-top:22px">
@@ -2087,7 +2135,7 @@ function renderMasteredReview(){
   const ws=stars[wordId];
   const starCount=ws?ws.stars:1;
   const starsHtml=Array.from({length:5},(_,i)=>
-    `<span style="font-size:17px;color:${i<starCount?"#F5C518":"rgba(0,0,0,0.15)"}">${i<starCount?"★":"☆"}</span>`
+    `<span style="font-size:17px;color:${i<starCount?"#F5C518":"rgba(255,255,255,0.25)"}">${i<starCount?"★":"☆"}</span>`
   ).join("");
   const pct=(queueIdx/queue.length)*100;
   const arEn=direction==="ar-en";
@@ -2119,9 +2167,9 @@ function renderMasteredReview(){
     <button class="end-btn" onclick="endMasteredSession()">■ End</button>
   </div>
   <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">
-    <span class="badge" style="background:rgba(58,152,100,0.12);color:var(--lm)">★ Mastered</span>
-    <span class="badge" style="background:rgba(0,0,0,0.04);color:var(--muted)">${word.dialect||""}</span>
-    <span class="badge" style="background:rgba(0,0,0,0.04);color:var(--muted)">${word.wordType||""}</span>
+    <span class="badge" style="background:rgba(95,211,160,0.12);color:var(--lm)">★ Mastered</span>
+    <span class="badge" style="background:rgba(255,255,255,0.072);color:var(--muted)">${word.dialect||""}</span>
+    <span class="badge" style="background:rgba(255,255,255,0.072);color:var(--muted)">${word.wordType||""}</span>
   </div>
   <div class="flip-wrap" onclick="if(!${flipped})doMasteredFlip()">
     <div class="flip-inner${flipped?" flipped":""}">
@@ -2132,8 +2180,8 @@ function renderMasteredReview(){
     </div>
   </div>
   ${flipped?`<div class="rating-grid">
-    <button class="rate-btn" style="background:rgba(42,122,74,0.1);border-color:var(--green);color:var(--green)" onclick="rateMasteredWord('correct')">✓ Got it <span style="font-size:10px;opacity:.5;font-weight:400">[J]</span></button>
-    <button class="rate-btn" style="background:rgba(176,48,48,0.1);border-color:var(--red);color:var(--red)" onclick="rateMasteredWord('incorrect')">✗ Missed <span style="font-size:10px;opacity:.5;font-weight:400">[K]</span></button>
+    <button class="rate-btn" style="background:rgba(95,211,160,0.1);border-color:var(--green);color:var(--green)" onclick="rateMasteredWord('correct')">✓ Got it <span style="font-size:10px;opacity:.5;font-weight:400">[J]</span></button>
+    <button class="rate-btn" style="background:rgba(240,122,122,0.1);border-color:var(--red);color:var(--red)" onclick="rateMasteredWord('incorrect')">✗ Missed <span style="font-size:10px;opacity:.5;font-weight:400">[K]</span></button>
   </div>`:`<button class="btn1" style="width:100%;justify-content:center;font-size:15px;padding:15px" onclick="doMasteredFlip()">Reveal Answer</button>`}
   <div style="text-align:center;margin-top:14px;font-size:11px;color:var(--muted)">★ Mastered Review — words don't move unless demoted</div>`;
 }
@@ -2184,7 +2232,7 @@ function renderMasteredSummary(){
     ${statCols.map(({v,l,c})=>`<div class="stat-box"><div style="font-size:26px;font-weight:700;color:${c}">${v}</div><div style="font-size:9px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.08em">${l}</div></div>`).join("")}
   </div>
   ${starsGained?`<div style="background:rgba(245,197,24,0.08);border:1px solid rgba(245,197,24,0.2);border-radius:10px;padding:14px 16px;margin-bottom:14px;font-size:13px;color:var(--goldL)">★ ${starsGained} word${starsGained!==1?"s":""} gained a star</div>`:""}
-  ${demotedCount?`<div style="background:rgba(176,48,48,0.07);border:1px solid rgba(176,48,48,0.2);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+  ${demotedCount?`<div style="background:rgba(240,122,122,0.07);border:1px solid rgba(240,122,122,0.2);border-radius:10px;padding:14px 16px;margin-bottom:14px">
     <div style="font-size:12px;color:var(--red);font-weight:700;margin-bottom:4px">⚠ ${demotedCount} word${demotedCount!==1?"s":""} demoted to L5B</div>
     <div style="font-size:12px;color:var(--muted)">They'll work their way back up through the regular SRS boxes.</div>
   </div>`:""}
