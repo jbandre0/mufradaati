@@ -78,6 +78,12 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0
 .box-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:14px;}
 .box-card{border-radius:13px;padding:14px 11px;cursor:pointer;transition:all .15s;text-align:center;border:1.5px solid var(--border);background:var(--card);}
 .box-card:hover{transform:translateY(-2px);}
+.reserve-panel{grid-column:3;grid-row:1 / span 6;display:flex;flex-direction:column;gap:9px;}
+.reserve-ctl{border:1.5px solid rgba(110,127,141,0.28);border-radius:13px;padding:14px 13px;background:rgba(110,127,141,0.04);}
+.reserve-ctl .inp{padding:8px 10px;font-size:14px;}
+.reserve-row{display:flex;gap:8px;align-items:center;}
+.reserve-star{background:none;border:none;cursor:pointer;font-size:19px;line-height:1;padding:3px 6px;color:rgba(0,0,0,0.18);transition:color .15s;}
+.reserve-star.on{color:var(--gold);}
 .box-card.queue-box{border-style:dashed;opacity:.7;padding:10px 9px;cursor:default;}
 .box-card.queue-box:hover{transform:none;}
 .box-label{font-size:9px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px;font-weight:700;}
@@ -115,7 +121,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0
 .bulk-result{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;margin-bottom:5px;font-size:13px;}
 .bulk-result.ok{background:rgba(42,122,74,0.07);border:1px solid rgba(42,122,74,0.18);}
 .bulk-result.err{background:rgba(176,48,48,0.06);border:1px solid rgba(176,48,48,0.15);color:var(--muted);}
-@media(max-width:480px){.box-grid,.stat-grid{grid-template-columns:1fr 1fr;}.rating-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:480px){.box-grid,.stat-grid{grid-template-columns:1fr 1fr;}.reserve-panel{grid-column:1 / -1;grid-row:auto;}.rating-grid{grid-template-columns:1fr 1fr;}}
 /* ── Bigger card back content ── */
 .card-back-english{font-size:26px;font-weight:600;color:var(--sand);text-align:center;margin-bottom:10px;}
 .card-back-example{font-family:'Amiri',serif;direction:rtl;font-size:22px;color:var(--goldL);text-align:center;line-height:1.6;margin-bottom:6px;}
@@ -194,6 +200,7 @@ const BOXES=[
   {id:"l5a",label:"L5A",color:"#9B59B6",isQueue:false,main:5},
   {id:"l5b",label:"L5B",color:"#9B59B6",isQueue:false,main:5},
   {id:"mastered",label:"Mastered",color:"#3A9864",isQueue:false,main:6},
+  {id:"reserve",label:"Reserves",color:"#6E7F8D",isQueue:false,main:7},
 ];
 const DAY_LEVELS={
   0:["l5b","l4","l3","l2b","l1"],1:["l2b","l1"],2:["l2b","l1"],
@@ -214,7 +221,7 @@ function pinKey(k){const p=getPin();return p?`${p}-${k}`:k;}
 function ls(k,d){try{const v=localStorage.getItem(pinKey(k));return v!==null?JSON.parse(v):d;}catch{return d;}}
 function ss(k,v){try{localStorage.setItem(pinKey(k),JSON.stringify(v));}catch{}}
 function getWords(){return ls("muf-words",[]);}
-function getBoxes(){return ls("muf-boxes",{l1:[],l1q:[],l2a:[],l2b:[],l3q:[],l3:[],l4q:[],l4:[],l5a:[],l5b:[],mastered:[]});}
+function getBoxes(){return ls("muf-boxes",{l1:[],l1q:[],l2a:[],l2b:[],l3q:[],l3:[],l4q:[],l4:[],l5a:[],l5b:[],mastered:[],reserve:[]});}
 function getSettings(){return ls("muf-settings",{l1Target:40});}
 function getStats(){return ls("muf-stats",{sessions:[],lifetime:{reviewed:0,correct:0,byLevel:{}}});}
 function getSession(){return ls("muf-session",null);}
@@ -390,7 +397,7 @@ function renderBoxGrid(){
   const boxes=getBoxes();const words=getWords();
   const dm={};words.forEach(w=>{dm[w.id]=w.dialect;});
   function cnt(id){const ids=boxes[id]||[];return _dialectFilter==="All"?ids.length:ids.filter(id=>dm[id]===_dialectFilter).length;}
-  const layout=[{id:"l1q",q:true},{id:"l1",q:false},null,{id:"l2a",q:false},{id:"l2b",q:false},null,{id:"l3q",q:true},{id:"l3",q:false},null,{id:"l4q",q:true},{id:"l4",q:false},null,{id:"l5a",q:false},{id:"l5b",q:false},null,{id:"mastered",q:false},null,null];
+  const layout=[{id:"l1q",q:true},{id:"l1",q:false},{id:"l2a",q:false},{id:"l2b",q:false},{id:"l3q",q:true},{id:"l3",q:false},{id:"l4q",q:true},{id:"l4",q:false},{id:"l5a",q:false},{id:"l5b",q:false},{id:"mastered",q:false}];
   let h=`<div class="box-grid">`;
   for(const item of layout){
     if(!item){h+=`<div></div>`;continue;}
@@ -407,7 +414,85 @@ function renderBoxGrid(){
         return`<div class="box-card" onclick="viewBox('${item.id}')" style="background:rgba(${rg},0.04);border-color:rgba(${rg},0.25)"><div class="box-label" style="color:${c}">${def.label}</div><div class="box-count" style="color:${c}">${n}</div></div>`;
       })()
   }
-  return h+`</div>`;
+  return h+renderReservePanel(cnt("reserve"))+`</div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// RESERVES — parked words, never quizzed, moved out only by hand or Fill
+// ═══════════════════════════════════════════════════════════
+let _lastFill=null;
+function l1InPlay(b){b=b||getBoxes();return (b.l1||[]).length+(b.l1q||[]).length;}
+// Fill order: starred first, then oldest added
+function reservePickOrder(){
+  const b=getBoxes();const wm={};getWords().forEach(w=>{wm[w.id]=w;});
+  return (b.reserve||[]).map((id,i)=>({id,i})).filter(x=>wm[x.id]).sort((a,c)=>{
+    const pa=wm[a.id].priority?1:0,pc=wm[c.id].priority?1:0;
+    if(pa!==pc)return pc-pa;
+    const ta=wm[a.id].createdAt||0,tc=wm[c.id].createdAt||0;
+    return ta!==tc?ta-tc:a.i-c.i;
+  }).map(x=>x.id);
+}
+function renderReservePanel(shownCount){
+  const b=getBoxes();const def=boxDef("reserve");const c=def.color;const rg=hexRgb(c);
+  const total=(b.reserve||[]).length;const wm={};getWords().forEach(w=>{wm[w.id]=w;});
+  const starred=(b.reserve||[]).filter(id=>wm[id]&&wm[id].priority).length;
+  const target=getSettings().l1Target||40;const inPlay=l1InPlay(b);const need=Math.max(0,target-inPlay);
+  const fillLabel=total===0?"Reserves empty":need===0?"L1 at target":`Fill Level 1 · ${Math.min(need,total)}`;
+  const undo=_lastFill&&_lastFill.length?`<button class="btn3" style="width:100%;margin-top:8px;font-size:11px;padding:7px" onclick="undoLastFill()">↶ Undo last move (${_lastFill.length})</button>`:"";
+  return`<div class="reserve-panel">
+    <div class="box-card" onclick="viewBox('reserve')" style="background:rgba(${rg},0.05);border-color:rgba(${rg},0.3)">
+      <div class="box-label" style="color:${c}">Reserves</div><div class="box-count" style="color:${c}">${shownCount}</div>
+      ${starred?`<div style="font-size:9px;color:var(--gold);margin-top:3px">★${starred} first in line</div>`:""}
+    </div>
+    <div class="reserve-ctl">
+      <label class="lbl" style="margin-bottom:5px">L1 Target</label>
+      <div class="reserve-row"><input id="rs-target" class="inp" type="number" min="1" max="500" value="${target}" onchange="saveReserveTarget(this.value)" style="max-width:80px"/><span style="font-size:11px;color:var(--muted2)">words</span></div>
+      <div style="font-size:11px;color:var(--muted);margin:8px 0 10px;line-height:1.5">L1 + Queue: <span style="color:var(--sand)">${inPlay}</span> of ${target}</div>
+      <button class="btn1" style="width:100%;justify-content:center;padding:11px 10px;font-size:13px" ${total===0||need===0?"disabled":""} onclick="askFillReserve('target')">${fillLabel}</button>
+      <div style="height:1px;background:var(--border);margin:14px 0 12px"></div>
+      <label class="lbl" style="margin-bottom:5px">Add a number</label>
+      <div class="reserve-row"><input id="rs-n" class="inp" type="number" min="1" placeholder="#" style="max-width:80px"/><button class="btn2" style="flex:1;padding:9px 10px" ${total===0?"disabled":""} onclick="askFillReserve('manual')">Add to L1</button></div>
+      ${undo}
+    </div>
+  </div>`;
+}
+function saveReserveTarget(v){const n=Math.max(1,Math.min(500,parseInt(v)||40));const s=getSettings();s.l1Target=n;saveSettings(s);toast("Target saved");render();}
+function askFillReserve(mode){
+  const b=getBoxes();const total=(b.reserve||[]).length;const inPlay=l1InPlay(b);const target=getSettings().l1Target||40;
+  let n;
+  if(mode==="target"){n=Math.min(Math.max(0,target-inPlay),total);}
+  else{n=parseInt(document.getElementById("rs-n")?.value);if(!n||n<1){toast("Enter how many to add","var(--gold)");return;}n=Math.min(n,total);}
+  if(n<1){toast(total===0?"Reserves is empty":"L1 is already at target","var(--gold)");return;}
+  const order=reservePickOrder().slice(0,n);const wm={};getWords().forEach(w=>{wm[w.id]=w;});
+  const nStar=order.filter(id=>wm[id]&&wm[id].priority).length;
+  const after=inPlay+n;
+  document.getElementById("modal-root").innerHTML=`
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal" style="text-align:center">
+        <div style="font-size:17px;font-weight:700;color:var(--sand);margin-bottom:10px">Move ${n} word${n!==1?"s":""} to Level 1?</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:6px;line-height:1.6">From Reserves → Level 1<br>L1 + Queue: ${inPlay} → <strong style="color:var(--sand)">${after}</strong> (target ${target})</div>
+        ${nStar?`<div style="font-size:11px;color:var(--gold);margin-bottom:6px">★ ${nStar} starred word${nStar!==1?"s":""} included</div>`:""}
+        ${mode==="manual"&&after>target?`<div style="font-size:11px;color:var(--muted2);margin-bottom:6px">This goes ${after-target} over your target.</div>`:""}
+        <div style="display:flex;gap:10px;justify-content:center;margin-top:20px">
+          <button class="btn1" onclick="closeModal();doFillReserve(${n})">Move ${n}</button>
+          <button class="btn3" onclick="closeModal()">Cancel</button>
+        </div>
+      </div>
+    </div>`;
+}
+function doFillReserve(n){
+  const ids=reservePickOrder().slice(0,n);if(!ids.length)return;
+  moveWords(ids,"reserve","l1");_lastFill=ids;
+  toast(`Moved ${ids.length} to Level 1 ✓`);render();
+}
+function undoLastFill(){
+  const b=getBoxes();const ids=(_lastFill||[]).filter(id=>(b.l1||[]).includes(id));
+  if(ids.length)moveWords(ids,"l1","reserve");
+  _lastFill=null;toast(`Returned ${ids.length} to Reserves`);render();
+}
+function toggleReserveStar(id){
+  const words=getWords();const w=words.find(x=>x.id===id);if(!w)return;
+  w.priority=!w.priority;saveWords(words);render();
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -822,18 +907,20 @@ function renderBoxes(){
     const cnt=(boxes[b.id]||[]).length;const rg=hexRgb(b.color);const act=b.id===_activeBoxView;
     return`<button class="tab-btn" onclick="viewBox('${b.id}')" style="${act?`background:rgba(${rg},0.12);border-color:${b.color};color:${b.color}`:""}">${b.label} <span style="opacity:.4;font-size:11px">${cnt}</span></button>`;
   }).join("");
-  const def=boxDef(_activeBoxView);const ids=boxes[_activeBoxView]||[];
+  const def=boxDef(_activeBoxView);const isRes=_activeBoxView==="reserve";
+  const ids=isRes?reservePickOrder():(boxes[_activeBoxView]||[]);
   const rows=ids.length===0?`<div style="text-align:center;color:var(--muted);padding:60px 0;font-size:13px">No words here yet.</div>`
     :ids.map(id=>{const w=wordById(id);if(!w)return"";
       return`<div class="word-row">
         <div class="ar" style="font-size:23px;flex:0 0 auto;min-width:75px;text-align:right">${w.arabic}</div>
         <div style="flex:1;min-width:0"><div style="font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${w.english}</div>
           <div style="font-size:10px;color:var(--muted);margin-top:3px">${w.dialect} · ${w.wordType}</div></div>
+        ${isRes?`<button class="reserve-star${w.priority?" on":""}" title="Fill first" onclick="toggleReserveStar('${id}')">${w.priority?"★":"☆"}</button>`:""}
         <button onclick="deleteWordFull('${id}')" style="background:none;border:none;cursor:pointer;color:rgba(176,48,48,0.3);font-size:20px;padding:3px 7px;line-height:1;transition:color .2s" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='rgba(176,48,48,0.3)'">×</button>
       </div>`;}).join("");
   return`${searchBar}<div class="tab-strip">${tabs}</div>
     <div style="margin-bottom:18px"><div style="font-size:20px;font-weight:700;color:${def.color}">${def.label}</div>
-    <div style="font-size:11px;color:var(--muted);margin-top:3px">${ids.length} word${ids.length!==1?"s":""}</div></div>${rows}`;
+    <div style="font-size:11px;color:var(--muted);margin-top:3px">${ids.length} word${ids.length!==1?"s":""}${isRes?" · Fill order: ★ first, then oldest added":""}</div></div>${rows}`;
 }
 function deleteWordFull(id){
   document.getElementById("modal-root").innerHTML=`
@@ -893,8 +980,9 @@ function renderManualAdd(){
         <select id="f-dial" class="inp" style="cursor:pointer;font-size:13px;padding:10px 12px">${DIALECTS.map(d=>`<option>${d}</option>`).join("")}</select></div>
     </div>
     ${!sa?`<div class="field"><label class="lbl">Starting Box</label>
-      <select id="f-box" class="inp" style="cursor:pointer;font-size:13px;padding:10px 12px">${BOXES.map(b=>`<option value="${b.id}"${b.id==="l1"?" selected":""}>${b.label}</option>`).join("")}</select>
+      <select id="f-box" class="inp" style="cursor:pointer;font-size:13px;padding:10px 12px" onchange="document.getElementById('f-star-wrap').style.display=this.value==='reserve'?'block':'none'">${BOXES.map(b=>`<option value="${b.id}"${b.id==="l1"?" selected":""}>${b.label}</option>`).join("")}</select>
       <div style="font-size:10px;color:var(--muted2);margin-top:5px">Defaults to Level 1. Use to migrate words from other systems.</div>
+      <label id="f-star-wrap" style="display:none;margin-top:10px;font-size:12px;color:var(--muted);cursor:pointer"><input type="checkbox" id="f-star" style="margin-right:7px"/>★ Fill first (priority in Reserves)</label>
     </div>`:`<div style="background:rgba(196,158,60,0.07);border:1px solid rgba(196,158,60,0.2);border-radius:9px;padding:11px 14px;margin-bottom:18px;font-size:12px;color:var(--muted)">Session in progress — new words go to the appropriate queue box.</div>`}
     <div style="display:flex;gap:10px;flex-wrap:wrap">
       <button class="btn1" onclick="submitManual(false)">Save Word</button>
@@ -917,9 +1005,10 @@ function submitManual(andAnother){
   if(!ar||!en)return;
   const word={id:uid(),arabic:ar,english:en,example:document.getElementById("f-ex")?.value?.trim()||"",
     wordType:document.getElementById("f-type")?.value||"Noun",dialect:document.getElementById("f-dial")?.value||"MSA",createdAt:Date.now()};
-  saveWords([...getWords(),word]);
   const sess=getSession();const sa=sess&&sess.active;
   const tb=sa?(SESSION_QUEUE_FOR_BOX[sess.steps[sess.stepIdx]?.box||"l1"]||"l1q"):(document.getElementById("f-box")?.value||"l1");
+  if(tb==="reserve"&&document.getElementById("f-star")?.checked)word.priority=true;
+  saveWords([...getWords(),word]);
   addWordToBox(word.id,tb);toast(`Added to ${boxDef(tb).label} ✓`);
   if(andAnother){document.getElementById("f-ar").value="";document.getElementById("f-en").value="";document.getElementById("f-ex").value="";document.getElementById("f-ar").focus();}
   else setView("home");
