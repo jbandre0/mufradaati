@@ -474,7 +474,8 @@ function saveStats(s){ss("muf-stats",s);kvSet("muf-stats",s).catch(()=>{});}
 
 // ═══════════════════════════════════════════════════════════
 // MIDNIGHT QUEUE CLEAR — runs once per calendar day on load
-// Auto-clears: L1Q→L1, L3Q→L3, L4Q→L4
+// Auto-clears ONLY L1Q→L1 each night.
+// L3Q→L3 and L4Q→L4 release after their level's session step finishes (finishStep);
 // L2A→L2B and L5A→L5B are prompt-only (in-session)
 // ═══════════════════════════════════════════════════════════
 function runMidnightClear(){
@@ -484,7 +485,7 @@ function runMidnightClear(){
   const sess=getSession();
   if(sess&&sess.active)return; // don't run during live session
   const boxes=getBoxes();let changed=false;
-  [["l1q","l1"],["l3q","l3"],["l4q","l4"]].forEach(([from,to])=>{
+  [["l1q","l1"]].forEach(([from,to])=>{
     const ids=boxes[from]||[];
     if(ids.length){boxes[to]=[...(boxes[to]||[]),...ids];boxes[from]=[];changed=true;}
   });
