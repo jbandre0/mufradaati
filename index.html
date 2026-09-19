@@ -78,7 +78,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0
 .box-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:14px;}
 .box-card{border-radius:13px;padding:14px 11px;cursor:pointer;transition:all .15s;text-align:center;border:1.5px solid var(--border);background:var(--card);}
 .box-card:hover{transform:translateY(-2px);}
-.reserve-panel{grid-column:3;grid-row:1 / span 6;display:flex;flex-direction:column;gap:9px;}
+.reserve-panel{grid-column:3;grid-row:1 / span 5;display:flex;flex-direction:column;gap:9px;}
 .reserve-ctl{border:1.5px solid rgba(141,181,165,0.28);border-radius:13px;padding:14px 13px;background:rgba(141,181,165,0.04);}
 .reserve-ctl .inp{padding:8px 10px;font-size:14px;}
 .reserve-row{display:flex;gap:8px;align-items:center;}
@@ -745,7 +745,7 @@ function renderBoxGrid(){
   const boxes=getBoxes();const words=getWords();
   const dm={};words.forEach(w=>{dm[w.id]=w.dialect;});
   function cnt(id){const ids=boxes[id]||[];return _dialectFilter==="All"?ids.length:ids.filter(id=>dm[id]===_dialectFilter).length;}
-  const layout=[{id:"l1q",q:true},{id:"l1",q:false},{id:"l2a",q:false},{id:"l2b",q:false},{id:"l3q",q:true},{id:"l3",q:false},{id:"l4q",q:true},{id:"l4",q:false},{id:"l5a",q:false},{id:"l5b",q:false},{id:"mastered",q:false}];
+  const layout=[{id:"l1q",q:true},{id:"l1",q:false},{id:"l2a",q:false},{id:"l2b",q:false},{id:"l3q",q:true},{id:"l3",q:false},{id:"l4q",q:true},{id:"l4",q:false},{id:"l5a",q:false},{id:"l5b",q:false}];
   let h=`<div class="box-grid">`;
   for(const item of layout){
     if(!item){h+=`<div></div>`;continue;}
@@ -762,7 +762,13 @@ function renderBoxGrid(){
         return`<div class="box-card" onclick="viewBox('${item.id}')" style="background:rgba(${rg},0.04);border-color:rgba(${rg},0.25)"><div class="box-label" style="color:${c}">${def.label}</div><div class="box-count" style="color:${c}">${n}</div></div>`;
       })()
   }
-  return h+renderReservePanel(cnt("reserve"))+`</div>`;
+  // Mastered lives in the right-hand column, under the Reserves controls
+  const mdef=boxDef("mastered");const mc=mdef.color;const mrg=hexRgb(mc);const mn=cnt("mastered");
+  const mStars=getMasteredStars();const mastIds=boxes["mastered"]||[];
+  const fiveStars=mastIds.filter(id=>mStars[id]&&mStars[id].stars>=5).length;
+  const starBar=fiveStars>0?`<div style="font-size:9px;color:var(--lm);margin-top:3px">★${fiveStars} perfect</div>`:"";
+  const masteredTile=`<div class="box-card" onclick="viewBox('mastered')" style="background:rgba(${mrg},0.04);border-color:rgba(${mrg},0.25)"><div class="box-label" style="color:${mc}">Mastered</div><div class="box-count" style="color:${mc}">${mn}</div>${starBar}</div>`;
+  return h+renderReservePanel(cnt("reserve"),masteredTile)+`</div>`;
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -780,7 +786,7 @@ function reservePickOrder(){
     return ta!==tc?ta-tc:a.i-c.i;
   }).map(x=>x.id);
 }
-function renderReservePanel(shownCount){
+function renderReservePanel(shownCount,extraHtml){
   const b=getBoxes();const def=boxDef("reserve");const c=def.color;const rg=hexRgb(c);
   const total=(b.reserve||[]).length;const wm={};getWords().forEach(w=>{wm[w.id]=w;});
   const starred=(b.reserve||[]).filter(id=>wm[id]&&wm[id].priority).length;
@@ -803,6 +809,7 @@ function renderReservePanel(shownCount){
       <div class="reserve-row"><input id="rs-n" class="inp" type="number" min="1" placeholder="#" style="max-width:80px"/><button class="btn2" style="flex:1;padding:9px 10px" ${total===0?"disabled":""} onclick="askFillReserve('manual')">Add to L1</button></div>
       ${undo}
     </div>
+    ${extraHtml||""}
   </div>`;
 }
 function saveReserveTarget(v){const n=Math.max(1,Math.min(500,parseInt(v)||40));const s=getSettings();s.l1Target=n;saveSettings(s);toast("Target saved");render();}
