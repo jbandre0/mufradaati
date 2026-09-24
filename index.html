@@ -1345,9 +1345,9 @@ function renderManualAdd(){
         <select id="f-dial" class="inp" style="cursor:pointer;font-size:13px;padding:10px 12px">${DIALECTS.map(d=>`<option>${d}</option>`).join("")}</select></div>
     </div>
     ${!sa?`<div class="field"><label class="lbl">Starting Box</label>
-      <select id="f-box" class="inp" style="cursor:pointer;font-size:13px;padding:10px 12px" onchange="document.getElementById('f-star-wrap').style.display=this.value==='reserve'?'block':'none'">${BOXES.map(b=>`<option value="${b.id}"${b.id==="l1"?" selected":""}>${b.label}</option>`).join("")}</select>
-      <div style="font-size:10px;color:var(--muted2);margin-top:5px">Defaults to Level 1. Use to migrate words from other systems.</div>
-      <label id="f-star-wrap" style="display:none;margin-top:10px;font-size:12px;color:var(--muted);cursor:pointer"><input type="checkbox" id="f-star" style="margin-right:7px"/>★ Fill first (priority in Reserves)</label>
+      <select id="f-box" class="inp" style="cursor:pointer;font-size:13px;padding:10px 12px" onchange="document.getElementById('f-star-wrap').style.display=this.value==='reserve'?'block':'none'">${BOXES.map(b=>`<option value="${b.id}"${b.id==="reserve"?" selected":""}>${b.label}</option>`).join("")}</select>
+      <div style="font-size:10px;color:var(--muted2);margin-top:5px">Defaults to Reserves. Use to migrate words from other systems.</div>
+      <label id="f-star-wrap" style="display:block;margin-top:10px;font-size:12px;color:var(--muted);cursor:pointer"><input type="checkbox" id="f-star" style="margin-right:7px"/>★ Fill first (priority in Reserves)</label>
     </div>`:`<div style="background:rgba(217,180,94,0.07);border:1px solid rgba(217,180,94,0.2);border-radius:9px;padding:11px 14px;margin-bottom:18px;font-size:12px;color:var(--muted)">Session in progress — new words go to the appropriate queue box.</div>`}
     <div style="display:flex;gap:10px;flex-wrap:wrap">
       <button class="btn1" onclick="submitManual(false)">Save Word</button>
@@ -1380,7 +1380,7 @@ function submitManual(andAnother){
 }
 
 // ── Quick Add ──
-let _qaState={dialect:"MSA",wordType:"Noun",targetBox:"l1q",loading:false,preview:null,error:null,mode:"english"};
+let _qaState={dialect:"MSA",wordType:"Noun",targetBox:"reserve",loading:false,preview:null,error:null,mode:"english"};
 function renderQuickAdd(){
   const s=_qaState;
   const sess=getSession();const sa=sess&&sess.active;
@@ -1560,17 +1560,28 @@ Respond ONLY with this exact JSON — no markdown, no explanation:
 }
 
 // ── Bulk Add ──
-let _bulkState={loading:false,results:null,targetBox:"l1q"};
+let _bulkState={loading:false,results:null,targetBox:"reserve",mode:"english"};
 function renderBulkAdd(){
   const boxOptions=BOXES.map(b=>`<option value="${b.id}"${b.id===_bulkState.targetBox?" selected":""}>${b.label}</option>`).join("");
+  const m=_bulkState.mode;
   return`<div class="card">
+    <div style="display:flex;gap:8px;margin-bottom:20px">
+      <button onclick="_bulkState.mode='english';_bulkState.results=null;render()" style="flex:1;padding:10px;border-radius:9px;border:1.5px solid ${m==='english'?'rgba(217,180,94,0.6)':'var(--border)'};background:${m==='english'?'rgba(217,180,94,0.1)':'transparent'};cursor:pointer;font-size:12px;color:${m==='english'?'var(--goldL)':'var(--muted)'};font-weight:${m==='english'?'700':'400'};transition:all .2s">
+        🇬🇧 English → Arabic
+      </button>
+      <button onclick="_bulkState.mode='arabic';_bulkState.results=null;render()" style="flex:1;padding:10px;border-radius:9px;border:1.5px solid ${m==='arabic'?'rgba(217,180,94,0.6)':'var(--border)'};background:${m==='arabic'?'rgba(217,180,94,0.1)':'transparent'};cursor:pointer;font-size:12px;color:${m==='arabic'?'var(--goldL)':'var(--muted)'};font-weight:${m==='arabic'?'700':'400'};transition:all .2s">
+        🔤 Arabic → Full Card
+      </button>
+    </div>
     <div style="font-size:13px;color:var(--muted);margin-bottom:6px;line-height:1.6">
-      One entry per line: <strong style="color:var(--sand)">English word or phrase, Dialect</strong>
+      ${m==='english'
+        ?`One entry per line: <strong style="color:var(--sand)">English word or phrase, Dialect</strong>`
+        :`One entry per line: <strong style="color:var(--sand)">Arabic word (any form), Dialect</strong>`}
     </div>
     <div style="font-size:11px;color:var(--muted2);margin-bottom:6px;line-height:1.7">
-      Available dialects: ${DIALECTS.join(", ")}
+      Available dialects: ${DIALECTS.join(", ")}${m==='arabic'?" · Dialect is optional — MSA is assumed if left off.":""}
     </div>
-    <div style="font-size:11px;color:var(--muted2);margin-bottom:18px">Word type is detected automatically.</div>
+    <div style="font-size:11px;color:var(--muted2);margin-bottom:18px">${m==='english'?"Word type is detected automatically.":"The AI finds the base (dictionary) form and detects the word type automatically."}</div>
     <div class="field">
       <label class="lbl">Save all words to</label>
       <select id="bulk-box" class="inp" style="cursor:pointer;font-size:13px;padding:10px 12px" onchange="_bulkState.targetBox=this.value">
@@ -1579,7 +1590,9 @@ function renderBulkAdd(){
     </div>
     <div class="field">
       <label class="lbl">Words to add</label>
-      <textarea id="bulk-ta" class="bulk-ta" placeholder="to understand, MSA&#10;book, Shaami&#10;beautiful, Egyptian&#10;to find out, Iraqi&#10;friend, Darija"></textarea>
+      ${m==='english'
+        ?`<textarea id="bulk-ta" class="bulk-ta" placeholder="to understand, MSA&#10;book, Shaami&#10;beautiful, Egyptian&#10;to find out, Iraqi&#10;friend, Darija"></textarea>`
+        :`<textarea id="bulk-ta" class="bulk-ta ar" dir="rtl" style="text-align:right;font-size:20px;line-height:2" placeholder="كِتَاب, MSA&#10;يَذْهَبُ, Shaami&#10;جَمِيل, Egyptian&#10;صَدِيق, Darija"></textarea>`}
     </div>
     <button class="btn1" onclick="runBulkAdd()" ${_bulkState.loading?"disabled":""} style="margin-bottom:20px">
       ${_bulkState.loading?`<span class="spinner"></span> Generating (this may take a moment)…`:"✦ Generate All Cards"}
@@ -1677,16 +1690,35 @@ async function runBulkAdd(){
   const raw=document.getElementById("bulk-ta")?.value||"";
   const lines=raw.split("\n").map(l=>l.trim()).filter(Boolean);
   if(!lines.length){toast("Enter at least one word","var(--red)");return;}
+  const mode=_bulkState.mode||"english";
   _bulkState={..._bulkState,loading:true,results:null};render();
   const results=[];
   for(const line of lines){
     const parts=line.split(",").map(p=>p.trim());
-    const engInput=parts[0]||"";
+    const mainInput=parts[0]||"";
     const dialectRaw=parts[1]||"MSA";
     const dialect=DIALECTS.find(d=>d.toLowerCase()===dialectRaw.toLowerCase())||"MSA";
-    if(!engInput){results.push({input:line,error:"Could not parse",removed:false,expanded:false});continue;}
-    const prompt=`You are an expert Arabic linguist. Generate a vocabulary flashcard.
-English: "${engInput}"
+    if(!mainInput){results.push({input:line,error:"Could not parse",removed:false,expanded:false});continue;}
+    const prompt=mode==="arabic"
+      ?`You are an expert Arabic linguist. The input below may be in ANY form (conjugated verb, bound/construct noun, inflected adjective, etc.).
+Your tasks:
+1. Identify the BASE FORM (lemma/dictionary citation form) with FULL diacritics (tashkeel) on every letter — no exceptions.
+2. Determine the word type: Verb, Noun, Adjective, Phrase, or Other.
+3. Provide the primary English meaning (concise, 1–6 words).
+4. Generate the appropriate grammatical forms with full diacritics:
+   - Verb → extraFields MUST have exactly: "Past (هو)", "Present (هو)", "Masdar", "Imperative (أنت)".
+   - Noun → extraFields MUST have exactly: "Singular", "Plural" (broken plural if one exists, otherwise sound plural).
+   - Adjective → extraFields MUST have exactly: "Masculine", "Feminine", "Plural" (broken plural if exists).
+   - Otherwise: extraFields = {}.
+5. Compose one short natural example sentence in ${dialect_note(dialect)} using the word, with full diacritics, plus its English translation.
+
+Input word: "${mainInput}"
+Assumed dialect: ${dialect_note(dialect)}
+
+Respond ONLY with this exact JSON structure, no markdown:
+{"arabic":"base form with full diacritics","english":"meaning","wordType":"Verb or Noun or Adjective or Phrase or Other","extraFields":{"all keys filled as instructed"},"exampleAr":"sentence with diacritics","exampleEn":"english translation"}`
+      :`You are an expert Arabic linguist. Generate a vocabulary flashcard.
+English: "${mainInput}"
 Dialect: ${dialect_note(dialect)}
 Detect word type. Use FULL diacritics on ALL Arabic text.
 
@@ -1698,14 +1730,14 @@ Otherwise: extraFields = {}.
 Also provide one short natural example sentence in ${dialect_note(dialect)} with full diacritics, plus its English translation.
 
 Respond ONLY with this exact JSON structure, no markdown:
-{"arabic":"main form with diacritics","english":"${engInput}","wordType":"Verb or Noun or Adjective or Phrase or Other","extraFields":{"all keys filled as instructed"},"exampleAr":"sentence with diacritics","exampleEn":"english translation"}`;
+{"arabic":"main form with diacritics","english":"${mainInput}","wordType":"Verb or Noun or Adjective or Phrase or Other","extraFields":{"all keys filled as instructed"},"exampleAr":"sentence with diacritics","exampleEn":"english translation"}`;
     try{
       const r=await fetch(apiUrl(),{method:"POST",headers:apiHeaders(),
         body:JSON.stringify({model:"claude-sonnet-4-5-20250929",max_tokens:600,messages:[{role:"user",content:prompt}]})});
       const data=await r.json();const raw2=data.content?.find(c=>c.type==="text")?.text||"";
       const p=JSON.parse(raw2.replace(/```json|```/g,"").trim());
       const ex=p.exampleAr?(p.exampleEn?`${p.exampleAr} — ${p.exampleEn}`:p.exampleAr):"";
-      const word={id:uid(),arabic:p.arabic,english:p.english||engInput,example:ex,wordType:p.wordType||"Other",dialect,forms:p.extraFields||{},createdAt:Date.now()};
+      const word={id:uid(),arabic:p.arabic,english:p.english||(mode==="arabic"?"":mainInput),example:ex,wordType:p.wordType||"Other",dialect,forms:p.extraFields||{},createdAt:Date.now()};
       // Don't save yet — user reviews first
       results.push({word,input:line,error:null,removed:false,expanded:false});
     }catch(e){results.push({input:line,error:"Generation failed",removed:false,expanded:false});}
