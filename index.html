@@ -1787,6 +1787,11 @@ function renderStats(){
       <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)"/>
     </div>
     <div style="margin-top:20px;padding-top:18px;border-top:1px solid var(--border)">
+      <div style="font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px">Import Words</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.6">Paste JSON exported from another tool (mufradaati-import-v1) to add new cards — this only adds words, it never touches your existing data.</div>
+      <button class="btn3" onclick="openImportWordsModal()" style="font-size:12px;padding:7px 14px">⬆ Import Words</button>
+    </div>
+    <div style="margin-top:20px;padding-top:18px;border-top:1px solid var(--border)">
       <div style="font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px">AI Proxy</div>
       <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.6">${insideClaude()?"Running inside Claude.ai — no setup needed.":getApiKey()?"✓ API key saved — AI features active.":"⚠ No API key — AI features disabled."}</div>
       ${insideClaude()?"":`<div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -1887,6 +1892,139 @@ function _importConfirmed(){
     toast("Import successful — reloading…");
     setTimeout(()=>location.reload(),1200);
   });
+}
+
+// ═══════════════════════════════════════════════════════════
+// IMPORT WORDS — paste JSON from an external tool; only ADDS cards,
+// never touches existing words/boxes/stats/session. Not to be
+// confused with "Import Backup" above, which replaces everything.
+// ═══════════════════════════════════════════════════════════
+const IMPORT_WORDS_FORMAT="mufradaati-import-v1";
+function stripDiacritics(s){return(s||"").replace(/[ً-ْٰـ]/g,"").trim();}
+function importDialectLabel(d){
+  const v=(d||"").trim().toLowerCase();
+  if(v==="shaami")return"Shaami";
+  if(v==="darija")return"Darija";
+  return"MSA"; // fusha, both, or unrecognized all land on MSA (this app's name for Fusha)
+}
+function importPosLabel(p){
+  const v=(p||"").trim().toLowerCase();
+  if(v==="noun")return"Noun";
+  if(v==="verb")return"Verb";
+  if(v==="adjective")return"Adjective";
+  return"Other";
+}
+// Raw import entry → card object. Caller has already checked ar/en are non-empty.
+function mapImportEntry(raw){
+  const arabic=(raw.ar||"").trim();const english=(raw.en||"").trim();
+  const dialect=importDialectLabel(raw.dialect);
+  const forms={};
+  if((raw.plural||"").trim())forms["Plural"]=raw.plural.trim();
+  if((raw.verbForm||"").trim())forms["Form"]=raw.verbForm.trim();
+  if((raw.present||"").trim())forms["Present"]=raw.present.trim();
+  if((raw.feminine||"").trim())forms["Feminine"]=raw.feminine.trim();
+  if((raw.adjPlural||"").trim())forms[forms["Plural"]?"Plural (adj.)":"Plural"]=raw.adjPlural.trim();
+  if((raw.dialect||"").trim().toLowerCase()==="both")forms["Also"]="Shaami";
+  if((raw.levantine||"").trim())forms["Shaami equivalent"]=raw.levantine.trim();
+  if((raw.source||"").trim())forms["Source"]=raw.source.trim();
+  let createdAt=Date.now();
+  const addedStr=(raw.added||"").trim();
+  if(addedStr){const t=Date.parse(addedStr);if(!isNaN(t))createdAt=t;}
+  return{id:uid(),arabic,english,example:(raw.example||"").trim(),wordType:importPosLabel(raw.pos),dialect,forms,createdAt};
+}
+let _importWordsState={text:"",error:null,result:null};
+function openImportWordsModal(){_importWordsState={text:"",error:null,result:null};renderImportWordsModal();}
+function closeImportWordsModal(){closeModal();}
+function renderImportWordsModal(){
+  const s=_importWordsState;
+  const taVal=(s.text||"").replace(/&/g,"&amp;").replace(/</g,"&lt;");
+  document.getElementById("modal-root").innerHTML=`
+    <div class="modal-overlay" onclick="if(event.target===this)closeImportWordsModal()">
+      <div class="modal">
+        <div style="font-size:17px;font-weight:700;color:var(--sand);margin-bottom:6px">Import Words</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6">Paste JSON exported as <span style="color:var(--goldL)">${IMPORT_WORDS_FORMAT}</span> — or a bare array of word objects. This only adds new cards; it never changes existing words or boxes.</div>
+        <textarea id="import-words-ta" class="bulk-ta" style="min-height:200px;font-size:12px;line-height:1.6;direction:ltr;text-align:left" placeholder='{"format":"${IMPORT_WORDS_FORMAT}","words":[...]}' oninput="_importWordsState.text=this.value">${taVal}</textarea>
+        ${s.error?`<div style="color:var(--red);font-size:12px;margin-top:10px;padding:10px 12px;background:rgba(240,122,122,0.08);border-radius:8px;line-height:1.5">${s.error}</div>`:""}
+        ${s.result?renderImportWordsResult(s.result):""}
+        <div style="display:flex;gap:10px;margin-top:16px;justify-content:flex-end">
+          <button class="btn3" onclick="closeImportWordsModal()">${s.result?"Done":"Cancel"}</button>
+          <button class="btn1" onclick="runWordImport()">${s.result?"Import Again":"Import"}</button>
+        </div>
+      </div>
+    </div>`;
+  const ta=document.getElementById("import-words-ta");
+  if(ta){ta.focus();const len=ta.value.length;ta.setSelectionRange(len,len);}
+}
+function renderImportWordsResult(r){
+  const dupList=r.duplicates.length?`<details style="margin-top:8px">
+    <summary style="cursor:pointer;font-size:11px;color:var(--muted)">Show ${r.duplicates.length} skipped duplicate${r.duplicates.length!==1?"s":""}</summary>
+    <div style="margin-top:8px;max-height:160px;overflow-y:auto">${r.duplicates.map(d=>`<div style="font-size:12px;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--border)"><span class="ar" style="color:var(--goldL);font-size:15px">${d.ar}</span> — ${d.en} <span style="color:var(--muted2)">(${d.dialect}, already in your deck)</span></div>`).join("")}</div>
+  </details>`:"";
+  const invList=r.invalid.length?`<details style="margin-top:8px">
+    <summary style="cursor:pointer;font-size:11px;color:var(--muted)">Show ${r.invalid.length} invalid entr${r.invalid.length!==1?"ies":"y"}</summary>
+    <div style="margin-top:8px;max-height:160px;overflow-y:auto">${r.invalid.map(x=>`<div style="font-size:12px;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--border)">Entry ${x.index+1}: ${x.reason}${x.ar?` — ar: "${x.ar}"`:""}${x.en?` en: "${x.en}"`:""}</div>`).join("")}</div>
+  </details>`:"";
+  return`<div style="margin-top:14px;padding:12px 14px;background:rgba(95,211,160,0.06);border:1px solid rgba(95,211,160,0.2);border-radius:9px">
+    <div style="font-size:13px;color:var(--sand)">Imported <strong style="color:var(--green)">${r.imported}</strong>, skipped <strong style="color:var(--gold)">${r.duplicates.length}</strong> duplicate${r.duplicates.length!==1?"s":""}, <strong style="color:var(--red)">${r.invalid.length}</strong> invalid.</div>
+    ${dupList}${invList}
+  </div>`;
+}
+function runWordImport(){
+  const ta=document.getElementById("import-words-ta");
+  const raw=ta?ta.value:(_importWordsState.text||"");
+  _importWordsState.text=raw;
+  let parsed;
+  try{parsed=JSON.parse(raw);}
+  catch(e){_importWordsState={..._importWordsState,error:"That isn't valid JSON — check for a missing bracket, quote, or trailing comma.",result:null};renderImportWordsModal();return;}
+
+  let list;
+  if(Array.isArray(parsed)){
+    list=parsed;
+  }else if(parsed&&typeof parsed==="object"&&Array.isArray(parsed.words)){
+    if(parsed.format!==IMPORT_WORDS_FORMAT){
+      _importWordsState={..._importWordsState,error:`Unrecognized format "${parsed.format||"(none)"}" — expected "${IMPORT_WORDS_FORMAT}".`,result:null};
+      renderImportWordsModal();return;
+    }
+    list=parsed.words;
+  }else{
+    _importWordsState={..._importWordsState,error:`Expected a "words" array (${IMPORT_WORDS_FORMAT}) or a bare array of word objects.`,result:null};
+    renderImportWordsModal();return;
+  }
+  if(!list.length){
+    _importWordsState={..._importWordsState,error:"No words found in that JSON.",result:null};
+    renderImportWordsModal();return;
+  }
+
+  // Dedupe against words already in the app, by Arabic (diacritics/tatweel stripped) + mapped dialect
+  const existingWords=getWords();
+  const seen=new Set(existingWords.map(w=>stripDiacritics(w.arabic)+"|"+w.dialect));
+  const toAdd=[];const duplicates=[];const invalid=[];
+  list.forEach((entry,i)=>{
+    if(!entry||typeof entry!=="object"){invalid.push({index:i,reason:"Not a word object"});return;}
+    const arRaw=(entry.ar||"").trim();const enRaw=(entry.en||"").trim();
+    if(!arRaw||!enRaw){
+      invalid.push({index:i,ar:arRaw,en:enRaw,reason:!arRaw&&!enRaw?"Missing \"ar\" and \"en\"":!arRaw?"Missing \"ar\"":"Missing \"en\""});
+      return;
+    }
+    const word=mapImportEntry(entry);
+    const key=stripDiacritics(word.arabic)+"|"+word.dialect;
+    if(seen.has(key)){duplicates.push({ar:word.arabic,en:word.english,dialect:word.dialect});return;}
+    seen.add(key); // also catches duplicates within this same pasted batch
+    toAdd.push(word);
+  });
+
+  if(toAdd.length){
+    const sess=getSession();const sa=sess&&sess.active;
+    const tb=sa?(SESSION_QUEUE_FOR_BOX[sess.steps[sess.stepIdx]?.box||"l1"]||"l1q"):"reserve";
+    const boxes=getBoxes();if(!boxes[tb])boxes[tb]=[];
+    toAdd.forEach(w=>{if(!boxes[tb].includes(w.id))boxes[tb].push(w.id);});
+    saveWords([...existingWords,...toAdd]);  // one write for the whole batch
+    saveBoxes(boxes);                        // one write for the whole batch
+    toast(`Imported ${toAdd.length} word${toAdd.length!==1?"s":""} to ${boxDef(tb).label} ✓`);
+  }
+
+  _importWordsState={..._importWordsState,error:null,result:{imported:toAdd.length,duplicates,invalid}};
+  renderImportWordsModal();
 }
 
 // ═══════════════════════════════════════════════════════════
