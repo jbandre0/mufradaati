@@ -361,6 +361,15 @@ body{background:#03110D;}
 .card{background:linear-gradient(160deg,rgba(16,62,50,0.78),rgba(7,32,25,0.76));}
 
 /*END GEN:CSS*/
+/* ═══ dialect color coding on flashcards (vars --dl / --dl-rgb are set inline per word) ═══ */
+.badge.dial-badge{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:6px 15px;color:var(--dl);background:rgba(var(--dl-rgb),.14);border:1px solid rgba(var(--dl-rgb),.6);box-shadow:0 0 14px rgba(var(--dl-rgb),.25);}
+.dl-word{color:var(--dl,var(--goldL));text-shadow:0 0 22px rgba(var(--dl-rgb,240,212,138),.5);}
+.ar.dl-word{color:var(--dl,var(--goldL));text-shadow:0 0 22px rgba(var(--dl-rgb,240,212,138),.5);}
+.dial-chip{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--dl);background:rgba(var(--dl-rgb),.14);border:1px solid rgba(var(--dl-rgb),.55);border-radius:20px;padding:5px 16px;white-space:nowrap;box-shadow:0 0 12px rgba(var(--dl-rgb),.22);}
+.flip-face.flip-front{padding-bottom:62px;}
+.flip-face{border-color:rgba(var(--dl-rgb,240,212,138),.78);box-shadow:0 0 34px rgba(var(--dl-rgb,230,195,110),.3),0 14px 44px rgba(0,0,0,.55),inset 0 0 40px rgba(0,0,0,0.25);}
+.flip-face::before{background:var(--dl,#F0D48A);box-shadow:0 0 10px rgba(var(--dl-rgb,240,212,138),.85);}
+.flip-face::after{border-color:rgba(var(--dl-rgb,240,212,138),.4);}
 </style>
 </head>
 <body>
@@ -502,6 +511,10 @@ function hexRgb(hex){const h=hex.replace("#","");return`${parseInt(h.slice(0,2),
 function sHead(t){return`<div class="s-head">${t}<div class="s-head-line"></div></div>`;}
 function wordById(id){return getWords().find(w=>w.id===id);}
 function boxDef(id){return BOXES.find(b=>b.id===id)||{id,label:id,color:"#888",isQueue:false,main:1};}
+// Dialect color coding on flashcards. MSA stays gold so the default look is unchanged.
+const DIALECT_COLORS={MSA:"#F0D48A",Universal:"#EEE8D5",Darija:"#E8935E",Shaami:"#6FD8D0",Egyptian:"#B7A6E8",Iraqi:"#B9D96B",Gulf:"#E59BB8",Other:"#8DB5A5"};
+function dialectColor(d){return DIALECT_COLORS[d]||(d?DIALECT_COLORS.Other:DIALECT_COLORS.MSA);}
+function dialectVars(d){const c=dialectColor(d);return`--dl:${c};--dl-rgb:${hexRgb(c)};`;}
 function moveWords(ids,fromBox,toBox){const b=getBoxes();const set=new Set(ids);b[fromBox]=(b[fromBox]||[]).filter(id=>!set.has(id));b[toBox]=[...(b[toBox]||[]),...ids];saveBoxes(b);}
 function addWordToBox(wordId,box){const b=getBoxes();if(!b[box])b[box]=[];if(!b[box].includes(wordId))b[box].push(wordId);saveBoxes(b);}
 function removeWordFromBox(wordId,box){const b=getBoxes();b[box]=(b[box]||[]).filter(id=>id!==wordId);saveBoxes(b);}
@@ -969,11 +982,12 @@ function renderReview(){
   const arEn=(sess.cardDirection||"ar-en")==="ar-en";
 
   // Front face content
-  const frontHtml=arEn
+  const frontHtml=(arEn
     ?`<div style="font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:20px">What does this mean?</div>
-      <div class="ar" style="font-size:54px;text-align:center;line-height:1.45">${word.arabic}</div>`
+      <div class="ar dl-word" style="font-size:54px;text-align:center;line-height:1.45">${word.arabic}</div>`
     :`<div style="font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:20px">How do you say this?</div>
-      <div style="font-size:32px;font-weight:600;color:var(--sand);text-align:center;line-height:1.4">${word.english}</div>`;
+      <div class="dl-word" style="font-size:32px;font-weight:600;text-align:center;line-height:1.4">${word.english}</div>`)
+    +(word.dialect?`<div class="dial-chip">${word.dialect}</div>`:"");
 
   // Back face content
   const backHtml=arEn
@@ -996,18 +1010,18 @@ function renderReview(){
   <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
     <button class="end-btn" onclick="confirmEndSession()">■ End Session</button>
   </div>
-  <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">
+  <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+    ${word.dialect?`<span class="badge dial-badge" style="${dialectVars(word.dialect)}">${word.dialect}</span>`:""}
     <span class="badge" style="background:rgba(${rg},0.12);color:${c}">${def.label}</span>
-    <span class="badge" style="background:rgba(255,255,255,0.072);color:var(--muted)">${word.dialect||""}</span>
     <span class="badge" style="background:rgba(255,255,255,0.072);color:var(--muted)">${word.wordType||""}</span>
   </div>
   <div class="medina" data-key="${sess.stepIdx}-${sess.queueIdx}">
     <div class="m-world" data-mv="${(sess.queueIdx+sess.stepIdx*2)%3}"></div><div class="fx-layer"></div>
-    <div class="hang"><div class="pend" style="animation-delay:-${(Date.now()/1000%7).toFixed(2)}s">
+    <div class="hang"><div class="pend" style="${dialectVars(word.dialect)}animation-delay:-${(Date.now()/1000%7).toFixed(2)}s">
       <div class="rope"></div>
   <div class="flip-wrap" onclick="if(!${sess.flipped})doFlip()">
     <div class="flip-inner${sess.flipped?" flipped":""}">
-      <div class="flip-face">
+      <div class="flip-face flip-front">
         ${frontHtml}
       </div>
       <div class="flip-face flip-back">
@@ -2635,11 +2649,12 @@ function renderMasteredReview(){
     Object.entries(word.forms).forEach(([lbl,val])=>{if(val)formsHtml+=`<div class="card-back-form"><div class="card-back-form-label">${lbl}</div><div class="card-back-form-val">${val}</div></div>`;});
     formsHtml+=`</div>`;
   }
-  const frontHtml=arEn
+  const frontHtml=(arEn
     ?`<div style="font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:20px">What does this mean?</div>
-       <div class="ar" style="font-size:54px;text-align:center;line-height:1.45">${word.arabic}</div>`
+       <div class="ar dl-word" style="font-size:54px;text-align:center;line-height:1.45">${word.arabic}</div>`
     :`<div style="font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:20px">How do you say this?</div>
-       <div style="font-size:32px;font-weight:600;color:var(--sand);text-align:center;line-height:1.4">${word.english}</div>`;
+       <div class="dl-word" style="font-size:32px;font-weight:600;text-align:center;line-height:1.4">${word.english}</div>`)
+    +(word.dialect?`<div class="dial-chip">${word.dialect}</div>`:"");
   const backHtml=arEn
     ?`<div style="font-size:10px;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;opacity:.7;margin-bottom:10px;flex-shrink:0">Answer</div>
        <div class="card-back-english">${word.english}</div>
@@ -2656,18 +2671,18 @@ function renderMasteredReview(){
     <div style="display:flex;align-items:center;gap:8px">${starsHtml}<span style="font-size:10px;color:var(--muted);margin-left:2px">${starCount}/5</span></div>
     <button class="end-btn" onclick="endMasteredSession()">■ End</button>
   </div>
-  <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">
+  <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+    ${word.dialect?`<span class="badge dial-badge" style="${dialectVars(word.dialect)}">${word.dialect}</span>`:""}
     <span class="badge" style="background:rgba(95,211,160,0.12);color:var(--lm)">★ Mastered</span>
-    <span class="badge" style="background:rgba(255,255,255,0.072);color:var(--muted)">${word.dialect||""}</span>
     <span class="badge" style="background:rgba(255,255,255,0.072);color:var(--muted)">${word.wordType||""}</span>
   </div>
   <div class="medina" data-key="m-${queueIdx}">
     <div class="m-world" data-mv="${queueIdx%3}"></div><div class="fx-layer"></div>
-    <div class="hang"><div class="pend" style="animation-delay:-${(Date.now()/1000%7).toFixed(2)}s">
+    <div class="hang"><div class="pend" style="${dialectVars(word.dialect)}animation-delay:-${(Date.now()/1000%7).toFixed(2)}s">
       <div class="rope"></div>
   <div class="flip-wrap" onclick="if(!${flipped})doMasteredFlip()">
     <div class="flip-inner${flipped?" flipped":""}">
-      <div class="flip-face">${frontHtml}
+      <div class="flip-face flip-front">${frontHtml}
       </div>
       <div class="flip-face flip-back">${backHtml}</div>
     </div>
