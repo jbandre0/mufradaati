@@ -512,7 +512,7 @@ function sHead(t){return`<div class="s-head">${t}<div class="s-head-line"></div>
 function wordById(id){return getWords().find(w=>w.id===id);}
 function boxDef(id){return BOXES.find(b=>b.id===id)||{id,label:id,color:"#888",isQueue:false,main:1};}
 // Dialect color coding on flashcards. MSA stays gold so the default look is unchanged.
-const DIALECT_COLORS={MSA:"#F0D48A",Universal:"#EEE8D5",Darija:"#E8935E",Shaami:"#6FD8D0",Egyptian:"#B7A6E8",Iraqi:"#B9D96B",Gulf:"#E59BB8",Other:"#8DB5A5"};
+const DIALECT_COLORS={MSA:"#F0D48A",Universal:"#EEE8D5",Darija:"#E59BB8",Shaami:"#6FD8D0",Egyptian:"#B7A6E8",Iraqi:"#B9D96B",Gulf:"#E8935E",Other:"#8DB5A5"};
 function dialectColor(d){return DIALECT_COLORS[d]||(d?DIALECT_COLORS.Other:DIALECT_COLORS.MSA);}
 function dialectVars(d){const c=dialectColor(d);return`--dl:${c};--dl-rgb:${hexRgb(c)};`;}
 function moveWords(ids,fromBox,toBox){const b=getBoxes();const set=new Set(ids);b[fromBox]=(b[fromBox]||[]).filter(id=>!set.has(id));b[toBox]=[...(b[toBox]||[]),...ids];saveBoxes(b);}
